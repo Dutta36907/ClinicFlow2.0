@@ -1,0 +1,1 @@
+ALTER TABLE public.clinics ADD COLUMN IF NOT EXISTS website text, ADD COLUMN IF NOT EXISTS google_map_url text;

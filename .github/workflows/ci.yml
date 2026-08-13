@@ -1,0 +1,35 @@
+name: CI
+
+# Runs on every PR into preproduction or main, and on pushes to those
+# branches (so a direct push, not just a PR, still gets checked before the
+# deploy workflows run). This is the gate: red here should block merge.
+on:
+  pull_request:
+    branches: [main, preproduction]
+  push:
+    branches: [main, preproduction]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Build
+        run: bun run build

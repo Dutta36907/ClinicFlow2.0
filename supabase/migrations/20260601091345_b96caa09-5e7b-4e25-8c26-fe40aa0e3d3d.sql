@@ -1,0 +1,1 @@
+ALTER TABLE public.doctors ALTER COLUMN appointment_duration_minutes SET DEFAULT 15;

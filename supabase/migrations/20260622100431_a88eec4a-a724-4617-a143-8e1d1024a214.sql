@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS idx_appointments_created_by_user_id ON public.appointments(created_by_user_id);
+CREATE INDEX IF NOT EXISTS idx_system_alerts_resolved_by ON public.system_alerts(resolved_by);

@@ -1,0 +1,9 @@
+# ClinicFlow
+
+> ClinicFlow is a multi-tenant clinic appointment booking platform. Patients browse clinics and doctors and book appointments online; clinics manage schedules, doctors, treatments, and enquiries.
+
+## Pages
+
+- [Home](/): Find a clinic and book an appointment.
+- [Privacy Policy](/privacy): How patient and clinic data is handled.
+- [Terms of Service](/terms): Terms governing use of ClinicFlow.

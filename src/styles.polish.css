@@ -1,0 +1,106 @@
+/* ============================================================================
+ * UI Polish v2 — opt-in stylesheet, gated by `.ui-v2` on <html>.
+ *
+ * To disable instantly: run `localStorage.setItem('ui-v2','off')` and reload,
+ * or click the "Classic UI" toggle in the dev header. Removing this file +
+ * its import from styles.css fully reverts every visual change in this layer.
+ *
+ * Everything here is additive — no existing token is renamed or removed.
+ * ========================================================================== */
+
+/* ---- Semantic status tokens ---- */
+.ui-v2 {
+  --success: oklch(0.62 0.14 155);
+  --success-foreground: oklch(0.99 0.005 180);
+  --warning: oklch(0.78 0.16 75);
+  --warning-foreground: oklch(0.22 0.05 60);
+  --info: oklch(0.62 0.14 235);
+  --info-foreground: oklch(0.99 0.005 180);
+}
+.dark.ui-v2,
+.ui-v2 .dark {
+  --success: oklch(0.72 0.14 155);
+  --success-foreground: oklch(0.16 0.03 220);
+  --warning: oklch(0.82 0.16 75);
+  --warning-foreground: oklch(0.18 0.04 60);
+  --info: oklch(0.72 0.14 235);
+  --info-foreground: oklch(0.16 0.03 220);
+}
+
+/* ---- Table polish: hover row, zebra stripe, sticky header inside cards ---- */
+.ui-v2 [data-slot="table-container"] {
+  /* horizontal scroll hint for narrow viewports */
+  scrollbar-width: thin;
+}
+.ui-v2 table tbody tr {
+  transition: background-color 0.12s ease;
+}
+.ui-v2 table tbody tr:hover {
+  background-color: color-mix(in oklab, var(--muted) 60%, transparent);
+}
+.ui-v2 table tbody tr:nth-child(even):not(:hover) {
+  background-color: color-mix(in oklab, var(--muted) 22%, transparent);
+}
+.ui-v2 table thead th {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* ---- Section titles ---- */
+.ui-v2 .section-header {
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  padding-bottom: 1rem;
+}
+
+/* ---- Cards: lift on hover (subtle) ---- */
+.ui-v2 .lift-on-hover {
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.ui-v2 .lift-on-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 40px -22px
+    color-mix(in oklab, var(--primary) 30%, transparent);
+  border-color: color-mix(in oklab, var(--border) 70%, var(--primary) 20%);
+}
+
+/* ---- Focus rings on bare buttons (filter pills, range pills) ---- */
+.ui-v2 .focus-pill:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+/* ---- Skeleton softening so it doesn't shimmer too harshly ---- */
+.ui-v2 [data-slot="skeleton"] {
+  background-color: color-mix(in oklab, var(--muted) 80%, var(--foreground) 4%);
+}
+
+/* ---- Sidebar active-state contrast bump ---- */
+.ui-v2 [data-sidebar="menu-button"][data-active="true"] {
+  background-color: color-mix(
+    in oklab,
+    var(--sidebar-accent) 100%,
+    var(--sidebar-primary) 12%
+  );
+  color: var(--sidebar-primary);
+  font-weight: 600;
+}
+
+/* ---- Mobile: filter strip h-scroll, table h-scroll cue ---- */
+@media (max-width: 640px) {
+  .ui-v2 .filter-strip {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ui-v2 .filter-strip::-webkit-scrollbar {
+    display: none;
+  }
+  .ui-v2 .filter-strip > * {
+    flex-shrink: 0;
+  }
+}
