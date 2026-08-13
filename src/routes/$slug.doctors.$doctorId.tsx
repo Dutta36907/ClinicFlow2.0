@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { formatRange12 } from "@/lib/clinic-time";
 import { WEEKDAY_LABELS } from "@/lib/doctor-slots";
 import { getClinicBySlug, getPublicDoctorProfile } from "@/lib/public.functions";
+import { SITE_URL } from "@/lib/site-url";
 
 export const Route = createFileRoute("/$slug/doctors/$doctorId")({
   loader: async ({ params }) => {
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/$slug/doctors/$doctorId")({
     return { clinic, ...profile };
   },
   head: ({ params, loaderData }) => {
-    const url = `https://book-my-clinic-98.lovable.app/${params.slug}/doctors/${params.doctorId}`;
+    const url = `${SITE_URL}/${params.slug}/doctors/${params.doctorId}`;
     if (!loaderData) {
       return { meta: [{ title: "Doctor profile" }] };
     }
@@ -80,7 +81,7 @@ export const Route = createFileRoute("/$slug/doctors/$doctorId")({
             worksFor: {
               "@type": "MedicalClinic",
               name: clinic.name,
-              url: `https://book-my-clinic-98.lovable.app/${params.slug}`,
+              url: `${SITE_URL}/${params.slug}`,
             },
           }),
         },

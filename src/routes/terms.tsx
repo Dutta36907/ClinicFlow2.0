@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site-url";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -10,9 +11,9 @@ export const Route = createFileRoute("/terms")({
           "Terms of use for ClinicFlow Suite — booking, payments, cancellations, and acceptable use.",
       },
       { property: "og:title", content: "Terms of Service — ClinicFlow Suite" },
-      { property: "og:url", content: "https://book-my-clinic-98.lovable.app/terms" },
+      { property: "og:url", content: `${SITE_URL}/terms` },
     ],
-    links: [{ rel: "canonical", href: "https://book-my-clinic-98.lovable.app/terms" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/terms` }],
   }),
   component: TermsPage,
 });

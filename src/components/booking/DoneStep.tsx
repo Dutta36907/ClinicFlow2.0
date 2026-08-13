@@ -31,7 +31,7 @@ function buildIcs({
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Lovable//Appointment//EN",
+    "PRODID:-//ClinicFlow//Appointment//EN",
     "BEGIN:VEVENT",
     `UID:${uid}`,
     `DTSTAMP:${fmt(new Date())}`,

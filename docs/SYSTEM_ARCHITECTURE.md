@@ -94,7 +94,7 @@ Each row lists the **role** so a swap-out target is obvious.
 | Email | Resend | API key stored as platform setting (encrypted) |
 | SMS / OTP | On-screen code (default), Twilio/MSG91/Gupshup pluggable | Provider is a `platform_settings` value |
 | Hosting (frontend) | Vercel | See `docs/deployment.md` |
-| Hosting (backend) | Supabase (Lovable Cloud) | Managed |
+| Hosting (backend) | Supabase | Managed |
 
 ---
 
@@ -382,7 +382,7 @@ Always read `mem://security/security-memory` before changing access policies.
 | Layer | Host | Config source |
 |---|---|---|
 | Frontend | Vercel | Project env vars (Vercel dashboard) |
-| Backend (DB, Auth, Storage) | Supabase (Lovable Cloud) | Managed; secrets via platform settings |
+| Backend (DB, Auth, Storage) | Supabase | Managed; secrets via platform settings |
 | Cron | `pg_cron` in Postgres | Migration-managed |
 
 Env vars are split by exposure:

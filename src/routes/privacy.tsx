@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site-url";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -10,9 +11,9 @@ export const Route = createFileRoute("/privacy")({
           "How ClinicFlow Suite collects, uses, stores, and deletes personal data under India's DPDP Act 2023.",
       },
       { property: "og:title", content: "Privacy Policy — ClinicFlow Suite" },
-      { property: "og:url", content: "https://book-my-clinic-98.lovable.app/privacy" },
+      { property: "og:url", content: `${SITE_URL}/privacy` },
     ],
-    links: [{ rel: "canonical", href: "https://book-my-clinic-98.lovable.app/privacy" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/privacy` }],
   }),
   component: PrivacyPage,
 });

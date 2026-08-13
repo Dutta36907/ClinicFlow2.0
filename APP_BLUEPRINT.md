@@ -28,12 +28,11 @@ ClinicFlow is a multi-tenant SaaS for Indian doctors, clinics, and hospitals. It
 | --- | --- |
 | Frontend | React 19, TanStack Router/Start, TanStack Query, Tailwind CSS v4, shadcn/ui (Radix), lucide-react |
 | Build / runtime | Vite 7, Cloudflare Workers (`workerd`) with `nodejs_compat`, SSR |
-| Backend | Lovable Cloud (Supabase Postgres + Auth + Storage + Realtime) |
+| Backend | Supabase (Postgres + Auth + Storage + Realtime) |
 | Validation | Zod on every server function input |
 | SMS | Pluggable provider (`dev` / `twilio` / `msg91` / `gupshup`) |
 | Email | Resend + `@react-email/components` (transactional templates) |
 | WhatsApp | Interakt (Meta WhatsApp Business approved templates) |
-| AI | Lovable AI Gateway (key: `LOVABLE_API_KEY`) — available, not currently invoked from product code |
 
 ---
 
@@ -443,7 +442,7 @@ Object paths are scoped by `clinic_id/...`. Deletes go through `deleteClinicMedi
 
 ## 8. Auth & Roles
 
-- **Providers**: email/password and Google (configured via Lovable Cloud's broker).
+- **Providers**: email/password and Google (configured in Supabase Auth → Providers).
 - **No anonymous signups**; super admins create clinic users via `addClinicUser`.
 - **Role model**: rows in `public.user_roles`. Super admins have `clinic_id IS NULL`.
 - **Super-admin bootstrap**: `getSignupStatus` returns only `{ bootstrapMode }`. While true, `/superadmin/login` shows a "Create first super admin" form. `bootstrapFirstSuperAdmin` is the only public privileged endpoint and is double-gated (pinned email in both Zod and SQL; SQL `WHERE NOT EXISTS` race guard).
@@ -536,8 +535,7 @@ createAppointment(...)
 
 ## 15. Integrations
 
-- **Lovable Cloud** (Supabase) — Postgres + Auth + Storage + Realtime.
-- **Lovable AI Gateway** — `LOVABLE_API_KEY` available for future LLM calls.
+- **Supabase** — Postgres + Auth + Storage + Realtime.
 - **SMS providers** — `src/lib/sms/provider.server.ts` + `src/lib/sms/adapters/*`; configured in `platform_settings.sms`. `dev` provider returns code in response for testing; `twilio` / `msg91` / `gupshup` send real SMS.
 - **Email** — Resend via `src/lib/notifications/providers/resend.server.ts`. Templates are React Email components under `src/lib/notifications/templates/email/`. Configured in `platform_settings.email`.
 - **WhatsApp** — Interakt (Meta WhatsApp Business approved templates) via `src/lib/notifications/providers/interakt.server.ts`. Template names live in `platform_settings.whatsapp.template_names`.
@@ -557,7 +555,6 @@ createAppointment(...)
 - `SUPABASE_SERVICE_ROLE_KEY` — used only inside handlers after auth checks
 - `SUPABASE_DB_URL`
 - `BOOTSTRAP_SUPER_ADMIN_EMAIL` — reference only; the canonical pin lives in the SQL function
-- `LOVABLE_API_KEY` — Lovable AI Gateway
 
 ---
 

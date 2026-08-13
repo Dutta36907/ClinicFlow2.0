@@ -143,7 +143,7 @@ using (
 );
 ```
 
-2. Run it via the migration tool (Lovable does this on approval).
+2. Run it against each environment: `supabase db push` (see `docs/CI_CD_SETUP.md`).
 3. Wait for `src/integrations/supabase/types.ts` to regenerate — never
    edit that file by hand.
 

@@ -83,12 +83,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "ClinicFlow V2" },
       { name: "description", content: "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings." },
-      { name: "author", content: "Lovable" },
       { property: "og:title", content: "ClinicFlow V2" },
       { property: "og:description", content: "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "ClinicFlow V2" },
       { name: "twitter:description", content: "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings." },
       // og:image / twitter:image are intentionally NOT set at the root.

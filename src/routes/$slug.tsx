@@ -17,8 +17,7 @@ import { ClinicInactive } from "@/components/landing/ClinicInactive";
 import { ClinicExpired } from "@/components/landing/ClinicExpired";
 import { ClinicLandingSkeleton } from "@/components/landing/ClinicLandingSkeleton";
 import type { Doctor } from "@/components/booking/types";
-
-const SITE_URL = "https://book-my-clinic-98.lovable.app";
+import { SITE_URL } from "@/lib/site-url";
 
 function truncate(text: string | null | undefined, max: number) {
   if (!text) return "";
