@@ -32,53 +32,52 @@ function PrivacyPage() {
       <section className="mt-8 space-y-3">
         <h2 className="text-lg font-semibold">1. What we collect</h2>
         <p>
-          When you book an appointment or submit an enquiry, we collect your
-          name, phone number, and (optionally) email and message. Clinics on the
-          platform may also store appointment notes you provide.
+          When you book an appointment or submit an enquiry, we collect your name, phone number, and
+          (optionally) email and message. Clinics on the platform may also store appointment notes
+          you provide.
         </p>
       </section>
 
       <section className="mt-6 space-y-3">
         <h2 className="text-lg font-semibold">2. How we use it</h2>
         <p>
-          We use this data solely to confirm your booking, send appointment
-          reminders, allow the clinic to contact you, and meet legal record-keeping
-          requirements. We do not sell or share your data for marketing.
+          We use this data solely to confirm your booking, send appointment reminders, allow the
+          clinic to contact you, and meet legal record-keeping requirements. We do not sell or share
+          your data for marketing.
         </p>
       </section>
 
       <section className="mt-6 space-y-3">
         <h2 className="text-lg font-semibold">3. Consent</h2>
         <p>
-          By submitting a booking or enquiry, you consent to the processing
-          described here. Consent is recorded with a timestamp at the moment of
-          submission, as required by India's Digital Personal Data Protection
-          Act, 2023.
+          By submitting a booking or enquiry, you consent to the processing described here. Consent
+          is recorded with a timestamp at the moment of submission, as required by India's Digital
+          Personal Data Protection Act, 2023.
         </p>
       </section>
 
       <section className="mt-6 space-y-3">
         <h2 className="text-lg font-semibold">4. Retention &amp; deletion</h2>
         <p>
-          You may request deletion of your enquiry or appointment data by writing
-          to your clinic, or to the platform at the contact below. Verified
-          deletion requests are honoured within 30 days.
+          You may request deletion of your enquiry or appointment data by writing to your clinic, or
+          to the platform at the contact below. Verified deletion requests are honoured within 30
+          days.
         </p>
       </section>
 
       <section className="mt-6 space-y-3">
         <h2 className="text-lg font-semibold">5. Security</h2>
         <p>
-          Data is stored on encrypted servers with strict role-based access. SMS
-          verification protects against unauthorised bookings made in your name.
+          Data is stored on encrypted servers with strict role-based access. SMS verification
+          protects against unauthorised bookings made in your name.
         </p>
       </section>
 
       <section className="mt-6 space-y-3">
         <h2 className="text-lg font-semibold">6. Contact</h2>
         <p>
-          For privacy questions or data requests, contact your clinic directly or
-          email the platform administrator.
+          For privacy questions or data requests, contact your clinic directly or email the platform
+          administrator.
         </p>
       </section>
     </main>

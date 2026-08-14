@@ -23,12 +23,9 @@ const TONE_CLASS: Record<string, string> = {
     "bg-[color:var(--success,oklch(0.62_0.14_155))]/15 text-[color:var(--success,oklch(0.45_0.14_155))] ring-[color:var(--success,oklch(0.62_0.14_155))]/25",
   active:
     "bg-[color:var(--success,oklch(0.62_0.14_155))]/15 text-[color:var(--success,oklch(0.45_0.14_155))] ring-[color:var(--success,oklch(0.62_0.14_155))]/25",
-  completed:
-    "bg-muted text-muted-foreground ring-border",
-  cancelled:
-    "bg-destructive/10 text-destructive ring-destructive/20",
-  inactive:
-    "bg-muted text-muted-foreground ring-border",
+  completed: "bg-muted text-muted-foreground ring-border",
+  cancelled: "bg-destructive/10 text-destructive ring-destructive/20",
+  inactive: "bg-muted text-muted-foreground ring-border",
   rescheduled:
     "bg-[color:var(--info,oklch(0.62_0.14_235))]/15 text-[color:var(--info,oklch(0.45_0.14_235))] ring-[color:var(--info,oklch(0.62_0.14_235))]/25",
 };

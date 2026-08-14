@@ -155,7 +155,6 @@ export function ManagerSidebar({
     }
   }
 
-
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
@@ -190,18 +189,13 @@ export function ManagerSidebar({
               <SidebarGroupContent>
                 <SidebarMenu>
                   {groupItems.map((it) => {
-                    const showBadge =
-                      it.id === "appointments" && appointmentCount > 0;
+                    const showBadge = it.id === "appointments" && appointmentCount > 0;
                     return (
                       <SidebarMenuItem key={it.id}>
                         <SidebarMenuButton
                           isActive={active === it.id}
                           onClick={() => onSelect(it.id)}
-                          tooltip={
-                            showBadge
-                              ? `${it.label} (${appointmentCount})`
-                              : it.label
-                          }
+                          tooltip={showBadge ? `${it.label} (${appointmentCount})` : it.label}
                         >
                           <it.icon className="size-4" />
                           {!collapsed && (

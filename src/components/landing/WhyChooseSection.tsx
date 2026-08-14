@@ -44,8 +44,8 @@ export function WhyChooseSection() {
             Premium software, without the premium hassle.
           </h2>
           <p className="mt-4 text-muted-foreground">
-            We obsess over the details so your team can focus on patients. Clean interface,
-            sensible defaults, and the few thoughtful features that actually move the needle.
+            We obsess over the details so your team can focus on patients. Clean interface, sensible
+            defaults, and the few thoughtful features that actually move the needle.
           </p>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2">
             {REASONS.map((r) => (
@@ -64,4 +64,3 @@ export function WhyChooseSection() {
     </section>
   );
 }
-

@@ -21,8 +21,8 @@ export function TestimonialBento() {
             <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a4a6e] to-[#0c2340] p-10 text-white">
               <Quote className="absolute -top-2 -right-2 size-40 text-white/5" />
               <p className="relative font-display text-2xl font-medium leading-relaxed md:text-3xl">
-                "We replaced three tools with ClinicFlow. Patients book themselves, reminders
-                go out automatically, and our front desk finally breathes."
+                "We replaced three tools with ClinicFlow. Patients book themselves, reminders go out
+                automatically, and our front desk finally breathes."
               </p>
               <div className="mt-8 flex items-center gap-4">
                 <div className="flex size-12 items-center justify-center rounded-full bg-[#5cbdb9]/30 font-display font-bold text-[#5cbdb9]">
@@ -48,7 +48,9 @@ export function TestimonialBento() {
                 </div>
                 <div>
                   <div className="text-sm font-bold text-[#0c2340]">Rohan Iyer</div>
-                  <div className="text-xs text-[#1a4a6e]/60">Practice Manager, Iyer Multispeciality</div>
+                  <div className="text-xs text-[#1a4a6e]/60">
+                    Practice Manager, Iyer Multispeciality
+                  </div>
                 </div>
               </div>
             </div>

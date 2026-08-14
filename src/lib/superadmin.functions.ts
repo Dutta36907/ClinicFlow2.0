@@ -12,23 +12,20 @@ async function getAdmin() {
   return m.supabaseAdmin;
 }
 
-
 /**
  * Returns whether the app is in "bootstrap mode" (no super_admin exists yet).
  * Public — safe to call without auth. Exposes only a boolean; never any
  * configured email or other identifying info.
  */
-export const getSignupStatus = createServerFn({ method: "GET" }).handler(
-  async () => {
-    const supabaseAdmin = await getAdmin();
-    const { count, error } = await supabaseAdmin
-      .from("user_roles")
-      .select("user_id", { count: "exact", head: true })
-      .eq("role", "super_admin");
-    if (error) throw new Error(error.message);
-    return { bootstrapMode: (count ?? 0) === 0 };
-  },
-);
+export const getSignupStatus = createServerFn({ method: "GET" }).handler(async () => {
+  const supabaseAdmin = await getAdmin();
+  const { count, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("user_id", { count: "exact", head: true })
+    .eq("role", "super_admin");
+  if (error) throw new Error(error.message);
+  return { bootstrapMode: (count ?? 0) === 0 };
+});
 
 /**
  * One-time, self-sealing first-time setup. Creates the very first super admin
@@ -83,10 +80,10 @@ export const bootstrapFirstSuperAdmin = createServerFn({ method: "POST" })
     const userId = createRes.data.user?.id;
     if (!userId) throw new Error("Setup unavailable");
 
-    const { data: rpcRes, error: rpcErr } = await supabaseAdmin.rpc(
-      "bootstrap_first_super_admin",
-      { _user_id: userId, _email: data.email },
-    );
+    const { data: rpcRes, error: rpcErr } = await supabaseAdmin.rpc("bootstrap_first_super_admin", {
+      _user_id: userId,
+      _email: data.email,
+    });
 
     if (rpcErr) {
       await supabaseAdmin.auth.admin.deleteUser(userId).catch(() => {});
@@ -107,14 +104,14 @@ export const bootstrapFirstSuperAdmin = createServerFn({ method: "POST" })
     return { bootstrapped: true };
   });
 
-
-
 async function assertSuperAdmin(userId: string) {
   const supabaseAdmin = await getAdmin();
   // Single RPC round-trip replaces two serial queries (user_roles + super_admin_permissions).
   const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
   if (error) throw new Error(error.message);
-  const row = Array.isArray(data) ? data[0] : (data as { is_super?: boolean; is_disabled?: boolean } | null);
+  const row = Array.isArray(data)
+    ? data[0]
+    : (data as { is_super?: boolean; is_disabled?: boolean } | null);
   if (!row?.is_super) throw new Error("Not authorized");
   if (row.is_disabled) throw new Error("Your account is disabled");
 }
@@ -236,9 +233,7 @@ export const createClinic = createServerFn({ method: "POST" })
       if (createRes.error) {
         const msg = createRes.error.message?.toLowerCase() ?? "";
         const alreadyExists =
-          msg.includes("already") ||
-          msg.includes("registered") ||
-          msg.includes("exists");
+          msg.includes("already") || msg.includes("registered") || msg.includes("exists");
         if (!alreadyExists) throw new Error(createRes.error.message);
 
         const { data: foundId, error: lookupErr } = await supabaseAdmin.rpc(
@@ -258,18 +253,13 @@ export const createClinic = createServerFn({ method: "POST" })
 
       await supabaseAdmin
         .from("profiles")
-        .upsert(
-          { id: userId, full_name: data.manager_full_name },
-          { onConflict: "id" },
-        );
+        .upsert({ id: userId, full_name: data.manager_full_name }, { onConflict: "id" });
 
-      const { error: roleErr } = await supabaseAdmin
-        .from("user_roles")
-        .insert({
-          user_id: userId,
-          clinic_id: clinicId,
-          role: "clinic_manager",
-        });
+      const { error: roleErr } = await supabaseAdmin.from("user_roles").insert({
+        user_id: userId,
+        clinic_id: clinicId,
+        role: "clinic_manager",
+      });
       if (roleErr && !/duplicate|unique/i.test(roleErr.message)) {
         throw new Error(roleErr.message);
       }
@@ -411,9 +401,7 @@ export const updateClinic = createServerFn({ method: "POST" })
 
 export const listClinicManagers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
-    z.object({ clinic_id: z.string().uuid() }).parse(d),
-  )
+  .inputValidator((d: unknown) => z.object({ clinic_id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await getAdmin();
     await assertSuperAdmin(context.userId);
@@ -433,7 +421,9 @@ export const listClinicManagers = createServerFn({ method: "POST" })
       supabaseAdmin.rpc("get_emails_for_ids", { _ids: userIds }),
     ]);
     const nameById = new Map<string, string | null>();
-    (profs ?? []).forEach((p) => nameById.set(p.id as string, (p.full_name as string | null) ?? null));
+    (profs ?? []).forEach((p) =>
+      nameById.set(p.id as string, (p.full_name as string | null) ?? null),
+    );
     const emailById = new Map<string, string | null>();
     ((emails ?? []) as Array<{ id: string; email: string | null }>).forEach((e) =>
       emailById.set(e.id, e.email ?? null),
@@ -472,10 +462,9 @@ export const setClinicManagerPassword = createServerFn({ method: "POST" })
     if (roleErr) throw new Error(roleErr.message);
     if (!role) throw new Error("User is not a manager of this clinic");
 
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(
-      data.user_id,
-      { password: data.password },
-    );
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.user_id, {
+      password: data.password,
+    });
     if (error) throw new Error(error.message);
 
     await supabaseAdmin.from("audit_log").insert({
@@ -513,7 +502,6 @@ const listCustomersSchema = z
   })
   .default({ page: 1, pageSize: 25, status: "all", search: "" });
 
-
 export const listAllCustomers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => listCustomersSchema.parse(d ?? {}))
@@ -547,11 +535,12 @@ export const listAllCustomers = createServerFn({ method: "POST" })
       cq = cq.or(`name.ilike.%${esc}%,slug.ilike.%${esc}%`);
     }
 
-    const { data: clinics, error: cErr, count } = await cq
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    const {
+      data: clinics,
+      error: cErr,
+      count,
+    } = await cq.order("created_at", { ascending: false }).range(from, to);
     if (cErr) throw new Error(cErr.message);
-
 
     const clinicIds = (clinics ?? []).map((c) => c.id);
     const managerByClinic = new Map<string, string>();
@@ -648,9 +637,7 @@ export const setClinicActive = createServerFn({ method: "POST" })
       is_active: data.isActive,
     };
     if (data.isActive) {
-      const currentExpiry = current.expires_at
-        ? new Date(current.expires_at).getTime()
-        : 0;
+      const currentExpiry = current.expires_at ? new Date(current.expires_at).getTime() : 0;
       if (!currentExpiry || currentExpiry < Date.now()) {
         const d = new Date();
         d.setDate(d.getDate() + 365);
@@ -658,10 +645,7 @@ export const setClinicActive = createServerFn({ method: "POST" })
       }
     }
 
-    const { error } = await supabaseAdmin
-      .from("clinics")
-      .update(patch)
-      .eq("id", data.clinicId);
+    const { error } = await supabaseAdmin.from("clinics").update(patch).eq("id", data.clinicId);
     if (error) throw new Error(error.message);
     await supabaseAdmin.from("audit_log").insert({
       actor_user_id: context.userId,
@@ -679,11 +663,13 @@ export const setClinicActive = createServerFn({ method: "POST" })
 export const updateClinicSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      clinicId: z.string().uuid(),
-      isActive: z.boolean(),
-      expiresAt: z.string().datetime().nullable(),
-    }).parse(d),
+    z
+      .object({
+        clinicId: z.string().uuid(),
+        isActive: z.boolean(),
+        expiresAt: z.string().datetime().nullable(),
+      })
+      .parse(d),
   )
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await getAdmin();
@@ -707,10 +693,12 @@ export const updateClinicSubscription = createServerFn({ method: "POST" })
 export const deleteClinic = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      clinicId: z.string().uuid(),
-      confirmSlug: z.string().trim().min(1).max(120),
-    }).parse(d),
+    z
+      .object({
+        clinicId: z.string().uuid(),
+        confirmSlug: z.string().trim().min(1).max(120),
+      })
+      .parse(d),
   )
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await getAdmin();
@@ -732,10 +720,7 @@ export const deleteClinic = createServerFn({ method: "POST" })
     await supabaseAdmin.from("clinic_testimonials").delete().eq("clinic_id", data.clinicId);
     await supabaseAdmin.from("clinic_treatments").delete().eq("clinic_id", data.clinicId);
 
-    const { error: delErr } = await supabaseAdmin
-      .from("clinics")
-      .delete()
-      .eq("id", data.clinicId);
+    const { error: delErr } = await supabaseAdmin.from("clinics").delete().eq("id", data.clinicId);
     if (delErr) throw new Error(delErr.message);
 
     await supabaseAdmin.from("audit_log").insert({
@@ -787,9 +772,7 @@ export const listClinicsForSuperAdmin = createServerFn({ method: "POST" })
     const term = data.search.replace(/[%,()]/g, "");
     if (term) {
       const like = `%${term}%`;
-      q = q.or(
-        `name.ilike.${like},phone.ilike.${like},email.ilike.${like}`,
-      );
+      q = q.or(`name.ilike.${like},phone.ilike.${like},email.ilike.${like}`);
     }
 
     // Sort
@@ -813,11 +796,6 @@ export const listClinicsForSuperAdmin = createServerFn({ method: "POST" })
       pageSize: data.pageSize,
     };
   });
-
-
-
-
-
 
 // ---- System users (super admins with menu-wise RBAC) ----
 
@@ -1011,10 +989,9 @@ export const addSystemUser = createServerFn({ method: "POST" })
       const exists =
         msg.includes("already") || msg.includes("registered") || msg.includes("exists");
       if (!exists) throw new Error(createRes.error.message);
-      const { data: foundId, error: lookupErr } = await supabaseAdmin.rpc(
-        "get_user_id_by_email",
-        { _email: email },
-      );
+      const { data: foundId, error: lookupErr } = await supabaseAdmin.rpc("get_user_id_by_email", {
+        _email: email,
+      });
       if (lookupErr) throw new Error(lookupErr.message);
       userId = (foundId as string | null) ?? null;
       if (!userId) throw new Error("User exists but could not be located");
@@ -1037,17 +1014,15 @@ export const addSystemUser = createServerFn({ method: "POST" })
       throw new Error(roleErr.message);
     }
 
-    const { error: permErr } = await supabaseAdmin
-      .from("super_admin_permissions")
-      .upsert(
-        {
-          user_id: userId,
-          ...data.permissions,
-          role_template_id: data.role_template_id,
-          is_disabled: true, // newly-added users start disabled
-        },
-        { onConflict: "user_id" },
-      );
+    const { error: permErr } = await supabaseAdmin.from("super_admin_permissions").upsert(
+      {
+        user_id: userId,
+        ...data.permissions,
+        role_template_id: data.role_template_id,
+        is_disabled: true, // newly-added users start disabled
+      },
+      { onConflict: "user_id" },
+    );
     if (permErr) throw new Error(permErr.message);
 
     await supabaseAdmin.from("audit_log").insert({
@@ -1075,16 +1050,14 @@ export const updateSystemUserPermissions = createServerFn({ method: "POST" })
     const supabaseAdmin = await getAdmin();
     await assertSuperAdmin(context.userId);
 
-    const { error } = await supabaseAdmin
-      .from("super_admin_permissions")
-      .upsert(
-        {
-          user_id: data.user_id,
-          ...data.permissions,
-          role_template_id: data.role_template_id,
-        },
-        { onConflict: "user_id" },
-      );
+    const { error } = await supabaseAdmin.from("super_admin_permissions").upsert(
+      {
+        user_id: data.user_id,
+        ...data.permissions,
+        role_template_id: data.role_template_id,
+      },
+      { onConflict: "user_id" },
+    );
     if (error) throw new Error(error.message);
 
     await supabaseAdmin.from("audit_log").insert({
@@ -1111,10 +1084,7 @@ export const setSystemUserDisabled = createServerFn({ method: "POST" })
 
     const { error } = await supabaseAdmin
       .from("super_admin_permissions")
-      .upsert(
-        { user_id: data.user_id, is_disabled: data.disabled },
-        { onConflict: "user_id" },
-      );
+      .upsert({ user_id: data.user_id, is_disabled: data.disabled }, { onConflict: "user_id" });
     if (error) throw new Error(error.message);
 
     await supabaseAdmin.from("audit_log").insert({
@@ -1173,10 +1143,9 @@ export const resetSystemUserPassword = createServerFn({ method: "POST" })
       throw new Error("Target is not a system user");
     }
 
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(
-      data.user_id,
-      { password: data.password },
-    );
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.user_id, {
+      password: data.password,
+    });
     if (error) throw new Error(error.message);
 
     await supabaseAdmin.from("audit_log").insert({
@@ -1225,11 +1194,7 @@ export const getMyProfile = createServerFn({ method: "GET" })
     const supabaseAdmin = await getAdmin();
     const uid = context.userId;
     const [{ data: profile }, { data: u }] = await Promise.all([
-      supabaseAdmin
-        .from("profiles")
-        .select("full_name, phone")
-        .eq("id", uid)
-        .maybeSingle(),
+      supabaseAdmin.from("profiles").select("full_name, phone").eq("id", uid).maybeSingle(),
       supabaseAdmin.auth.admin.getUserById(uid),
     ]);
     return {
@@ -1270,7 +1235,11 @@ export const listRoleTemplates = createServerFn({ method: "POST" })
     await assertSuperAdmin(context.userId);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, error, count } = await supabaseAdmin
+    const {
+      data: rows,
+      error,
+      count,
+    } = await supabaseAdmin
       .from("role_templates")
       .select("*", { count: "exact" })
       .order("is_system", { ascending: false })
@@ -1399,7 +1368,10 @@ function maskCreds(s: Record<string, string | undefined> | undefined) {
   if (!s) return s;
   const out: Record<string, string | undefined> = {};
   for (const [k, v] of Object.entries(s)) {
-    if (!v) { out[k] = ""; continue; }
+    if (!v) {
+      out[k] = "";
+      continue;
+    }
     // Mask anything that looks like a secret; keep short, public-ish fields visible.
     if (/token|key|secret|password/i.test(k)) {
       out[k] = v.length <= 4 ? "••••" : `••••${v.slice(-4)}`;
@@ -1422,7 +1394,8 @@ export const getSmsSettings = createServerFn({ method: "GET" })
       .maybeSingle();
     const raw = (data?.sms ?? {}) as z.infer<typeof smsSettingsSchema>;
     const settings = {
-      provider: (raw.provider as "dev" | "twilio" | "msg91" | "gupshup" | "on_screen") || "on_screen",
+      provider:
+        (raw.provider as "dev" | "twilio" | "msg91" | "gupshup" | "on_screen") || "on_screen",
       enabled: raw.enabled ?? true,
       twilio: maskCreds(raw.twilio as Record<string, string | undefined> | undefined),
       msg91: maskCreds(raw.msg91 as Record<string, string | undefined> | undefined),
@@ -1445,9 +1418,15 @@ export const updateSmsSettings = createServerFn({ method: "POST" })
       .select("id, sms")
       .limit(1)
       .maybeSingle();
-    const existing = (existingRow?.sms ?? {}) as Record<string, Record<string, string> | string | boolean>;
+    const existing = (existingRow?.sms ?? {}) as Record<
+      string,
+      Record<string, string> | string | boolean
+    >;
 
-    function merge(prev: Record<string, string> | undefined, next: Record<string, string | undefined> | undefined) {
+    function merge(
+      prev: Record<string, string> | undefined,
+      next: Record<string, string | undefined> | undefined,
+    ) {
       const out: Record<string, string> = { ...(prev ?? {}) };
       if (!next) return out;
       for (const [k, v] of Object.entries(next)) {
@@ -1491,7 +1470,16 @@ export const updateSmsSettings = createServerFn({ method: "POST" })
 export const sendTestSms = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({ phone: z.string().trim().min(6).max(20).regex(/^[+\d\s()-]+$/) }).parse(d),
+    z
+      .object({
+        phone: z
+          .string()
+          .trim()
+          .min(6)
+          .max(20)
+          .regex(/^[+\d\s()-]+$/),
+      })
+      .parse(d),
   )
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await getAdmin();

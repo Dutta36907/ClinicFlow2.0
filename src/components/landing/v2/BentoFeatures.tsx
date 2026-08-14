@@ -1,11 +1,4 @@
-import {
-  Bell,
-  Calendar,
-  Globe,
-  LineChart,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
+import { Bell, Calendar, Globe, LineChart, ShieldCheck, Users } from "lucide-react";
 import { Reveal } from "./Reveal";
 
 export function BentoFeatures() {
@@ -21,8 +14,8 @@ export function BentoFeatures() {
               Everything you need.
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-[#1a4a6e]/70">
-              A focused toolkit built for the daily reality of a busy clinic — not bloated
-              hospital software.
+              A focused toolkit built for the daily reality of a busy clinic — not bloated hospital
+              software.
             </p>
           </div>
         </Reveal>
@@ -39,8 +32,11 @@ export function BentoFeatures() {
                   Branded booking page
                 </h3>
                 <p className="mt-3 text-[#1a4a6e]/70">
-                  Every clinic gets a public page at <code className="rounded bg-[#5cbdb9]/15 px-1.5 py-0.5 text-xs text-[#2d8a9e]">/your-clinic</code>.
-                  Patients pick a doctor, date, and time — instantly.
+                  Every clinic gets a public page at{" "}
+                  <code className="rounded bg-[#5cbdb9]/15 px-1.5 py-0.5 text-xs text-[#2d8a9e]">
+                    /your-clinic
+                  </code>
+                  . Patients pick a doctor, date, and time — instantly.
                 </p>
               </div>
               <div className="absolute -bottom-4 -right-4 w-80 translate-y-6 translate-x-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-xl shadow-[#0c2340]/10 transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-0">
@@ -112,8 +108,8 @@ export function BentoFeatures() {
                     Verified bookings
                   </h3>
                   <p className="mt-1 max-w-xl text-[#1a4a6e]/75">
-                    Each appointment is verified with a one-time code via SMS / WhatsApp, so
-                    contact details are always real.
+                    Each appointment is verified with a one-time code via SMS / WhatsApp, so contact
+                    details are always real.
                   </p>
                 </div>
               </div>

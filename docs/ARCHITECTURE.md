@@ -13,7 +13,7 @@ This app is built on **TanStack Start** (React 19 + Vite 7) with
 **file-based routing**, **TanStack Query** for data fetching, **Tailwind
 v4** for styling, and **Supabase** for the database, auth, and storage.
 All server-side logic is written as
-**TanStack server functions** (`createServerFn`) — there are *no* Supabase
+**TanStack server functions** (`createServerFn`) — there are _no_ Supabase
 Edge Functions in this project.
 
 ---

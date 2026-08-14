@@ -67,14 +67,8 @@ export function tzDateKey(iso: string, tz: string) {
 }
 
 /** Convenience wrapper around Intl.DateTimeFormat — formats an ISO string in `tz`. */
-export function formatInTz(
-  iso: string,
-  tz: string,
-  opts: Intl.DateTimeFormatOptions,
-) {
-  return new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts }).format(
-    new Date(iso),
-  );
+export function formatInTz(iso: string, tz: string, opts: Intl.DateTimeFormatOptions) {
+  return new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts }).format(new Date(iso));
 }
 
 /**
@@ -85,10 +79,7 @@ export function formatInTz(
  */
 export function formatNice(iso: string, tz: string) {
   const todayKey = tzDateKey(new Date().toISOString(), tz);
-  const tomorrowKey = tzDateKey(
-    new Date(Date.now() + 86400000).toISOString(),
-    tz,
-  );
+  const tomorrowKey = tzDateKey(new Date(Date.now() + 86400000).toISOString(), tz);
   const key = tzDateKey(iso, tz);
   const time = formatInTz(iso, tz, {
     hour: "numeric",

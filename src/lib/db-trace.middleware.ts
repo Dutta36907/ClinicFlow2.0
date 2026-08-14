@@ -16,9 +16,7 @@ function deriveLabel(): string {
   }
 }
 
-export const dbTraceMiddleware = createMiddleware({ type: "function" }).server(
-  async ({ next }) => {
-    const label = deriveLabel();
-    return runWithTrace(label, () => next());
-  },
-);
+export const dbTraceMiddleware = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  const label = deriveLabel();
+  return runWithTrace(label, () => next());
+});

@@ -86,7 +86,6 @@ function LoginPage() {
 
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-2">
-
       {/* Brand panel */}
       <aside className="relative hidden overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/80 p-12 text-primary-foreground lg:flex lg:flex-col lg:justify-between">
         <div
@@ -110,7 +109,8 @@ function LoginPage() {
             Run your clinic, calmly.
           </h1>
           <p className="mt-4 max-w-md text-base text-primary-foreground/85">
-            The manager workspace for your day — doctors, schedules, and every patient booking in one place.
+            The manager workspace for your day — doctors, schedules, and every patient booking in
+            one place.
           </p>
 
           <ul className="mt-10 space-y-4">
@@ -294,8 +294,7 @@ function LoginPage() {
                   </>
                 ) : (
                   <>
-                    Already registered?{" "}
-                    <span className="font-medium text-primary">Sign in</span>
+                    Already registered? <span className="font-medium text-primary">Sign in</span>
                   </>
                 )}
               </button>
@@ -320,7 +319,8 @@ function LoginPage() {
 
             <p className="mt-6 text-center text-xs text-muted-foreground">
               Your patients book directly at{" "}
-              <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">/your-clinic</code> — no account needed for them.
+              <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">/your-clinic</code> —
+              no account needed for them.
             </p>
           </div>
         </div>

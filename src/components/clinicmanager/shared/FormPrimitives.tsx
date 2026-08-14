@@ -99,12 +99,7 @@ export function Field({
 }: FieldProps) {
   return (
     <div>
-      <LabelRow
-        label={label}
-        required={required}
-        value={value}
-        maxLength={maxLength}
-      />
+      <LabelRow label={label} required={required} value={value} maxLength={maxLength} />
       <Input
         type={type}
         inputMode={inputMode}
@@ -114,10 +109,7 @@ export function Field({
         required={required}
         placeholder={placeholder}
         aria-invalid={!!error}
-        className={cn(
-          error &&
-            "border-destructive focus-visible:ring-destructive/40",
-        )}
+        className={cn(error && "border-destructive focus-visible:ring-destructive/40")}
       />
       {error ? (
         <p className="mt-1 text-xs text-destructive">{error}</p>
@@ -145,12 +137,7 @@ export function TextAreaField({
 }: TextAreaFieldProps) {
   return (
     <div>
-      <LabelRow
-        label={label}
-        required={required}
-        value={value}
-        maxLength={maxLength}
-      />
+      <LabelRow label={label} required={required} value={value} maxLength={maxLength} />
       <Textarea
         rows={rows}
         value={value}
@@ -159,10 +146,7 @@ export function TextAreaField({
         required={required}
         placeholder={placeholder}
         aria-invalid={!!error}
-        className={cn(
-          error &&
-            "border-destructive focus-visible:ring-destructive/40",
-        )}
+        className={cn(error && "border-destructive focus-visible:ring-destructive/40")}
       />
       {error ? (
         <p className="mt-1 text-xs text-destructive">{error}</p>

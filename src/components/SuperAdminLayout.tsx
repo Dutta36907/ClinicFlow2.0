@@ -35,10 +35,7 @@ import {
 } from "lucide-react";
 import { signOutSuperAdmin } from "@/lib/superadminAuth";
 import { toast } from "sonner";
-import {
-  useSuperAdminView,
-  type SuperAdminView,
-} from "@/stores/superadminViewStore";
+import { useSuperAdminView, type SuperAdminView } from "@/stores/superadminViewStore";
 import {
   useSuperAdminPermissions,
   VIEW_PERMISSION,
@@ -168,7 +165,9 @@ function AppSidebar() {
           variant="ghost"
           size="sm"
           className="justify-start gap-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-          onClick={() => { void signOutSuperAdmin(); }}
+          onClick={() => {
+            void signOutSuperAdmin();
+          }}
         >
           <LogOut className="size-4" />
           {!collapsed && <span>Sign out</span>}
@@ -202,9 +201,7 @@ export function SuperAdminLayout({
                 {title}
               </h1>
               {subtitle && (
-                <p className="hidden truncate text-xs text-muted-foreground sm:block">
-                  {subtitle}
-                </p>
+                <p className="hidden truncate text-xs text-muted-foreground sm:block">{subtitle}</p>
               )}
             </div>
             {actions}
@@ -274,11 +271,15 @@ function redirectToLoginOnce(): never {
 export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
   if (cause === "preload") return;
 
-  let { data: { session } } = await supabase.auth.getSession();
+  let {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session?.user) {
     await authReady;
-    ({ data: { session } } = await supabase.auth.getSession());
+    ({
+      data: { session },
+    } = await supabase.auth.getSession());
   }
 
   if (!session?.user) redirectToLoginOnce();

@@ -33,10 +33,7 @@ export function DoctorsView() {
   const clinicsQ = useQuery({
     queryKey: ["sa-clinics-lookup"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("clinics")
-        .select("id, name")
-        .order("name");
+      const { data } = await supabase.from("clinics").select("id, name").order("name");
       return (data ?? []) as Clinic[];
     },
   });
@@ -66,9 +63,7 @@ export function DoctorsView() {
     const all = doctorsQ.data?.rows ?? [];
     return all
       .map((d) => ({ ...d, clinicName: clinicMap.get(d.clinic_id) ?? "Unknown clinic" }))
-      .sort((a, b) =>
-        a.clinicName.localeCompare(b.clinicName) || a.name.localeCompare(b.name),
-      );
+      .sort((a, b) => a.clinicName.localeCompare(b.clinicName) || a.name.localeCompare(b.name));
   }, [doctorsQ.data, clinicMap]);
 
   const total = doctorsQ.data?.total ?? 0;
@@ -135,9 +130,7 @@ export function DoctorsView() {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{d.clinicName}</td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {d.specialization || "—"}
-                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{d.specialization || "—"}</td>
                     <td className="px-4 py-3">
                       <span
                         className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${

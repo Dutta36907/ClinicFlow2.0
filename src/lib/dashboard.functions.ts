@@ -23,7 +23,6 @@ async function getAdmin() {
   return m.supabaseAdmin;
 }
 
-
 // ----------------------------------------------------------------------------
 // Auth helpers (local copies of the existing patterns — see superadmin.functions.ts
 // and clinicmanager.functions.ts for the originals).
@@ -34,7 +33,9 @@ async function assertSuperAdmin(userId: string) {
   // Single RPC round-trip — returns is_super, is_disabled, and clinic_ids.
   const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
   if (error) throw new Error(error.message);
-  const row = Array.isArray(data) ? data[0] : (data as { is_super?: boolean; is_disabled?: boolean } | null);
+  const row = Array.isArray(data)
+    ? data[0]
+    : (data as { is_super?: boolean; is_disabled?: boolean } | null);
   if (!row?.is_super) throw new Error("Not authorized");
   if (row.is_disabled) throw new Error("Your account is disabled");
 }
@@ -43,7 +44,9 @@ async function assertClinicAccess(userId: string, clinicId: string) {
   const supabaseAdmin = await getAdmin();
   const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
   if (error) throw new Error(error.message);
-  const row = Array.isArray(data) ? data[0] : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
+  const row = Array.isArray(data)
+    ? data[0]
+    : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
   if (row?.is_super) {
     if (row.is_disabled) throw new Error("Your account is disabled");
     return;
@@ -75,18 +78,58 @@ function trend(curr: number, prev: number): { delta: number; dir: "up" | "down" 
 // ----------------------------------------------------------------------------
 
 export type SuperAdminDashboardDTO = {
-  clinics: { total: number; active: number; inactive: number; newThisWeek: number; trendVsPrev: { delta: number; dir: "up" | "down" | "flat" } };
+  clinics: {
+    total: number;
+    active: number;
+    inactive: number;
+    newThisWeek: number;
+    trendVsPrev: { delta: number; dir: "up" | "down" | "flat" };
+  };
   doctors: { total: number; active: number };
   appointments: { total: number; pending: number; newThisWeek: number };
   users: { total: number };
-  enquiries: { totalLast7d: number; newCount: number; inProgressCount: number; contactedCount: number; convertedCount: number; trendVsPrev: { delta: number; dir: "up" | "down" | "flat" } };
+  enquiries: {
+    totalLast7d: number;
+    newCount: number;
+    inProgressCount: number;
+    contactedCount: number;
+    convertedCount: number;
+    trendVsPrev: { delta: number; dir: "up" | "down" | "flat" };
+  };
   pendingActions: { pendingAppts: number; unassignedEnquiriesOver48h: number };
-  renewals: { dueWithinDays: number; count: number; nextClinic: { id: string; name: string; expiresAt: string; daysAway: number } | null };
+  renewals: {
+    dueWithinDays: number;
+    count: number;
+    nextClinic: { id: string; name: string; expiresAt: string; daysAway: number } | null;
+  };
   topBookingClinics: { id: string; name: string; slug: string; bookings: number }[];
-  systemHealth: { dbReachable: boolean; dbLatencyMs: number; unresolvedAlerts: number; lastAlertAt: string | null };
-  recentActivity: { id: string; kind: "appointment" | "clinic" | "enquiry" | "audit"; title: string; subtitle: string; at: string }[];
-  recentClinicsList: { id: string; name: string; slug: string; is_active: boolean; created_at: string }[];
-  recentApptsList: { id: string; patient_name: string; status: string; scheduled_at: string; clinic_id: string }[];
+  systemHealth: {
+    dbReachable: boolean;
+    dbLatencyMs: number;
+    unresolvedAlerts: number;
+    lastAlertAt: string | null;
+  };
+  recentActivity: {
+    id: string;
+    kind: "appointment" | "clinic" | "enquiry" | "audit";
+    title: string;
+    subtitle: string;
+    at: string;
+  }[];
+  recentClinicsList: {
+    id: string;
+    name: string;
+    slug: string;
+    is_active: boolean;
+    created_at: string;
+  }[];
+  recentApptsList: {
+    id: string;
+    patient_name: string;
+    status: string;
+    scheduled_at: string;
+    clinic_id: string;
+  }[];
 };
 
 export const getSuperAdminDashboard = createServerFn({ method: "GET" })
@@ -130,30 +173,109 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
         recentAudits,
       ] = await Promise.all([
         supabaseAdmin.from("clinics").select("id", { count: "exact", head: true }),
-        supabaseAdmin.from("clinics").select("id", { count: "exact", head: true }).eq("is_active", true),
-        supabaseAdmin.from("clinics").select("id", { count: "exact", head: true }).gt("created_at", weekAgo),
-        supabaseAdmin.from("clinics").select("id", { count: "exact", head: true }).gt("created_at", twoWeeksAgo).lte("created_at", weekAgo),
+        supabaseAdmin
+          .from("clinics")
+          .select("id", { count: "exact", head: true })
+          .eq("is_active", true),
+        supabaseAdmin
+          .from("clinics")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", weekAgo),
+        supabaseAdmin
+          .from("clinics")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", twoWeeksAgo)
+          .lte("created_at", weekAgo),
         supabaseAdmin.from("doctors").select("id", { count: "exact", head: true }),
-        supabaseAdmin.from("doctors").select("id", { count: "exact", head: true }).eq("is_active", true),
+        supabaseAdmin
+          .from("doctors")
+          .select("id", { count: "exact", head: true })
+          .eq("is_active", true),
         supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }),
-        supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }).gt("created_at", weekAgo),
+        supabaseAdmin
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", weekAgo),
         supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).gt("created_at", weekAgo),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).gt("created_at", twoWeeksAgo).lte("created_at", weekAgo),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "new"),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "in_progress"),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "contacted"),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "converted"),
-        supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }).eq("status", "pending"),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).is("assigned_to", null).lte("created_at", fortyEightHoursAgo).eq("status", "new"),
-        supabaseAdmin.from("clinics").select("id", { count: "exact", head: true }).not("expires_at", "is", null).lte("expires_at", renewalCutoff).gte("expires_at", new Date().toISOString()),
-        supabaseAdmin.from("clinics").select("id, name, expires_at").not("expires_at", "is", null).gte("expires_at", new Date().toISOString()).order("expires_at", { ascending: true }).limit(1).maybeSingle(),
-        supabaseAdmin.from("appointments").select("clinic_id").gt("created_at", weekAgo).limit(5000),
-        supabaseAdmin.from("system_alerts").select("id", { count: "exact", head: true }).is("resolved_at", null),
-        supabaseAdmin.from("system_alerts").select("created_at").order("created_at", { ascending: false }).limit(1).maybeSingle(),
-        supabaseAdmin.from("appointments").select("id, patient_name, status, scheduled_at, created_at, clinic_id").order("created_at", { ascending: false }).limit(8),
-        supabaseAdmin.from("clinics").select("id, name, slug, is_active, created_at").order("created_at", { ascending: false }).limit(5),
-        supabaseAdmin.from("audit_log").select("id, action, created_at, target_type, clinic_id").order("created_at", { ascending: false }).limit(8),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", weekAgo),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", twoWeeksAgo)
+          .lte("created_at", weekAgo),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "new"),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "in_progress"),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "contacted"),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "converted"),
+        supabaseAdmin
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending"),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .is("assigned_to", null)
+          .lte("created_at", fortyEightHoursAgo)
+          .eq("status", "new"),
+        supabaseAdmin
+          .from("clinics")
+          .select("id", { count: "exact", head: true })
+          .not("expires_at", "is", null)
+          .lte("expires_at", renewalCutoff)
+          .gte("expires_at", new Date().toISOString()),
+        supabaseAdmin
+          .from("clinics")
+          .select("id, name, expires_at")
+          .not("expires_at", "is", null)
+          .gte("expires_at", new Date().toISOString())
+          .order("expires_at", { ascending: true })
+          .limit(1)
+          .maybeSingle(),
+        supabaseAdmin
+          .from("appointments")
+          .select("clinic_id")
+          .gt("created_at", weekAgo)
+          .limit(5000),
+        supabaseAdmin
+          .from("system_alerts")
+          .select("id", { count: "exact", head: true })
+          .is("resolved_at", null),
+        supabaseAdmin
+          .from("system_alerts")
+          .select("created_at")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabaseAdmin
+          .from("appointments")
+          .select("id, patient_name, status, scheduled_at, created_at, clinic_id")
+          .order("created_at", { ascending: false })
+          .limit(8),
+        supabaseAdmin
+          .from("clinics")
+          .select("id, name, slug, is_active, created_at")
+          .order("created_at", { ascending: false })
+          .limit(5),
+        supabaseAdmin
+          .from("audit_log")
+          .select("id, action, created_at, target_type, clinic_id")
+          .order("created_at", { ascending: false })
+          .limit(8),
       ]);
 
       const dbLatencyMs = Date.now() - t0;
@@ -173,7 +295,10 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
         ? await supabaseAdmin
             .from("clinics")
             .select("id, name, slug")
-            .in("id", topClinicIds.map(([id]) => id))
+            .in(
+              "id",
+              topClinicIds.map(([id]) => id),
+            )
         : { data: [] };
       const metaById = new Map((topClinicMeta.data ?? []).map((c) => [c.id, c]));
       const topBookingClinics = topClinicIds.map(([id, bookings]) => {
@@ -223,7 +348,9 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
       if (renewalsNext.data?.expires_at) {
         const daysAway = Math.max(
           0,
-          Math.round((+new Date(renewalsNext.data.expires_at) - Date.now()) / (24 * 60 * 60 * 1000)),
+          Math.round(
+            (+new Date(renewalsNext.data.expires_at) - Date.now()) / (24 * 60 * 60 * 1000),
+          ),
         );
         nextClinic = {
           id: renewalsNext.data.id,
@@ -278,7 +405,8 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
           lastAlertAt: lastAlert.data?.created_at ?? null,
         },
         recentActivity: recentActivity.slice(0, 12),
-        recentClinicsList: (recentClinics.data ?? []) as SuperAdminDashboardDTO["recentClinicsList"],
+        recentClinicsList: (recentClinics.data ??
+          []) as SuperAdminDashboardDTO["recentClinicsList"],
         recentApptsList: (recentAppts.data ?? []).slice(0, 6).map((a) => ({
           id: a.id,
           patient_name: a.patient_name,
@@ -296,8 +424,19 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
 
 export type SuperAdminMonitoringDTO = {
   db: { reachable: boolean; latencyMs: number };
-  totals: { clinics: number; doctors: number; appointments: number; enquiries: number; profiles: number };
-  last24h: { newAppointments: number; newEnquiries: number; cancelledAppointments: number; auditEvents: number };
+  totals: {
+    clinics: number;
+    doctors: number;
+    appointments: number;
+    enquiries: number;
+    profiles: number;
+  };
+  last24h: {
+    newAppointments: number;
+    newEnquiries: number;
+    cancelledAppointments: number;
+    auditEvents: number;
+  };
   serverFns: {
     last5m: { sampleCount: number; p50Ms: number; p95Ms: number; errorRate: number };
     last1h: { sampleCount: number; p50Ms: number; p95Ms: number; errorRate: number };
@@ -320,23 +459,63 @@ export const getSuperAdminMonitoring = createServerFn({ method: "GET" })
       const t0 = Date.now();
 
       const [
-        clinics, doctors, appts, enquiries, profiles,
-        apptsNew, enquiriesNew, cancelled, audits24h,
-        activeSessions, alertsUnresolved, lastAlert, lastAuditRow,
+        clinics,
+        doctors,
+        appts,
+        enquiries,
+        profiles,
+        apptsNew,
+        enquiriesNew,
+        cancelled,
+        audits24h,
+        activeSessions,
+        alertsUnresolved,
+        lastAlert,
+        lastAuditRow,
       ] = await Promise.all([
         supabaseAdmin.from("clinics").select("id", { count: "exact", head: true }),
         supabaseAdmin.from("doctors").select("id", { count: "exact", head: true }),
         supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }),
         supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }),
         supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }),
-        supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }).gt("created_at", since24),
-        supabaseAdmin.from("enquiries").select("id", { count: "exact", head: true }).gt("created_at", since24),
-        supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }).eq("status", "cancelled").gt("updated_at", since24),
-        supabaseAdmin.from("audit_log").select("id", { count: "exact", head: true }).gt("created_at", since24),
-        supabaseAdmin.from("audit_log").select("actor_user_id").gt("created_at", since30m).limit(1000),
-        supabaseAdmin.from("system_alerts").select("id", { count: "exact", head: true }).is("resolved_at", null),
-        supabaseAdmin.from("system_alerts").select("created_at").order("created_at", { ascending: false }).limit(1).maybeSingle(),
-        supabaseAdmin.from("audit_log").select("action, created_at").order("created_at", { ascending: false }).limit(1).maybeSingle(),
+        supabaseAdmin
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", since24),
+        supabaseAdmin
+          .from("enquiries")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", since24),
+        supabaseAdmin
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "cancelled")
+          .gt("updated_at", since24),
+        supabaseAdmin
+          .from("audit_log")
+          .select("id", { count: "exact", head: true })
+          .gt("created_at", since24),
+        supabaseAdmin
+          .from("audit_log")
+          .select("actor_user_id")
+          .gt("created_at", since30m)
+          .limit(1000),
+        supabaseAdmin
+          .from("system_alerts")
+          .select("id", { count: "exact", head: true })
+          .is("resolved_at", null),
+        supabaseAdmin
+          .from("system_alerts")
+          .select("created_at")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabaseAdmin
+          .from("audit_log")
+          .select("action, created_at")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
       ]);
 
       const dbLatencyMs = Date.now() - t0;
@@ -395,52 +574,113 @@ export const getSuperAdminMonitoring = createServerFn({ method: "GET" })
 // ----------------------------------------------------------------------------
 
 export type ClinicManagerDashboardDTO = {
-  clinic: { id: string; name: string; plan: string | null; expiresAt: string | null; trialEndsAt: string | null };
+  clinic: {
+    id: string;
+    name: string;
+    plan: string | null;
+    expiresAt: string | null;
+    trialEndsAt: string | null;
+  };
   appointments: {
     today: number;
     thisWeek: number;
     lastWeek: number;
     confirmationRate: number; // 0..1 over last 100
   };
-  renewal: { daysUntilExpiry: number | null; daysUntilTrialEnd: number | null; status: "ok" | "soon" | "urgent" | "expired" | "no-plan" };
+  renewal: {
+    daysUntilExpiry: number | null;
+    daysUntilTrialEnd: number | null;
+    status: "ok" | "soon" | "urgent" | "expired" | "no-plan";
+  };
   topDoctor: { id: string; name: string; bookings: number } | null;
-  recentActivity: { id: string; kind: "appointment" | "audit"; title: string; subtitle: string; at: string }[];
+  recentActivity: {
+    id: string;
+    kind: "appointment" | "audit";
+    title: string;
+    subtitle: string;
+    at: string;
+  }[];
 };
 
 export const getClinicManagerDashboard = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
-    z.object({ clinicId: z.string().uuid() }).parse(d),
-  )
+  .inputValidator((d: unknown) => z.object({ clinicId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }): Promise<ClinicManagerDashboardDTO> => {
     const supabaseAdmin = await getAdmin();
     await assertClinicAccess(context.userId, data.clinicId);
     return withSample("getClinicManagerDashboard", async () => {
       const weekAgo = isoDaysAgo(7);
       const twoWeeksAgo = isoDaysAgo(14);
-      const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0);
-      const dayEnd = new Date(); dayEnd.setHours(23, 59, 59, 999);
+      const dayStart = new Date();
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date();
+      dayEnd.setHours(23, 59, 59, 999);
 
       const [
         clinicRow,
-        todayCount, weekCount, prevWeekCount,
-        last100, topBookingsRaw, recentAppts, recentAudits,
+        todayCount,
+        weekCount,
+        prevWeekCount,
+        last100,
+        topBookingsRaw,
+        recentAppts,
+        recentAudits,
       ] = await Promise.all([
-        supabaseAdmin.from("clinics").select("id, name, plan, expires_at, trial_ends_at").eq("id", data.clinicId).maybeSingle(),
-        supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }).eq("clinic_id", data.clinicId).gte("scheduled_at", dayStart.toISOString()).lte("scheduled_at", dayEnd.toISOString()),
-        supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }).eq("clinic_id", data.clinicId).gt("created_at", weekAgo),
-        supabaseAdmin.from("appointments").select("id", { count: "exact", head: true }).eq("clinic_id", data.clinicId).gt("created_at", twoWeeksAgo).lte("created_at", weekAgo),
-        supabaseAdmin.from("appointments").select("status").eq("clinic_id", data.clinicId).order("created_at", { ascending: false }).limit(100),
-        supabaseAdmin.from("appointments").select("doctor_id").eq("clinic_id", data.clinicId).gt("created_at", weekAgo).limit(2000),
-        supabaseAdmin.from("appointments").select("id, patient_name, status, scheduled_at, created_at, doctor_id").eq("clinic_id", data.clinicId).order("created_at", { ascending: false }).limit(8),
-        supabaseAdmin.from("audit_log").select("id, action, created_at, target_type").eq("clinic_id", data.clinicId).order("created_at", { ascending: false }).limit(8),
+        supabaseAdmin
+          .from("clinics")
+          .select("id, name, plan, expires_at, trial_ends_at")
+          .eq("id", data.clinicId)
+          .maybeSingle(),
+        supabaseAdmin
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .eq("clinic_id", data.clinicId)
+          .gte("scheduled_at", dayStart.toISOString())
+          .lte("scheduled_at", dayEnd.toISOString()),
+        supabaseAdmin
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .eq("clinic_id", data.clinicId)
+          .gt("created_at", weekAgo),
+        supabaseAdmin
+          .from("appointments")
+          .select("id", { count: "exact", head: true })
+          .eq("clinic_id", data.clinicId)
+          .gt("created_at", twoWeeksAgo)
+          .lte("created_at", weekAgo),
+        supabaseAdmin
+          .from("appointments")
+          .select("status")
+          .eq("clinic_id", data.clinicId)
+          .order("created_at", { ascending: false })
+          .limit(100),
+        supabaseAdmin
+          .from("appointments")
+          .select("doctor_id")
+          .eq("clinic_id", data.clinicId)
+          .gt("created_at", weekAgo)
+          .limit(2000),
+        supabaseAdmin
+          .from("appointments")
+          .select("id, patient_name, status, scheduled_at, created_at, doctor_id")
+          .eq("clinic_id", data.clinicId)
+          .order("created_at", { ascending: false })
+          .limit(8),
+        supabaseAdmin
+          .from("audit_log")
+          .select("id, action, created_at, target_type")
+          .eq("clinic_id", data.clinicId)
+          .order("created_at", { ascending: false })
+          .limit(8),
       ]);
 
       if (!clinicRow.data) throw new Error("Clinic not found");
 
       // Confirmation rate from last 100
       const last = last100.data ?? [];
-      const confirmed = last.filter((r) => r.status === "confirmed" || r.status === "completed").length;
+      const confirmed = last.filter(
+        (r) => r.status === "confirmed" || r.status === "completed",
+      ).length;
       const confirmationRate = last.length === 0 ? 0 : confirmed / last.length;
 
       // Top doctor
@@ -453,7 +693,10 @@ export const getClinicManagerDashboard = createServerFn({ method: "POST" })
       let topDoctor: ClinicManagerDashboardDTO["topDoctor"] = null;
       if (top) {
         const { data: doc } = await supabaseAdmin
-          .from("doctors").select("id, name").eq("id", top[0]).maybeSingle();
+          .from("doctors")
+          .select("id, name")
+          .eq("id", top[0])
+          .maybeSingle();
         topDoctor = { id: top[0], name: doc?.name ?? "Doctor", bookings: top[1] };
       }
 
@@ -477,7 +720,8 @@ export const getClinicManagerDashboard = createServerFn({ method: "POST" })
       const recentActivity: ClinicManagerDashboardDTO["recentActivity"] = [];
       for (const a of recentAppts.data ?? []) {
         recentActivity.push({
-          id: `appt-${a.id}`, kind: "appointment",
+          id: `appt-${a.id}`,
+          kind: "appointment",
           title: `Booking · ${a.patient_name}`,
           subtitle: `${a.status} · ${new Date(a.scheduled_at).toLocaleString()}`,
           at: a.created_at,
@@ -485,16 +729,22 @@ export const getClinicManagerDashboard = createServerFn({ method: "POST" })
       }
       for (const r of recentAudits.data ?? []) {
         recentActivity.push({
-          id: `audit-${r.id}`, kind: "audit",
-          title: r.action, subtitle: r.target_type ?? "system", at: r.created_at,
+          id: `audit-${r.id}`,
+          kind: "audit",
+          title: r.action,
+          subtitle: r.target_type ?? "system",
+          at: r.created_at,
         });
       }
       recentActivity.sort((a, b) => +new Date(b.at) - +new Date(a.at));
 
       return {
         clinic: {
-          id: c.id, name: c.name, plan: c.plan,
-          expiresAt: c.expires_at, trialEndsAt: c.trial_ends_at,
+          id: c.id,
+          name: c.name,
+          plan: c.plan,
+          expiresAt: c.expires_at,
+          trialEndsAt: c.trial_ends_at,
         },
         appointments: {
           today: todayCount.count ?? 0,
@@ -526,12 +776,14 @@ export type SystemAlertRow = {
 export const listSuperAdminAlerts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      page: z.number().int().min(1).max(1000).default(1),
-      pageSize: z.number().int().min(1).max(100).default(25),
-      level: z.enum(["info", "warning", "critical"]).optional(),
-      unresolvedOnly: z.boolean().default(false),
-    }).parse(d ?? {}),
+    z
+      .object({
+        page: z.number().int().min(1).max(1000).default(1),
+        pageSize: z.number().int().min(1).max(100).default(25),
+        level: z.enum(["info", "warning", "critical"]).optional(),
+        unresolvedOnly: z.boolean().default(false),
+      })
+      .parse(d ?? {}),
   )
   .handler(async ({ data, context }): Promise<{ rows: SystemAlertRow[]; total: number }> => {
     const supabaseAdmin = await getAdmin();
@@ -541,9 +793,11 @@ export const listSuperAdminAlerts = createServerFn({ method: "POST" })
     if (data.unresolvedOnly) q = q.is("resolved_at", null);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, count, error } = await q
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    const {
+      data: rows,
+      count,
+      error,
+    } = await q.order("created_at", { ascending: false }).range(from, to);
     if (error) throw new Error(error.message);
     return { rows: (rows ?? []) as SystemAlertRow[], total: count ?? 0 };
   });
@@ -581,11 +835,13 @@ export type ClinicSummaryRow = {
 export const listClinicsSummary = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      page: z.number().int().min(1).max(1000).default(1),
-      pageSize: z.number().int().min(1).max(100).default(25),
-      search: z.string().max(120).optional(),
-    }).parse(d ?? {}),
+    z
+      .object({
+        page: z.number().int().min(1).max(1000).default(1),
+        pageSize: z.number().int().min(1).max(100).default(25),
+        search: z.string().max(120).optional(),
+      })
+      .parse(d ?? {}),
   )
   .handler(async ({ data, context }): Promise<{ rows: ClinicSummaryRow[]; total: number }> => {
     const supabaseAdmin = await getAdmin();
@@ -597,13 +853,15 @@ export const listClinicsSummary = createServerFn({ method: "POST" })
     if (data.search) q = q.ilike("name", `%${data.search}%`);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, count, error } = await q
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    const {
+      data: rows,
+      count,
+      error,
+    } = await q.order("created_at", { ascending: false }).range(from, to);
     if (error) throw new Error(error.message);
 
     const ids = (rows ?? []).map((r) => r.id);
-    let perClinic = new Map<string, number>();
+    const perClinic = new Map<string, number>();
     if (ids.length) {
       const { data: appts } = await supabaseAdmin
         .from("appointments")
@@ -648,24 +906,31 @@ export type EnquiryRow = {
 export const listEnquiriesAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      page: z.number().int().min(1).max(1000).default(1),
-      pageSize: z.number().int().min(1).max(100).default(25),
-      status: z.string().max(40).optional(),
-    }).parse(d ?? {}),
+    z
+      .object({
+        page: z.number().int().min(1).max(1000).default(1),
+        pageSize: z.number().int().min(1).max(100).default(25),
+        status: z.string().max(40).optional(),
+      })
+      .parse(d ?? {}),
   )
   .handler(async ({ data, context }): Promise<{ rows: EnquiryRow[]; total: number }> => {
     const supabaseAdmin = await getAdmin();
     await assertSuperAdmin(context.userId);
     let q = supabaseAdmin
       .from("enquiries")
-      .select("id, full_name, email, phone, company_name, enquiry_type, status, assigned_to, created_at", { count: "exact" });
+      .select(
+        "id, full_name, email, phone, company_name, enquiry_type, status, assigned_to, created_at",
+        { count: "exact" },
+      );
     if (data.status) q = q.eq("status", data.status);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, count, error } = await q
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    const {
+      data: rows,
+      count,
+      error,
+    } = await q.order("created_at", { ascending: false }).range(from, to);
     if (error) throw new Error(error.message);
     return { rows: (rows ?? []) as EnquiryRow[], total: count ?? 0 };
   });

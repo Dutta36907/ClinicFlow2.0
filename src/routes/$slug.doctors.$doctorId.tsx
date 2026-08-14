@@ -21,6 +21,30 @@ import { WEEKDAY_LABELS } from "@/lib/doctor-slots";
 import { getClinicBySlug, getPublicDoctorProfile } from "@/lib/public.functions";
 import { SITE_URL } from "@/lib/site-url";
 
+function DoctorProfileErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+  return (
+    <div
+      role="alert"
+      className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center p-10 text-center"
+    >
+      <h1 className="font-display text-2xl">Something went wrong</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        {error?.message ?? "We couldn't load this doctor's profile."}
+      </p>
+      <Button
+        className="mt-4"
+        onClick={() => {
+          reset();
+          router.invalidate();
+        }}
+      >
+        Try again
+      </Button>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/$slug/doctors/$doctorId")({
   loader: async ({ params }) => {
     if (!/^[a-z0-9-]+$/i.test(params.slug)) throw notFound();
@@ -41,10 +65,11 @@ export const Route = createFileRoute("/$slug/doctors/$doctorId")({
     const spec = doctor.specialization ? ` · ${doctor.specialization}` : "";
     const title = `${doctor.name}${spec} — ${clinic.name}`;
     const rawDesc =
-      (doctor.description?.trim()) ||
-      `${doctor.name}${spec}. Book an appointment at ${clinic.name}.`;
+      doctor.description?.trim() || `${doctor.name}${spec}. Book an appointment at ${clinic.name}.`;
     const description =
-      rawDesc.length > 160 ? `${rawDesc.replace(/\s+/g, " ").slice(0, 159).trimEnd()}…` : rawDesc.replace(/\s+/g, " ");
+      rawDesc.length > 160
+        ? `${rawDesc.replace(/\s+/g, " ").slice(0, 159).trimEnd()}…`
+        : rawDesc.replace(/\s+/g, " ");
     const ogImage =
       doctor.photo_url ||
       (clinic as { cover_image_url?: string | null }).cover_image_url ||
@@ -91,29 +116,7 @@ export const Route = createFileRoute("/$slug/doctors/$doctorId")({
   pendingMs: 0,
   pendingMinMs: 300,
   pendingComponent: DoctorProfileSkeleton,
-  errorComponent: ({ error, reset }) => {
-    const router = useRouter();
-    return (
-      <div
-        role="alert"
-        className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center p-10 text-center"
-      >
-        <h1 className="font-display text-2xl">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {error?.message ?? "We couldn't load this doctor's profile."}
-        </p>
-        <Button
-          className="mt-4"
-          onClick={() => {
-            reset();
-            router.invalidate();
-          }}
-        >
-          Try again
-        </Button>
-      </div>
-    );
-  },
+  errorComponent: DoctorProfileErrorComponent,
   notFoundComponent: () => (
     <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center p-10 text-center">
       <h1 className="font-display text-2xl">Doctor not found</h1>
@@ -153,12 +156,10 @@ function DoctorProfileSkeleton() {
 }
 
 const FONT_STACK = {
-  fontFamily:
-    '"Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  fontFamily: '"Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
 } as const;
 const BODY_STACK = {
-  fontFamily:
-    '"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  fontFamily: '"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
 } as const;
 
 type Schedule = {
@@ -227,16 +228,9 @@ function PublicDoctorProfilePage() {
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#2d8a9e] to-[#5cbdb9] rotate-3 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 duration-700" />
             <div className="absolute inset-0 rounded-3xl bg-[#1a4a6e] border-4 border-[#0c2340] overflow-hidden flex items-center justify-center">
               {doctor.photo_url ? (
-                <img
-                  src={doctor.photo_url}
-                  alt={doctor.name}
-                  className="size-full object-cover"
-                />
+                <img src={doctor.photo_url} alt={doctor.name} className="size-full object-cover" />
               ) : (
-                <span
-                  className="text-6xl font-semibold text-[#5cbdb9]"
-                  style={FONT_STACK}
-                >
+                <span className="text-6xl font-semibold text-[#5cbdb9]" style={FONT_STACK}>
                   {initials || doctor.name.slice(0, 1).toUpperCase()}
                 </span>
               )}
@@ -244,10 +238,7 @@ function PublicDoctorProfilePage() {
           </div>
 
           <div className="text-center space-y-2">
-            <h1
-              className="text-3xl lg:text-4xl font-semibold tracking-tight"
-              style={FONT_STACK}
-            >
+            <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight" style={FONT_STACK}>
               {doctor.name}
             </h1>
             {(doctor.degree || doctor.specialization) && (
@@ -266,17 +257,10 @@ function PublicDoctorProfilePage() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 mt-10">
             <SideStat
-              value={
-                doctor.years_experience != null
-                  ? String(doctor.years_experience)
-                  : "—"
-              }
+              value={doctor.years_experience != null ? String(doctor.years_experience) : "—"}
               label="Years Exp"
             />
-            <SideStat
-              value={`${doctor.appointment_duration_minutes}m`}
-              label="Avg Slot"
-            />
+            <SideStat value={`${doctor.appointment_duration_minutes}m`} label="Avg Slot" />
             <SideStat value={formatHours(weeklyMinutes)} label="Weekly" />
           </div>
         </div>
@@ -288,19 +272,13 @@ function PublicDoctorProfilePage() {
             size="lg"
             className="w-full gap-2 bg-[#5cbdb9] hover:bg-[#2d8a9e] text-[#0c2340] hover:text-white font-bold rounded-2xl py-6 shadow-xl shadow-black/20 transition-all group"
           >
-            <Link
-              to="/$slug"
-              params={{ slug }}
-              search={{ book: doctor.id } as never}
-            >
+            <Link to="/$slug" params={{ slug }} search={{ book: doctor.id } as never}>
               <CalendarCheck className="size-4" />
               Book appointment
               <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </Button>
-          <p className="text-center text-white/40 text-[11px] mt-3">
-            No payment required to book
-          </p>
+          <p className="text-center text-white/40 text-[11px] mt-3">No payment required to book</p>
         </div>
       </aside>
 
@@ -322,10 +300,7 @@ function PublicDoctorProfilePage() {
 
         {/* About */}
         <section className="space-y-4 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 duration-500">
-          <h2
-            className="text-2xl font-semibold text-[#0c2340]"
-            style={FONT_STACK}
-          >
+          <h2 className="text-2xl font-semibold text-[#0c2340]" style={FONT_STACK}>
             About
           </h2>
           {doctor.description ? (
@@ -339,10 +314,7 @@ function PublicDoctorProfilePage() {
 
         {/* Specialties */}
         <section className="space-y-4">
-          <h2
-            className="text-xl font-semibold text-[#0c2340]"
-            style={FONT_STACK}
-          >
+          <h2 className="text-xl font-semibold text-[#0c2340]" style={FONT_STACK}>
             Specialties
           </h2>
           {specialtyChips.length === 0 ? (
@@ -386,10 +358,7 @@ function PublicDoctorProfilePage() {
 
         {/* Clinic Details */}
         <section className="space-y-6">
-          <h2
-            className="text-xl font-semibold text-[#0c2340]"
-            style={FONT_STACK}
-          >
+          <h2 className="text-xl font-semibold text-[#0c2340]" style={FONT_STACK}>
             Clinic Details
           </h2>
           <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm grid md:grid-cols-2 gap-8">
@@ -440,10 +409,7 @@ function PublicDoctorProfilePage() {
         {/* Weekly Availability */}
         <section className="space-y-6">
           <div className="flex justify-between items-end gap-4">
-            <h2
-              className="text-xl font-semibold text-[#0c2340]"
-              style={FONT_STACK}
-            >
+            <h2 className="text-xl font-semibold text-[#0c2340]" style={FONT_STACK}>
               Weekly Availability
             </h2>
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
@@ -463,11 +429,7 @@ function PublicDoctorProfilePage() {
                     key={wd}
                     className={
                       "flex items-center justify-between gap-4 p-5 transition-colors " +
-                      (isToday
-                        ? "bg-[#5cbdb9]/10"
-                        : unavailable
-                          ? "bg-slate-50/60"
-                          : "")
+                      (isToday ? "bg-[#5cbdb9]/10" : unavailable ? "bg-slate-50/60" : "")
                     }
                   >
                     <div className="flex items-center gap-4 min-w-0">
@@ -513,15 +475,10 @@ function PublicDoctorProfilePage() {
                             key={s.id}
                             className={
                               "text-sm font-medium tabular-nums " +
-                              (s.is_active
-                                ? "text-slate-700"
-                                : "text-slate-400 line-through")
+                              (s.is_active ? "text-slate-700" : "text-slate-400 line-through")
                             }
                           >
-                            {formatRange12(
-                              s.start_time.slice(0, 5),
-                              s.end_time.slice(0, 5),
-                            )}
+                            {formatRange12(s.start_time.slice(0, 5), s.end_time.slice(0, 5))}
                           </span>
                         ))
                       )}
@@ -535,10 +492,7 @@ function PublicDoctorProfilePage() {
 
         {/* Time Off */}
         <section className="space-y-4">
-          <h2
-            className="text-xl font-semibold text-[#0c2340]"
-            style={FONT_STACK}
-          >
+          <h2 className="text-xl font-semibold text-[#0c2340]" style={FONT_STACK}>
             Upcoming Time Off
           </h2>
           {overrides.length === 0 ? (
@@ -547,25 +501,18 @@ function PublicDoctorProfilePage() {
                 <CalendarOff className="size-5" />
               </div>
               <p className="text-slate-600 text-sm">
-                No upcoming time off — {doctor.name.split(" ")[0]}'s weekly
-                schedule applies normally.
+                No upcoming time off — {doctor.name.split(" ")[0]}'s weekly schedule applies
+                normally.
               </p>
             </div>
           ) : (
             <ul className="bg-white rounded-2xl border border-slate-100 shadow-sm divide-y divide-slate-100">
               {overrides.map((o) => (
-                <li
-                  key={o.id}
-                  className="flex items-center justify-between gap-4 p-5"
-                >
+                <li key={o.id} className="flex items-center justify-between gap-4 p-5">
                   <div className="min-w-0">
-                    <div className="font-semibold text-[#0c2340]">
-                      {formatDate(o.date)}
-                    </div>
+                    <div className="font-semibold text-[#0c2340]">{formatDate(o.date)}</div>
                     {o.reason && (
-                      <div className="truncate text-xs text-slate-500 mt-0.5">
-                        {o.reason}
-                      </div>
+                      <div className="truncate text-xs text-slate-500 mt-0.5">{o.reason}</div>
                     )}
                   </div>
                   <div>
@@ -576,10 +523,7 @@ function PublicDoctorProfilePage() {
                       </span>
                     ) : o.start_time && o.end_time ? (
                       <span className="rounded-full bg-[#2d8a9e]/10 text-[#0c2340] px-3 py-1 text-xs font-semibold tabular-nums">
-                        {formatRange12(
-                          o.start_time.slice(0, 5),
-                          o.end_time.slice(0, 5),
-                        )}
+                        {formatRange12(o.start_time.slice(0, 5), o.end_time.slice(0, 5))}
                       </span>
                     ) : (
                       <span className="text-xs text-slate-400">—</span>
@@ -601,15 +545,12 @@ function SideStat({ value, label }: { value: string; label: string }) {
       <div className="text-[#5cbdb9] text-xl font-bold tabular-nums" style={FONT_STACK}>
         {value}
       </div>
-      <div className="text-[10px] uppercase tracking-wider text-white/60 mt-0.5">
-        {label}
-      </div>
+      <div className="text-[10px] uppercase tracking-wider text-white/60 mt-0.5">{label}</div>
     </div>
   );
 }
 
 // ---------- helpers ----------
-
 
 function minutesBetween(start: string, end: string): number {
   const [sh, sm] = start.split(":").map(Number);

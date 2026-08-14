@@ -7,7 +7,6 @@ async function getAdmin() {
   return m.supabaseAdmin;
 }
 
-
 // --- Access helpers -------------------------------------------------------
 
 async function assertClinicAccess(userId: string, clinicId: string) {
@@ -15,7 +14,9 @@ async function assertClinicAccess(userId: string, clinicId: string) {
   // Single RPC round-trip — returns is_super, is_disabled, and clinic_ids.
   const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
   if (error) throw new Error(error.message);
-  const row = Array.isArray(data) ? data[0] : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
+  const row = Array.isArray(data)
+    ? data[0]
+    : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
   if (row?.is_super) {
     if (row.is_disabled) throw new Error("Your account is disabled");
     return;
@@ -36,7 +37,11 @@ async function resolveClinicBySlug(slug: string) {
   return data;
 }
 
-const slugSchema = z.string().min(1).max(120).regex(/^[a-z0-9-]+$/);
+const slugSchema = z
+  .string()
+  .min(1)
+  .max(120)
+  .regex(/^[a-z0-9-]+$/);
 
 // --- Dashboard bootstrap --------------------------------------------------
 
@@ -62,12 +67,12 @@ export const getManagerDashboard = createServerFn({ method: "GET" })
     // sections (filters, reschedule dialog). 200 is a defensive ceiling.
     const { data: doctors } = await supabaseAdmin
       .from("doctors")
-      .select("id, name, specialization, degree, years_experience, description, photo_url, is_active, appointment_duration_minutes, specialties, languages")
+      .select(
+        "id, name, specialization, degree, years_experience, description, photo_url, is_active, appointment_duration_minutes, specialties, languages",
+      )
       .eq("clinic_id", clinic.id)
       .order("name")
       .range(0, 199);
-
-
 
     return {
       clinic,
@@ -124,9 +129,7 @@ export const updateClinicProfile = createServerFn({ method: "POST" })
 // --- Working hours --------------------------------------------------------
 
 const timeRe = /^([01]\d|2[0-3]):[0-5]\d$/;
-const dayValueSchema = z
-  .tuple([z.string().regex(timeRe), z.string().regex(timeRe)])
-  .nullable();
+const dayValueSchema = z.tuple([z.string().regex(timeRe), z.string().regex(timeRe)]).nullable();
 
 const workingHoursSchema = z.object({
   id: z.string().uuid(),
@@ -157,10 +160,7 @@ export const updateClinicWorkingHours = createServerFn({ method: "POST" })
 
 // --- Doctors --------------------------------------------------------------
 
-const tagArray = z
-  .array(z.string().trim().min(1).max(60))
-  .max(12)
-  .optional();
+const tagArray = z.array(z.string().trim().min(1).max(60)).max(12).optional();
 
 const doctorSchema = z.object({
   id: z.string().uuid().optional(),
@@ -252,7 +252,6 @@ export const updateDoctorInterval = createServerFn({ method: "POST" })
 
 // --- Team / RBAC ----------------------------------------------------------
 
-
 const listMembersSchema = z.object({
   clinic_id: z.string().uuid(),
   page: z.number().int().min(1).max(10_000).default(1),
@@ -267,7 +266,11 @@ export const listClinicMembers = createServerFn({ method: "POST" })
     await assertClinicAccess(context.userId, data.clinic_id);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, count, error } = await supabaseAdmin
+    const {
+      data: rows,
+      count,
+      error,
+    } = await supabaseAdmin
       .from("user_roles")
       .select("id, user_id, role", { count: "exact" })
       .eq("clinic_id", data.clinic_id)
@@ -299,7 +302,6 @@ export const listClinicMembers = createServerFn({ method: "POST" })
     return { rows: members, total: count ?? 0 };
   });
 
-
 const addUserSchema = z.object({
   clinic_id: z.string().uuid(),
   full_name: z.string().trim().min(2).max(120),
@@ -328,10 +330,9 @@ export const addClinicUser = createServerFn({ method: "POST" })
       const exists =
         msg.includes("already") || msg.includes("registered") || msg.includes("exists");
       if (!exists) throw new Error(created.error.message);
-      const { data: foundId, error: lookupErr } = await supabaseAdmin.rpc(
-        "get_user_id_by_email",
-        { _email: email },
-      );
+      const { data: foundId, error: lookupErr } = await supabaseAdmin.rpc("get_user_id_by_email", {
+        _email: email,
+      });
       if (lookupErr) throw new Error(lookupErr.message);
       userId = (foundId as string | null) ?? null;
       if (!userId) throw new Error("User exists but could not be resolved");
@@ -391,7 +392,9 @@ export const rescheduleAppointment = createServerFn({ method: "POST" })
     const supabaseAdmin = await getAdmin();
     const { data: appt, error: getErr } = await supabaseAdmin
       .from("appointments")
-      .select("id, clinic_id, doctor_id, scheduled_at, patient_name, patient_email, patient_phone, status")
+      .select(
+        "id, clinic_id, doctor_id, scheduled_at, patient_name, patient_email, patient_phone, status",
+      )
       .eq("id", data.appointmentId)
       .maybeSingle();
     if (getErr) throw new Error(getErr.message);
@@ -439,7 +442,12 @@ export const rescheduleAppointment = createServerFn({ method: "POST" })
       const tz = clinic?.timezone || "UTC";
       const fmtDate = (iso: string) => utcToZonedParts(new Date(iso), tz).date;
       const fmtTime = (iso: string) =>
-        new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: tz });
+        new Date(iso).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+          timeZone: tz,
+        });
 
       dispatchEmailSafe({
         event: "appointment_rescheduled",

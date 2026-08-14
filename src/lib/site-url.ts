@@ -5,6 +5,7 @@
  * this one is build-time inlined so route `head()` functions can read it
  * isomorphically).
  */
-export const SITE_URL = (
-  import.meta.env.VITE_APP_URL ?? "https://your-domain.example"
-).replace(/\/$/, "");
+export const SITE_URL = (import.meta.env.VITE_APP_URL ?? "https://your-domain.example").replace(
+  /\/$/,
+  "",
+);

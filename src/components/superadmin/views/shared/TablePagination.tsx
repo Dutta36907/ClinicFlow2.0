@@ -8,11 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  PAGE_SIZE_OPTIONS,
-  useTablePagination,
-  type PageSize,
-} from "./useTablePagination";
+import { PAGE_SIZE_OPTIONS, useTablePagination, type PageSize } from "./useTablePagination";
 
 type Props = {
   total: number;
@@ -39,10 +35,7 @@ export function TablePagination({ total, compact }: Props) {
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground">Rows</span>
-          <Select
-            value={String(size)}
-            onValueChange={(v) => setSize(Number(v) as PageSize)}
-          >
+          <Select value={String(size)} onValueChange={(v) => setSize(Number(v) as PageSize)}>
             <SelectTrigger className="h-7 w-[68px] text-xs">
               <SelectValue />
             </SelectTrigger>

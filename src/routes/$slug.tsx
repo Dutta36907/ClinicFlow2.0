@@ -30,8 +30,7 @@ export const Route = createFileRoute("/$slug")({
     const url = `${SITE_URL}/${params.slug}`;
     const clinic = (loaderData as { clinic?: LandingClinic | null } | undefined)?.clinic;
     const name = clinic?.name ?? params.slug;
-    const tagline =
-      (clinic as { tagline?: string | null } | undefined)?.tagline?.trim() || "";
+    const tagline = (clinic as { tagline?: string | null } | undefined)?.tagline?.trim() || "";
     const description =
       truncate(tagline, 160) ||
       truncate(clinic?.description ?? "", 160) ||
@@ -121,12 +120,10 @@ function BookingError({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center">
       <div className="max-w-md">
-        <h1 className="font-display text-3xl font-semibold">
-          We couldn't load this clinic
-        </h1>
+        <h1 className="font-display text-3xl font-semibold">We couldn't load this clinic</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Something went wrong on our end while loading the booking page. Your
-          connection may have hiccuped — please try again in a moment.
+          Something went wrong on our end while loading the booking page. Your connection may have
+          hiccuped — please try again in a moment.
         </p>
         <div className="mt-6 flex justify-center gap-2">
           <Button

@@ -5,11 +5,7 @@ import type { SmsResult } from "../provider.server";
 
 type Msg91Cfg = { authKey?: string; senderId?: string; templateId?: string };
 
-export async function sendMsg91(
-  phone: string,
-  otp: string,
-  cfg: Msg91Cfg,
-): Promise<SmsResult> {
+export async function sendMsg91(phone: string, otp: string, cfg: Msg91Cfg): Promise<SmsResult> {
   const { authKey, templateId, senderId } = cfg;
   if (!authKey || !templateId) {
     return { ok: false, provider: "msg91", error: "MSG91 is not fully configured" };
@@ -26,7 +22,11 @@ export async function sendMsg91(
     headers: { authkey: authKey, "Content-Type": "application/json" },
     body: JSON.stringify({}),
   });
-  const data = (await res.json().catch(() => ({}))) as { type?: string; message?: string; request_id?: string };
+  const data = (await res.json().catch(() => ({}))) as {
+    type?: string;
+    message?: string;
+    request_id?: string;
+  };
   if (!res.ok || data.type === "error") {
     return { ok: false, provider: "msg91", error: data.message || `HTTP ${res.status}` };
   }

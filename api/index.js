@@ -38,9 +38,7 @@ export default async function handler(req, res) {
     res.statusCode = 500;
     res.setHeader("content-type", "text/html; charset=utf-8");
     const detail =
-      process.env.NODE_ENV === "production"
-        ? ""
-        : `<pre>${String(err?.stack || err)}</pre>`;
+      process.env.NODE_ENV === "production" ? "" : `<pre>${String(err?.stack || err)}</pre>`;
     res.end(`<h1>Server Error</h1>${detail}`);
   }
 }

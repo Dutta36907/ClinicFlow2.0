@@ -49,7 +49,6 @@ Everything else — patient booking, clinic manager dashboard, appointments, doc
 
 ---
 
-
 ## Backend — Supabase
 
 ClinicFlow uses Supabase only for data, auth, and storage. **No Edge Functions** — all server logic runs as TanStack `createServerFn` handlers on Vercel.
@@ -76,11 +75,13 @@ This runs everything in `supabase/migrations/` — tables, RLS, GRANTs, triggers
 ### Auth
 
 In **Authentication → Providers**:
+
 - Enable **Email** (leave email confirmation ON for production).
 - Enable **Google**: paste OAuth client ID/secret; add `https://<ref>.supabase.co/auth/v1/callback` to authorized redirect URIs in Google Cloud Console.
 - Disable anonymous sign-ups.
 
 In **Authentication → URL Configuration**:
+
 - **Site URL**: your Vercel/custom domain.
 - **Redirect URLs**: `https://your-domain.com/**` and `http://localhost:8080/**`.
 
@@ -115,21 +116,21 @@ Set all of these for **Production**, **Preview**, and **Development**:
 
 #### Public (browser-visible — must be prefixed `VITE_`)
 
-| Name                            | Value                                |
-| ------------------------------- | ------------------------------------ |
-| `VITE_SUPABASE_URL`             | `https://<ref>.supabase.co`          |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | publishable / anon key               |
-| `VITE_SUPABASE_PROJECT_ID`      | project ref                          |
+| Name                            | Value                       |
+| ------------------------------- | --------------------------- |
+| `VITE_SUPABASE_URL`             | `https://<ref>.supabase.co` |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | publishable / anon key      |
+| `VITE_SUPABASE_PROJECT_ID`      | project ref                 |
 
 #### Server-only (NEVER prefix with `VITE_`)
 
-| Name                          | Value                                | Notes                |
-| ----------------------------- | ------------------------------------ | -------------------- |
-| `SUPABASE_URL`                | same as `VITE_SUPABASE_URL`          |                      |
-| `SUPABASE_PUBLISHABLE_KEY`    | same as `VITE_SUPABASE_PUBLISHABLE_KEY` |                   |
-| `SUPABASE_SERVICE_ROLE_KEY`   | service role key                     | Mark **Sensitive**   |
-| `APP_URL`                     | your live domain                     |                      |
-| `NODE_ENV`                    | `production`                         |                      |
+| Name                        | Value                                   | Notes              |
+| --------------------------- | --------------------------------------- | ------------------ |
+| `SUPABASE_URL`              | same as `VITE_SUPABASE_URL`             |                    |
+| `SUPABASE_PUBLISHABLE_KEY`  | same as `VITE_SUPABASE_PUBLISHABLE_KEY` |                    |
+| `SUPABASE_SERVICE_ROLE_KEY` | service role key                        | Mark **Sensitive** |
+| `APP_URL`                   | your live domain                        |                    |
+| `NODE_ENV`                  | `production`                            |                    |
 
 SMS / WhatsApp / Email provider credentials are configured at **runtime** via the Super Admin Settings UI (stored in `platform_settings`), not env vars.
 
@@ -148,26 +149,26 @@ Vercel → **Settings → Domains** → add `your-domain.com` and follow the DNS
 
 ## Day-2 operations
 
-| Task                           | How                                                                                       |
-| ------------------------------ | ----------------------------------------------------------------------------------------- |
-| Ship app code                  | `git push origin main` → Vercel auto-deploys. PRs get preview deploys.                    |
-| Ship a DB change               | Add a new file in `supabase/migrations/`, run `supabase db push`.                         |
-| Rotate `service_role`          | Supabase → Settings → API → Rotate, then update Vercel env + redeploy.                    |
-| Rollback frontend              | Vercel → Deployments → Promote a previous build.                                          |
-| Rollback DB                    | Write a forward migration that reverts. Migrations don't auto-rollback.                   |
+| Task                  | How                                                                     |
+| --------------------- | ----------------------------------------------------------------------- |
+| Ship app code         | `git push origin main` → Vercel auto-deploys. PRs get preview deploys.  |
+| Ship a DB change      | Add a new file in `supabase/migrations/`, run `supabase db push`.       |
+| Rotate `service_role` | Supabase → Settings → API → Rotate, then update Vercel env + redeploy.  |
+| Rollback frontend     | Vercel → Deployments → Promote a previous build.                        |
+| Rollback DB           | Write a forward migration that reverts. Migrations don't auto-rollback. |
 
 ---
 
 ## Common gotchas
 
-| Symptom                                            | Fix                                                                  |
-| -------------------------------------------------- | -------------------------------------------------------------------- |
-| `Unsupported provider` on Google sign-in           | Enable Google provider in Supabase Auth.                             |
-| `Unauthorized: No authorization header provided`   | Ensure `src/start.ts` registers `attachSupabaseAuth` middleware.     |
-| Server fn 500 with `process.env.X is undefined`    | Missing env var in Vercel for the current environment.               |
-| `permission denied for table ...` in browser       | Missing `GRANT` in the migration. Add `GRANT ... TO authenticated`.  |
-| Public page works locally, blank on Vercel SSR     | Protected serverFn called from a public loader — move into a component with `useServerFn` + `useQuery`. |
-| `/superadmin/login` 404s                           | App not deployed, or route file missing under `src/routes/`.         |
+| Symptom                                          | Fix                                                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `Unsupported provider` on Google sign-in         | Enable Google provider in Supabase Auth.                                                                |
+| `Unauthorized: No authorization header provided` | Ensure `src/start.ts` registers `attachSupabaseAuth` middleware.                                        |
+| Server fn 500 with `process.env.X is undefined`  | Missing env var in Vercel for the current environment.                                                  |
+| `permission denied for table ...` in browser     | Missing `GRANT` in the migration. Add `GRANT ... TO authenticated`.                                     |
+| Public page works locally, blank on Vercel SSR   | Protected serverFn called from a public loader — move into a component with `useServerFn` + `useQuery`. |
+| `/superadmin/login` 404s                         | App not deployed, or route file missing under `src/routes/`.                                            |
 
 ---
 

@@ -42,7 +42,9 @@ export function BenefitsSection() {
               <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20 transition-transform group-hover:scale-110">
                 <Icon className="size-5" aria-hidden />
               </div>
-              <p className="mt-5 bg-gradient-to-br from-primary to-[color-mix(in_oklab,var(--primary)_55%,white)] bg-clip-text text-4xl font-semibold tracking-tight text-transparent">{stat}</p>
+              <p className="mt-5 bg-gradient-to-br from-primary to-[color-mix(in_oklab,var(--primary)_55%,white)] bg-clip-text text-4xl font-semibold tracking-tight text-transparent">
+                {stat}
+              </p>
               <p className="text-sm font-medium text-muted-foreground">{label}</p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{body}</p>
             </div>

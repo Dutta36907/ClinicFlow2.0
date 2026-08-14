@@ -14,11 +14,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, SectionShell } from "../shared/SectionShell";
 import { MediaLibraryDialog } from "../shared/MediaLibraryDialog";
-import {
-  listClinicMedia,
-  deleteClinicMedia,
-  type MediaItem,
-} from "@/lib/media.functions";
+import { listClinicMedia, deleteClinicMedia, type MediaItem } from "@/lib/media.functions";
 import type { DashboardClinic } from "../types";
 
 type Filter = "all" | "clinic-logos" | "clinic-covers" | "clinic-gallery";
@@ -70,9 +66,7 @@ export function MediaLibrarySection({ clinic }: { clinic: DashboardClinic }) {
           clinicId={clinic.id}
           label="Upload image"
           pickFromBuckets={["clinic-gallery", "clinic-covers", "clinic-logos"]}
-          onSelect={() =>
-            qc.invalidateQueries({ queryKey: ["clinic-media", clinic.id] })
-          }
+          onSelect={() => qc.invalidateQueries({ queryKey: ["clinic-media", clinic.id] })}
         />
       }
     >
@@ -106,12 +100,7 @@ export function MediaLibrarySection({ clinic }: { clinic: DashboardClinic }) {
                 className="group relative overflow-hidden rounded-xl border border-border bg-muted/30 transition duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5"
               >
                 <div className="aspect-square">
-                  <img
-                    src={m.url}
-                    alt=""
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={m.url} alt="" loading="lazy" className="h-full w-full object-cover" />
                 </div>
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-gradient-to-t from-background/95 to-transparent p-2 opacity-0 transition group-hover:opacity-100">
                   <span className="truncate rounded bg-background/80 px-1.5 py-0.5 text-[10px] font-medium text-foreground/80 backdrop-blur">

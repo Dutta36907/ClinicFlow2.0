@@ -16,11 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -42,11 +38,7 @@ import {
   HelpCircle,
   ExternalLink,
 } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { checkSlugAvailable, createClinic } from "@/lib/superadmin.functions";
 import {
   validateField,
@@ -116,9 +108,9 @@ export function AddClinicWizard() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(initial);
-  const [slugState, setSlugState] = useState<
-    "idle" | "checking" | "ok" | "taken" | "invalid"
-  >("idle");
+  const [slugState, setSlugState] = useState<"idle" | "checking" | "ok" | "taken" | "invalid">(
+    "idle",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof WizardForm, string>>>({});
@@ -310,11 +302,7 @@ export function AddClinicWizard() {
                 <span
                   className={cn(
                     "text-xs font-medium whitespace-nowrap transition-colors",
-                    active
-                      ? "text-foreground"
-                      : done
-                        ? "text-primary"
-                        : "text-muted-foreground",
+                    active ? "text-foreground" : done ? "text-primary" : "text-muted-foreground",
                   )}
                 >
                   {s.title}
@@ -366,7 +354,10 @@ export function AddClinicWizard() {
                 />
                 <div className="mt-1.5 flex items-center justify-between text-xs">
                   <span className="text-muted-foreground truncate">
-                    Booking page: <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">{bookingUrl}</code>
+                    Booking page:{" "}
+                    <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">
+                      {bookingUrl}
+                    </code>
                   </span>
                   <SlugBadge state={slugState} />
                 </div>
@@ -377,10 +368,40 @@ export function AddClinicWizard() {
 
           {step === 2 && (
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Phone number" value={form.phone} onChange={(v) => setField("phone", v)} onBlur={() => onBlur("phone")} error={touched.has("phone") ? errors.phone : undefined} placeholder="+91 98765 43210" />
-              <Field label="Email" type="email" value={form.email} onChange={(v) => setField("email", v)} onBlur={() => onBlur("email")} error={touched.has("email") ? errors.email : undefined} placeholder="hello@clinic.com" />
-              <Field label="WhatsApp number" value={form.whatsapp} onChange={(v) => setField("whatsapp", v)} onBlur={() => onBlur("whatsapp")} error={touched.has("whatsapp") ? errors.whatsapp : undefined} placeholder="+91 98765 43210" />
-              <Field label="Website" type="url" value={form.website} onChange={(v) => setField("website", v)} onBlur={() => onBlur("website")} error={touched.has("website") ? errors.website : undefined} placeholder="https://clinic.com" />
+              <Field
+                label="Phone number"
+                value={form.phone}
+                onChange={(v) => setField("phone", v)}
+                onBlur={() => onBlur("phone")}
+                error={touched.has("phone") ? errors.phone : undefined}
+                placeholder="+91 98765 43210"
+              />
+              <Field
+                label="Email"
+                type="email"
+                value={form.email}
+                onChange={(v) => setField("email", v)}
+                onBlur={() => onBlur("email")}
+                error={touched.has("email") ? errors.email : undefined}
+                placeholder="hello@clinic.com"
+              />
+              <Field
+                label="WhatsApp number"
+                value={form.whatsapp}
+                onChange={(v) => setField("whatsapp", v)}
+                onBlur={() => onBlur("whatsapp")}
+                error={touched.has("whatsapp") ? errors.whatsapp : undefined}
+                placeholder="+91 98765 43210"
+              />
+              <Field
+                label="Website"
+                type="url"
+                value={form.website}
+                onChange={(v) => setField("website", v)}
+                onBlur={() => onBlur("website")}
+                error={touched.has("website") ? errors.website : undefined}
+                placeholder="https://clinic.com"
+              />
             </div>
           )}
 
@@ -410,12 +431,23 @@ export function AddClinicWizard() {
               <Collapsible>
                 <div className="flex items-center justify-between gap-2">
                   <CollapsibleTrigger asChild>
-                    <Button type="button" variant="ghost" size="sm" className="h-auto gap-1.5 px-2 py-1 text-xs text-muted-foreground hover:text-foreground">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto gap-1.5 px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+                    >
                       <HelpCircle className="size-3.5" />
                       How do I get this link?
                     </Button>
                   </CollapsibleTrigger>
-                  <Button type="button" variant="outline" size="sm" asChild className="h-7 gap-1 text-xs">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="h-7 gap-1 text-xs"
+                  >
                     <a href="https://maps.google.com" target="_blank" rel="noreferrer">
                       Open Google Maps <ExternalLink className="size-3" />
                     </a>
@@ -450,8 +482,10 @@ export function AddClinicWizard() {
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Activation is Super Admin only</p>
                     <p className="text-xs text-muted-foreground">
-                      This clinic will be created as <strong className="text-foreground">Inactive</strong>.
-                      You can still set when the subscription should expire — the Super Admin will activate it from the Subscriptions tab.
+                      This clinic will be created as{" "}
+                      <strong className="text-foreground">Inactive</strong>. You can still set when
+                      the subscription should expire — the Super Admin will activate it from the
+                      Subscriptions tab.
                     </p>
                   </div>
                 </div>
@@ -544,9 +578,7 @@ export function AddClinicWizard() {
             <div className="space-y-4">
               <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-xs text-muted-foreground">
                 Create the first clinic manager login. They will sign in at{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">
-                  {managerUrl}
-                </code>{" "}
+                <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">{managerUrl}</code>{" "}
                 to manage doctors, appointments, and the booking page.
               </div>
               <Field
@@ -586,11 +618,7 @@ export function AddClinicWizard() {
                       className="size-8"
                       onClick={() => setShowPw((s) => !s)}
                     >
-                      {showPw ? (
-                        <EyeOff className="size-4" />
-                      ) : (
-                        <Eye className="size-4" />
-                      )}
+                      {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                     </Button>
                     <Button
                       type="button"
@@ -604,10 +632,12 @@ export function AddClinicWizard() {
                     </Button>
                   </div>
                 </div>
-                <FieldError msg={touched.has("manager_password") ? errors.manager_password : undefined} />
+                <FieldError
+                  msg={touched.has("manager_password") ? errors.manager_password : undefined}
+                />
                 <p className="mt-1.5 text-xs text-muted-foreground">
-                  Share these credentials with the clinic manager — they can
-                  change the password after first login.
+                  Share these credentials with the clinic manager — they can change the password
+                  after first login.
                 </p>
               </div>
             </div>
@@ -660,14 +690,26 @@ export function AddClinicWizard() {
                 <div className="mt-2 flex items-center gap-2">
                   <span className="text-muted-foreground shrink-0">Booking:</span>
                   <code className="flex-1 truncate text-foreground">{bookingUrl}</code>
-                  <Button type="button" size="icon" variant="ghost" className="size-7" onClick={() => copy(bookingUrl, "Booking URL")}>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="size-7"
+                    onClick={() => copy(bookingUrl, "Booking URL")}
+                  >
                     <Copy className="size-3.5" />
                   </Button>
                 </div>
                 <div className="mt-1 flex items-center gap-2">
                   <span className="text-muted-foreground shrink-0">Manager:</span>
                   <code className="flex-1 truncate text-foreground">{managerUrl}</code>
-                  <Button type="button" size="icon" variant="ghost" className="size-7" onClick={() => copy(managerUrl, "Manager URL")}>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="size-7"
+                    onClick={() => copy(managerUrl, "Manager URL")}
+                  >
                     <Copy className="size-3.5" />
                   </Button>
                 </div>
@@ -700,7 +742,9 @@ export function AddClinicWizard() {
               disabled={submitting || !canNext}
               className="bg-gradient-to-r from-primary to-primary/85 shadow-sm shadow-primary/20"
             >
-              {submitting ? "Creating…" : (
+              {submitting ? (
+                "Creating…"
+              ) : (
                 <>
                   <Check className="size-4" /> Create clinic
                 </>

@@ -22,16 +22,14 @@ export const Route = createFileRoute("/api/public/hooks/email-expiry-sweep")({
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { dispatchEmail, loadEmailSettings } = await import(
-          "@/lib/notifications/email-dispatcher.server"
-        );
+        const { dispatchEmail, loadEmailSettings } =
+          await import("@/lib/notifications/email-dispatcher.server");
 
         const settings = await loadEmailSettings();
         if (!settings.enabled) {
-          return new Response(
-            JSON.stringify({ ok: true, skipped: "email_disabled" }),
-            { headers: { "Content-Type": "application/json" } },
-          );
+          return new Response(JSON.stringify({ ok: true, skipped: "email_disabled" }), {
+            headers: { "Content-Type": "application/json" },
+          });
         }
 
         const summary = {

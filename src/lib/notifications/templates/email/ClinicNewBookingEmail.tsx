@@ -32,14 +32,20 @@ export function ClinicNewBookingEmail(p: ClinicNewBookingEmailProps) {
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>New booking — {p.patientName} with {p.doctorName}</Preview>
+      <Preview>
+        New booking — {p.patientName} with {p.doctorName}
+      </Preview>
       <Body style={main}>
         <Container style={container}>
           <Text style={{ color: "#64748B", fontSize: "13px", margin: 0 }}>{p.clinicName}</Text>
-          <Heading as="h1" style={heroTeal}>New booking received</Heading>
+          <Heading as="h1" style={heroTeal}>
+            New booking received
+          </Heading>
           <Section style={card}>
             <Text style={rowLabel}>Patient</Text>
-            <Text style={rowValue}>{p.patientName} · {p.patientPhone}</Text>
+            <Text style={rowValue}>
+              {p.patientName} · {p.patientPhone}
+            </Text>
             <Text style={rowLabel}>Doctor</Text>
             <Text style={rowValue}>{p.doctorName}</Text>
             <Text style={rowLabel}>When</Text>

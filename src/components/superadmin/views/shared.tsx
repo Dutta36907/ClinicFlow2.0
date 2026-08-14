@@ -5,23 +5,51 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, type LucideIcon } from "lucide-react";
 
-export type Tone =
-  | "primary"
-  | "chart-1"
-  | "chart-2"
-  | "chart-3"
-  | "chart-4"
-  | "chart-5"
-  | "muted";
+export type Tone = "primary" | "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5" | "muted";
 
 export const toneStyles: Record<Tone, { bg: string; text: string; ring: string; bar: string }> = {
-  primary:   { bg: "bg-primary/10",                     text: "text-primary",                     ring: "ring-primary/20",                     bar: "bg-primary" },
-  "chart-1": { bg: "bg-[color:var(--chart-1)]/12",      text: "text-[color:var(--chart-1)]",      ring: "ring-[color:var(--chart-1)]/25",      bar: "bg-[color:var(--chart-1)]" },
-  "chart-2": { bg: "bg-[color:var(--chart-2)]/12",      text: "text-[color:var(--chart-2)]",      ring: "ring-[color:var(--chart-2)]/25",      bar: "bg-[color:var(--chart-2)]" },
-  "chart-3": { bg: "bg-[color:var(--chart-3)]/12",      text: "text-[color:var(--chart-3)]",      ring: "ring-[color:var(--chart-3)]/25",      bar: "bg-[color:var(--chart-3)]" },
-  "chart-4": { bg: "bg-[color:var(--chart-4)]/12",      text: "text-[color:var(--chart-4)]",      ring: "ring-[color:var(--chart-4)]/25",      bar: "bg-[color:var(--chart-4)]" },
-  "chart-5": { bg: "bg-[color:var(--chart-5)]/12",      text: "text-[color:var(--chart-5)]",      ring: "ring-[color:var(--chart-5)]/25",      bar: "bg-[color:var(--chart-5)]" },
-  muted:     { bg: "bg-muted",                          text: "text-muted-foreground",            ring: "ring-border",                         bar: "bg-muted-foreground/40" },
+  primary: {
+    bg: "bg-primary/10",
+    text: "text-primary",
+    ring: "ring-primary/20",
+    bar: "bg-primary",
+  },
+  "chart-1": {
+    bg: "bg-[color:var(--chart-1)]/12",
+    text: "text-[color:var(--chart-1)]",
+    ring: "ring-[color:var(--chart-1)]/25",
+    bar: "bg-[color:var(--chart-1)]",
+  },
+  "chart-2": {
+    bg: "bg-[color:var(--chart-2)]/12",
+    text: "text-[color:var(--chart-2)]",
+    ring: "ring-[color:var(--chart-2)]/25",
+    bar: "bg-[color:var(--chart-2)]",
+  },
+  "chart-3": {
+    bg: "bg-[color:var(--chart-3)]/12",
+    text: "text-[color:var(--chart-3)]",
+    ring: "ring-[color:var(--chart-3)]/25",
+    bar: "bg-[color:var(--chart-3)]",
+  },
+  "chart-4": {
+    bg: "bg-[color:var(--chart-4)]/12",
+    text: "text-[color:var(--chart-4)]",
+    ring: "ring-[color:var(--chart-4)]/25",
+    bar: "bg-[color:var(--chart-4)]",
+  },
+  "chart-5": {
+    bg: "bg-[color:var(--chart-5)]/12",
+    text: "text-[color:var(--chart-5)]",
+    ring: "ring-[color:var(--chart-5)]/25",
+    bar: "bg-[color:var(--chart-5)]",
+  },
+  muted: {
+    bg: "bg-muted",
+    text: "text-muted-foreground",
+    ring: "ring-border",
+    bar: "bg-muted-foreground/40",
+  },
 };
 
 export function Kpi({
@@ -60,7 +88,9 @@ export function Kpi({
             )}
             {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
           </div>
-          <div className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${t.bg} ${t.text} ring-1 ${t.ring}`}>
+          <div
+            className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${t.bg} ${t.text} ring-1 ${t.ring}`}
+          >
             <Icon className="size-5" />
           </div>
         </div>
@@ -89,7 +119,9 @@ export function MiniStat({
   return (
     <Card className="border-border/70 shadow-none">
       <CardContent className="flex items-center gap-3 p-4">
-        <div className={`flex size-9 items-center justify-center rounded-md ${t.bg} ${t.text} ring-1 ${t.ring}`}>
+        <div
+          className={`flex size-9 items-center justify-center rounded-md ${t.bg} ${t.text} ring-1 ${t.ring}`}
+        >
           <Icon className="size-4" />
         </div>
         <div className="min-w-0">

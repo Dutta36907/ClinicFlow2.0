@@ -6,13 +6,7 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Stethoscope,
-  CalendarCheck,
-  GraduationCap,
-  Award,
-  UserRound,
-} from "lucide-react";
+import { Stethoscope, CalendarCheck, GraduationCap, Award, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Doctor } from "@/components/booking/types";
 
@@ -46,8 +40,8 @@ export function DoctorsGridSection({ doctors, slug, onBook }: Props) {
             Meet Our Doctors
           </h2>
           <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-            Experienced specialists dedicated to your care. Book a visit with the
-            doctor that's right for you.
+            Experienced specialists dedicated to your care. Book a visit with the doctor that's
+            right for you.
           </p>
         </div>
 
@@ -77,20 +71,11 @@ function Avatar({
 }) {
   if (doctor.photo_url) {
     return (
-      <img
-        src={doctor.photo_url}
-        alt={doctor.name}
-        className={cn("object-cover", className)}
-      />
+      <img src={doctor.photo_url} alt={doctor.name} className={cn("object-cover", className)} />
     );
   }
   return (
-    <div
-      className={cn(
-        "flex items-center justify-center bg-primary/10 text-primary",
-        className,
-      )}
-    >
+    <div className={cn("flex items-center justify-center bg-primary/10 text-primary", className)}>
       <Stethoscope className={cn("size-8", iconClassName)} />
     </div>
   );
@@ -117,13 +102,9 @@ function DoctorCard({
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="font-display text-lg font-semibold leading-tight">
-            {doctor.name}
-          </h3>
+          <h3 className="font-display text-lg font-semibold leading-tight">{doctor.name}</h3>
           {doctor.specialization && (
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {doctor.specialization}
-            </p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{doctor.specialization}</p>
           )}
         </div>
 
@@ -145,20 +126,13 @@ function DoctorCard({
         )}
 
         <div className="mt-auto flex flex-col gap-2 sm:flex-row">
-          <Button
-            asChild
-            variant="outline"
-            className="w-full gap-2 sm:flex-1"
-          >
+          <Button asChild variant="outline" className="w-full gap-2 sm:flex-1">
             <Link to="/$slug/doctors/$doctorId" params={{ slug, doctorId: doctor.id }}>
               <UserRound className="size-4" />
               View profile
             </Link>
           </Button>
-          <Button
-            className="w-full gap-2 sm:flex-1"
-            onClick={() => onBook(doctor)}
-          >
+          <Button className="w-full gap-2 sm:flex-1" onClick={() => onBook(doctor)}>
             <CalendarCheck className="size-4" />
             Book
           </Button>
@@ -189,9 +163,7 @@ function SpotlightCard({
 
       <div className="flex flex-1 flex-col gap-4 p-6 sm:p-7">
         <div>
-          <h3 className="font-display text-2xl font-semibold leading-tight">
-            {doctor.name}
-          </h3>
+          <h3 className="font-display text-2xl font-semibold leading-tight">{doctor.name}</h3>
           {doctor.specialization && (
             <p className="mt-1 text-sm text-muted-foreground sm:text-base">
               {doctor.specialization}
@@ -200,9 +172,7 @@ function SpotlightCard({
         </div>
 
         {doctor.description && (
-          <p className="line-clamp-3 text-sm text-muted-foreground">
-            {doctor.description}
-          </p>
+          <p className="line-clamp-3 text-sm text-muted-foreground">{doctor.description}</p>
         )}
 
         {(doctor.degree || doctor.years_experience != null) && (
@@ -223,12 +193,7 @@ function SpotlightCard({
         )}
 
         <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:self-start">
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="gap-2"
-          >
+          <Button asChild size="lg" variant="outline" className="gap-2">
             <Link to="/$slug/doctors/$doctorId" params={{ slug, doctorId: doctor.id }}>
               <UserRound className="size-4" />
               View profile

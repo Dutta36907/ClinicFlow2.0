@@ -25,7 +25,10 @@ export const Route = createFileRoute("/")({
         content:
           "Publish a branded booking page, manage doctors and schedules, and accept verified patient appointments online. Request a demo today.",
       },
-      { property: "og:title", content: "ClinicFlow Suite — Online appointments for modern clinics" },
+      {
+        property: "og:title",
+        content: "ClinicFlow Suite — Online appointments for modern clinics",
+      },
       {
         property: "og:description",
         content:

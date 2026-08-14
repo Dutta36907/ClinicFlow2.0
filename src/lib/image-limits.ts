@@ -28,11 +28,7 @@ export const BUCKET_LABEL: Record<ClinicBucket, string> = {
   "clinic-gallery": "Gallery image",
 };
 
-export const ALLOWED_IMAGE_MIME = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+export const ALLOWED_IMAGE_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 /** Human-friendly size formatter: "512 KB", "1 MB", "1.4 MB". */
 export function formatBytes(bytes: number): string {

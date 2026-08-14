@@ -4,7 +4,16 @@
  * this is a renewal-themed dead-end, not an activation-pending state.
  */
 import { useState } from "react";
-import { Phone, Mail, Copy, Check, CalendarX, CalendarCheck, LayoutDashboard, BellRing } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  Copy,
+  Check,
+  CalendarX,
+  CalendarCheck,
+  LayoutDashboard,
+  BellRing,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SUPPORT_PHONE, SUPPORT_EMAIL } from "@/lib/support-contact";
@@ -99,9 +108,7 @@ export function ClinicExpired({
           <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">
             Your subscription has expired
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {clinic.name}
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{clinic.name}</p>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             {note ??
               `Online bookings and the manager dashboard are paused${expiredOn ? ` since ${expiredOn}` : ""}. Renew with the platform admin to bring everything back online.`}
@@ -124,9 +131,7 @@ export function ClinicExpired({
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Renew — call admin
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-foreground">
-                {SUPPORT_PHONE}
-              </p>
+              <p className="mt-0.5 text-sm font-semibold text-foreground">{SUPPORT_PHONE}</p>
             </div>
           </a>
 
@@ -162,10 +167,7 @@ export function ClinicExpired({
               { icon: LayoutDashboard, label: "Manager dashboard" },
               { icon: BellRing, label: "Patient notifications" },
             ].map(({ icon: Icon, label }) => (
-              <li
-                key={label}
-                className="flex items-center gap-2 text-sm text-foreground"
-              >
+              <li key={label} className="flex items-center gap-2 text-sm text-foreground">
                 <span className="flex size-7 items-center justify-center rounded-md bg-primary/10 text-primary">
                   <Icon className="size-4" />
                 </span>
@@ -178,9 +180,7 @@ export function ClinicExpired({
         {slug && (
           <div className="mt-6 flex items-center justify-center gap-2 rounded-full border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground">
             <span>Your clinic ID:</span>
-            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-              {slug}
-            </code>
+            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">{slug}</code>
             <Button
               type="button"
               variant="ghost"
@@ -189,7 +189,11 @@ export function ClinicExpired({
               onClick={copySlug}
               aria-label="Copy clinic ID"
             >
-              {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
+              {copied ? (
+                <Check className="size-3.5 text-emerald-500" />
+              ) : (
+                <Copy className="size-3.5" />
+              )}
             </Button>
           </div>
         )}

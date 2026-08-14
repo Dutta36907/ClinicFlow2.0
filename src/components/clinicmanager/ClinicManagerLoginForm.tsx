@@ -184,8 +184,7 @@ export function ClinicManagerLoginForm({
           </>
         ) : (
           <>
-            Already registered?{" "}
-            <span className="font-medium text-primary">Sign in</span>
+            Already registered? <span className="font-medium text-primary">Sign in</span>
           </>
         )}
       </button>

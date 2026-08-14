@@ -62,10 +62,7 @@ function formatDate(iso: string) {
   });
 }
 
-const TYPE_META: Record<
-  EnquiryType,
-  { icon: typeof Sparkles; tone: string }
-> = {
+const TYPE_META: Record<EnquiryType, { icon: typeof Sparkles; tone: string }> = {
   request_demo: {
     icon: Sparkles,
     tone: "bg-violet-500/10 text-violet-700 ring-violet-500/20",
@@ -88,7 +85,6 @@ function TypePill({ type }: { type: EnquiryType }) {
     </span>
   );
 }
-
 
 export function EnquiriesView() {
   const { data, isLoading, error, refetch, isFetching } = useEnquiries();
@@ -115,10 +111,7 @@ export function EnquiriesView() {
   }, [rows, search, typeFilter, statusFilter]);
 
   return (
-    <SuperAdminLayout
-      title="Enquiry"
-      subtitle="Demo and sign-up requests from the landing page"
-    >
+    <SuperAdminLayout title="Enquiry" subtitle="Demo and sign-up requests from the landing page">
       <div className="space-y-5">
         {/* Filters */}
         <Card className="border-border/70">
@@ -196,7 +189,9 @@ export function EnquiriesView() {
           <Card className="border-destructive/40">
             <CardContent className="flex flex-col items-center gap-3 py-16 text-sm text-muted-foreground">
               <p>Couldn't load enquiries.</p>
-              <Button size="sm" onClick={() => void refetch()}>Retry</Button>
+              <Button size="sm" onClick={() => void refetch()}>
+                Retry
+              </Button>
             </CardContent>
           </Card>
         ) : filtered.length === 0 ? (
@@ -225,10 +220,7 @@ export function EnquiriesView() {
                   </TableHeader>
                   <TableBody>
                     {filtered.map((e) => (
-                      <TableRow
-                        key={e.id}
-                        className="transition-colors hover:bg-muted/40"
-                      >
+                      <TableRow key={e.id} className="transition-colors hover:bg-muted/40">
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <div className="grid size-9 place-items-center rounded-lg bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/15">
@@ -250,7 +242,9 @@ export function EnquiriesView() {
                         <TableCell>
                           <TypePill type={e.enquiry_type} />
                         </TableCell>
-                        <TableCell><EnquiryStatusBadge status={e.status} /></TableCell>
+                        <TableCell>
+                          <EnquiryStatusBadge status={e.status} />
+                        </TableCell>
                         <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                           {formatDate(e.created_at)}
                         </TableCell>
@@ -310,10 +304,7 @@ export function EnquiriesView() {
         )}
       </div>
 
-      <EnquiryDetailsDialog
-        enquiry={active}
-        onClose={() => setActive(null)}
-      />
+      <EnquiryDetailsDialog enquiry={active} onClose={() => setActive(null)} />
     </SuperAdminLayout>
   );
 }
@@ -379,13 +370,18 @@ function EnquiryDetailsDialog({
               <span className="col-span-2">{ENQUIRY_TYPE_LABEL[enquiry.enquiry_type]}</span>
 
               <span className="text-muted-foreground">Status</span>
-              <span className="col-span-2"><EnquiryStatusBadge status={enquiry.status} /></span>
+              <span className="col-span-2">
+                <EnquiryStatusBadge status={enquiry.status} />
+              </span>
 
               <span className="text-muted-foreground">Company</span>
               <span className="col-span-2">{enquiry.company_name ?? "—"}</span>
 
               <span className="text-muted-foreground">Email</span>
-              <a href={`mailto:${enquiry.email}`} className="col-span-2 text-primary hover:underline">
+              <a
+                href={`mailto:${enquiry.email}`}
+                className="col-span-2 text-primary hover:underline"
+              >
                 {enquiry.email}
               </a>
 
@@ -420,7 +416,9 @@ function EnquiryDetailsDialog({
                 </SelectTrigger>
                 <SelectContent>
                   {ENQUIRY_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>{ENQUIRY_STATUS_LABEL[s]}</SelectItem>
+                    <SelectItem key={s} value={s}>
+                      {ENQUIRY_STATUS_LABEL[s]}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

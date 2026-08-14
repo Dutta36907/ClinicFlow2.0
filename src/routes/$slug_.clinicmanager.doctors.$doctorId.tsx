@@ -21,28 +21,30 @@ import { Button } from "@/components/ui/button";
 import { formatRange12 } from "@/lib/clinic-time";
 import { WEEKDAY_LABELS } from "@/lib/doctor-slots";
 
+function ClinicManagerDoctorErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+  return (
+    <div className="mx-auto max-w-md p-10 text-center">
+      <h1 className="font-display text-2xl">Something went wrong</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+      <Button
+        className="mt-4"
+        onClick={() => {
+          reset();
+          router.invalidate();
+        }}
+      >
+        Try again
+      </Button>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/$slug_/clinicmanager/doctors/$doctorId")({
   head: ({ params }) => ({
     meta: [{ title: `Doctor profile — ${params.slug}` }],
   }),
-  errorComponent: ({ error, reset }) => {
-    const router = useRouter();
-    return (
-      <div className="mx-auto max-w-md p-10 text-center">
-        <h1 className="font-display text-2xl">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-        <Button
-          className="mt-4"
-          onClick={() => {
-            reset();
-            router.invalidate();
-          }}
-        >
-          Try again
-        </Button>
-      </div>
-    );
-  },
+  errorComponent: ClinicManagerDoctorErrorComponent,
   notFoundComponent: () => (
     <div className="mx-auto max-w-md p-10 text-center">
       <h1 className="font-display text-2xl">Doctor not found</h1>
@@ -97,12 +99,10 @@ type Clinic = {
 };
 
 const FONT_STACK = {
-  fontFamily:
-    '"Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  fontFamily: '"Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
 } as const;
 const BODY_STACK = {
-  fontFamily:
-    '"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  fontFamily: '"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
 } as const;
 
 function DoctorProfilePage() {
@@ -244,9 +244,7 @@ function DoctorProfilePage() {
         <h1 className="font-display text-2xl" style={FONT_STACK}>
           Doctor not found
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          This doctor isn't part of /{slug}.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">This doctor isn't part of /{slug}.</p>
         <Button asChild className="mt-4" variant="outline">
           <Link to="/$slug_/clinicmanager" params={{ slug }}>
             <ArrowLeft className="mr-2 size-4" /> Back to dashboard
@@ -288,10 +286,7 @@ function DoctorProfilePage() {
       : null);
 
   return (
-    <div
-      className="min-h-screen bg-[#f4f7fb]"
-      style={BODY_STACK}
-    >
+    <div className="min-h-screen bg-[#f4f7fb]" style={BODY_STACK}>
       <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Back nav */}
         <div className="mb-5 flex items-center justify-between">
@@ -332,8 +327,7 @@ function DoctorProfilePage() {
                   <div
                     className="flex size-32 items-center justify-center rounded-full text-4xl font-semibold text-white ring-4 ring-white/90 shadow-2xl"
                     style={{
-                      background:
-                        "linear-gradient(135deg, #2d8a9e 0%, #5cbdb9 100%)",
+                      background: "linear-gradient(135deg, #2d8a9e 0%, #5cbdb9 100%)",
                       ...FONT_STACK,
                     }}
                   >
@@ -348,9 +342,7 @@ function DoctorProfilePage() {
                   >
                     {doctor.name}
                   </h1>
-                  {doctor.degree && (
-                    <p className="text-sm text-white/70">{doctor.degree}</p>
-                  )}
+                  {doctor.degree && <p className="text-sm text-white/70">{doctor.degree}</p>}
                 </div>
 
                 <StatusPill active={doctor.is_active} />
@@ -359,11 +351,7 @@ function DoctorProfilePage() {
                   <MetaTile
                     icon={<Award className="size-4" />}
                     label="Experience"
-                    value={
-                      doctor.years_experience != null
-                        ? `${doctor.years_experience} yr`
-                        : "—"
-                    }
+                    value={doctor.years_experience != null ? `${doctor.years_experience} yr` : "—"}
                   />
                   <MetaTile
                     icon={<Timer className="size-4" />}
@@ -408,29 +396,21 @@ function DoctorProfilePage() {
           {/* ============================================================ */}
           <div className="space-y-5">
             {/* About */}
-            <Section
-              title="About"
-              icon={<Sparkles className="size-4" />}
-              delay={0}
-            >
+            <Section title="About" icon={<Sparkles className="size-4" />} delay={0}>
               {doctor.description ? (
                 <p className="whitespace-pre-line text-sm leading-relaxed text-[#1f2a44]/90">
                   {doctor.description}
                 </p>
               ) : (
                 <EmptyLine>
-                  No bio added yet. Add a short description so patients learn
-                  about {doctor.name.split(" ")[0]}.
+                  No bio added yet. Add a short description so patients learn about{" "}
+                  {doctor.name.split(" ")[0]}.
                 </EmptyLine>
               )}
             </Section>
 
             {/* Specialties */}
-            <Section
-              title="Specialties"
-              icon={<Stethoscope className="size-4" />}
-              delay={60}
-            >
+            <Section title="Specialties" icon={<Stethoscope className="size-4" />} delay={60}>
               {specialtyChips.length === 0 ? (
                 <EmptyLine>No specialties listed yet.</EmptyLine>
               ) : (
@@ -470,10 +450,7 @@ function DoctorProfilePage() {
             {/* Clinic */}
             <Section title="Clinic" icon={<MapPin className="size-4" />} delay={180}>
               <div className="space-y-3">
-                <div
-                  className="text-base font-semibold text-[#0c2340]"
-                  style={FONT_STACK}
-                >
+                <div className="text-base font-semibold text-[#0c2340]" style={FONT_STACK}>
                   {clinic.name}
                 </div>
                 <div className="grid gap-2 text-sm sm:grid-cols-2">
@@ -548,9 +525,7 @@ function DoctorProfilePage() {
                           <span
                             className={
                               "flex size-10 shrink-0 items-center justify-center rounded-lg text-[11px] font-semibold tracking-wide " +
-                              (isToday
-                                ? "bg-[#0c2340] text-white"
-                                : "bg-[#f4f7fb] text-[#1a4a6e]")
+                              (isToday ? "bg-[#0c2340] text-white" : "bg-[#f4f7fb] text-[#1a4a6e]")
                             }
                             style={FONT_STACK}
                           >
@@ -566,17 +541,13 @@ function DoctorProfilePage() {
                               )}
                             </div>
                             {list.length === 0 && (
-                              <div className="text-xs text-muted-foreground">
-                                Unavailable
-                              </div>
+                              <div className="text-xs text-muted-foreground">Unavailable</div>
                             )}
                           </div>
                         </div>
                         <div className="flex flex-wrap items-center justify-end gap-1.5">
                           {list.length === 0 && (
-                            <span className="text-xs text-muted-foreground">
-                              —
-                            </span>
+                            <span className="text-xs text-muted-foreground">—</span>
                           )}
                           {list.map((s) => (
                             <span
@@ -588,10 +559,7 @@ function DoctorProfilePage() {
                                   : "border-[#0c2340]/10 bg-[#f4f7fb] text-muted-foreground line-through opacity-70")
                               }
                             >
-                              {formatRange12(
-                                s.start_time.slice(0, 5),
-                                s.end_time.slice(0, 5),
-                              )}
+                              {formatRange12(s.start_time.slice(0, 5), s.end_time.slice(0, 5))}
                             </span>
                           ))}
                           {list.length > 0 && active.length === 0 && (
@@ -617,24 +585,18 @@ function DoctorProfilePage() {
                 <SkeletonRows count={3} />
               ) : overrides.length === 0 ? (
                 <EmptyLine>
-                  No upcoming overrides. {doctor.name.split(" ")[0]}'s weekly
-                  schedule applies.
+                  No upcoming overrides. {doctor.name.split(" ")[0]}'s weekly schedule applies.
                 </EmptyLine>
               ) : (
                 <ul className="divide-y divide-[#0c2340]/8">
                   {overrides.map((o) => (
-                    <li
-                      key={o.id}
-                      className="flex items-center justify-between gap-4 py-3"
-                    >
+                    <li key={o.id} className="flex items-center justify-between gap-4 py-3">
                       <div className="min-w-0">
                         <div className="text-sm font-medium text-[#0c2340]">
                           {formatDate(o.date)}
                         </div>
                         {o.reason && (
-                          <div className="truncate text-xs text-muted-foreground">
-                            {o.reason}
-                          </div>
+                          <div className="truncate text-xs text-muted-foreground">{o.reason}</div>
                         )}
                       </div>
                       <div>
@@ -645,15 +607,10 @@ function DoctorProfilePage() {
                           </span>
                         ) : o.start_time && o.end_time ? (
                           <span className="rounded-full border border-[#2d8a9e]/25 bg-[#2d8a9e]/10 px-2.5 py-1 text-xs font-medium tabular-nums text-[#0c2340]">
-                            {formatRange12(
-                              o.start_time.slice(0, 5),
-                              o.end_time.slice(0, 5),
-                            )}
+                            {formatRange12(o.start_time.slice(0, 5), o.end_time.slice(0, 5))}
                           </span>
                         ) : (
-                          <span className="text-xs text-muted-foreground">
-                            —
-                          </span>
+                          <span className="text-xs text-muted-foreground">—</span>
                         )}
                       </div>
                     </li>
@@ -680,10 +637,7 @@ function DoctorProfilePage() {
               ) : (
                 <ul className="divide-y divide-[#0c2340]/8">
                   {apptsQ.data!.rows.map((a) => (
-                    <li
-                      key={a.id}
-                      className="flex items-center justify-between gap-4 py-3"
-                    >
+                    <li key={a.id} className="flex items-center justify-between gap-4 py-3">
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium text-[#0c2340]">
                           {a.patient_name}
@@ -734,10 +688,7 @@ function Section({
           <span className="flex size-7 items-center justify-center rounded-lg bg-[#2d8a9e]/10 text-[#2d8a9e]">
             {icon}
           </span>
-          <h2
-            className="text-base font-semibold tracking-tight text-[#0c2340]"
-            style={FONT_STACK}
-          >
+          <h2 className="text-base font-semibold tracking-tight text-[#0c2340]" style={FONT_STACK}>
             {title}
           </h2>
         </div>
@@ -769,25 +720,14 @@ function StatusPill({ active }: { active: boolean }) {
   );
 }
 
-function MetaTile({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
+function MetaTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/60">
         <span className="text-[#5cbdb9]">{icon}</span>
         {label}
       </div>
-      <div
-        className="mt-0.5 text-sm font-semibold text-white"
-        style={FONT_STACK}
-      >
+      <div className="mt-0.5 text-sm font-semibold text-white" style={FONT_STACK}>
         {value}
       </div>
     </div>
@@ -802,10 +742,7 @@ function SkeletonRows({ count }: { count: number }) {
   return (
     <div className="space-y-2">
       {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="h-12 animate-pulse rounded-lg bg-[#0c2340]/5"
-        />
+        <div key={i} className="h-12 animate-pulse rounded-lg bg-[#0c2340]/5" />
       ))}
     </div>
   );
@@ -821,19 +758,13 @@ function Centered({ children }: { children: React.ReactNode }) {
 
 function PageSkeleton() {
   return (
-    <div
-      className="mx-auto w-full max-w-6xl px-6 py-10"
-      style={BODY_STACK}
-    >
+    <div className="mx-auto w-full max-w-6xl px-6 py-10" style={BODY_STACK}>
       <div className="h-8 w-40 animate-pulse rounded-md bg-[#0c2340]/8" />
       <div className="mt-6 grid gap-6 lg:grid-cols-[360px_1fr]">
         <div className="h-[420px] animate-pulse rounded-3xl bg-[#0c2340]/8" />
         <div className="space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-32 animate-pulse rounded-2xl bg-[#0c2340]/5"
-            />
+            <div key={i} className="h-32 animate-pulse rounded-2xl bg-[#0c2340]/5" />
           ))}
         </div>
       </div>

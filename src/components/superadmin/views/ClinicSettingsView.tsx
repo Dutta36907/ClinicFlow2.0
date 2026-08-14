@@ -156,7 +156,10 @@ export function ClinicSettingsView() {
             </CardHeader>
             <CardContent className="space-y-4">
               {(["email", "whatsapp", "sms", "push"] as const).map((k) => (
-                <div key={k} className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div
+                  key={k}
+                  className="flex items-center justify-between rounded-lg border border-border p-3"
+                >
                   <div>
                     <p className="text-sm font-medium capitalize">{k}</p>
                     <p className="text-xs text-muted-foreground">
@@ -232,7 +235,10 @@ export function ClinicSettingsView() {
                 <Input
                   value={draft.whatsapp.provider ?? ""}
                   onChange={(e) =>
-                    setDraft({ ...draft, whatsapp: { ...draft.whatsapp, provider: e.target.value } })
+                    setDraft({
+                      ...draft,
+                      whatsapp: { ...draft.whatsapp, provider: e.target.value },
+                    })
                   }
                   placeholder="uazapi"
                 />
@@ -252,7 +258,10 @@ export function ClinicSettingsView() {
                 <Input
                   value={draft.whatsapp.sender_id ?? ""}
                   onChange={(e) =>
-                    setDraft({ ...draft, whatsapp: { ...draft.whatsapp, sender_id: e.target.value } })
+                    setDraft({
+                      ...draft,
+                      whatsapp: { ...draft.whatsapp, sender_id: e.target.value },
+                    })
                   }
                 />
               </div>
@@ -304,7 +313,9 @@ export function ClinicSettingsView() {
           <Card>
             <CardHeader>
               <CardTitle>More integrations</CardTitle>
-              <CardDescription>Coming soon — payments, calendar sync, analytics, etc.</CardDescription>
+              <CardDescription>
+                Coming soon — payments, calendar sync, analytics, etc.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">

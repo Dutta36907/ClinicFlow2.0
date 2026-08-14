@@ -1,10 +1,6 @@
 import { Loader2, ShieldCheck, Stethoscope } from "lucide-react";
 
-export function ClinicManagerSplash({
-  message = "Verifying access…",
-}: {
-  message?: string;
-}) {
+export function ClinicManagerSplash({ message = "Verifying access…" }: { message?: string }) {
   return (
     <div
       role="status"

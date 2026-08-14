@@ -3,11 +3,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { SuperAdminLayout } from "@/components/SuperAdminLayout";
-import {
-  listAllCustomers,
-  setClinicActive,
-  type Customer,
-} from "@/lib/superadmin.functions";
+import { listAllCustomers, setClinicActive, type Customer } from "@/lib/superadmin.functions";
 import {
   Select,
   SelectContent,
@@ -35,8 +31,7 @@ function statusFor(c: { is_active: boolean; expires_at: string | null }): Status
 
 function StatusPill({ status }: { status: StatusKind }) {
   const styles: Record<StatusKind, string> = {
-    active:
-      "bg-emerald-500/15 text-emerald-700 ring-emerald-500/25 dark:text-emerald-300",
+    active: "bg-emerald-500/15 text-emerald-700 ring-emerald-500/25 dark:text-emerald-300",
     inactive: "bg-muted text-muted-foreground ring-border",
     expired: "bg-destructive/10 text-destructive ring-destructive/25",
   };
@@ -71,8 +66,7 @@ export function SubscriptionsView() {
   });
 
   const mutation = useMutation({
-    mutationFn: (vars: { clinicId: string; isActive: boolean }) =>
-      toggleActive({ data: vars }),
+    mutationFn: (vars: { clinicId: string; isActive: boolean }) => toggleActive({ data: vars }),
     onMutate: async (vars) => {
       await qc.cancelQueries({ queryKey: ["sa-customers"] });
       const prev = qc.getQueryData<{ customers: Customer[] }>(["sa-customers"]);
@@ -191,9 +185,7 @@ export function SubscriptionsView() {
                     >
                       <td className="px-4 py-3">
                         <div className="font-medium">{c.clinic_name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          /{c.clinic_slug}
-                        </div>
+                        <div className="text-xs text-muted-foreground">/{c.clinic_slug}</div>
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">
                         {format(new Date(c.activation_date), "MMM d, yyyy")}
@@ -206,14 +198,10 @@ export function SubscriptionsView() {
                             : "text-muted-foreground",
                         )}
                       >
-                        {c.expires_at
-                          ? format(new Date(c.expires_at), "MMM d, yyyy")
-                          : "Never"}
+                        {c.expires_at ? format(new Date(c.expires_at), "MMM d, yyyy") : "Never"}
                       </td>
                       <td className="px-4 py-3">{c.full_name || "—"}</td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {c.phone || "—"}
-                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{c.phone || "—"}</td>
                       <td className="px-4 py-3">
                         <StatusPill status={s} />
                       </td>

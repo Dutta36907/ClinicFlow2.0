@@ -11,13 +11,14 @@ async function getAdmin() {
   return m.supabaseAdmin;
 }
 
-
 async function assertClinicAccess(userId: string, clinicId: string) {
   const supabaseAdmin = await getAdmin();
   // Single RPC round-trip — returns is_super, is_disabled, and clinic_ids.
   const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
   if (error) throw new Error(error.message);
-  const row = Array.isArray(data) ? data[0] : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
+  const row = Array.isArray(data)
+    ? data[0]
+    : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
   if (row?.is_super) {
     if (row.is_disabled) throw new Error("Your account is disabled");
     return;
@@ -99,7 +100,11 @@ export const listTreatments = createServerFn({ method: "POST" })
     await assertClinicAccess(context.userId, data.clinic_id);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, count, error } = await supabaseAdmin
+    const {
+      data: rows,
+      count,
+      error,
+    } = await supabaseAdmin
       .from("clinic_treatments")
       .select("id, title, description, icon, display_order, is_active", { count: "exact" })
       .eq("clinic_id", data.clinic_id)
@@ -109,9 +114,6 @@ export const listTreatments = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { rows: rows ?? [], total: count ?? 0 };
   });
-
-
-
 
 export const upsertTreatment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -170,7 +172,11 @@ const testimonialSchema = z.object({
   rating: z.number().int().min(1).max(5),
   quote: z.string().trim().min(1).max(1000),
   photo_url: z.string().trim().url().max(1000).optional().or(z.literal("")),
-  review_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().or(z.literal("")),
+  review_date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional()
+    .or(z.literal("")),
   display_order: z.number().int().min(0).max(999).default(0),
   is_featured: z.boolean().default(false),
 });
@@ -183,7 +189,11 @@ export const listTestimonials = createServerFn({ method: "POST" })
     await assertClinicAccess(context.userId, data.clinic_id);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, count, error } = await supabaseAdmin
+    const {
+      data: rows,
+      count,
+      error,
+    } = await supabaseAdmin
       .from("clinic_testimonials")
       .select(
         "id, patient_name, rating, quote, photo_url, review_date, display_order, is_featured",
@@ -196,8 +206,6 @@ export const listTestimonials = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { rows: rows ?? [], total: count ?? 0 };
   });
-
-
 
 export const upsertTestimonial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -266,7 +274,11 @@ export const listGallery = createServerFn({ method: "POST" })
     await assertClinicAccess(context.userId, data.clinic_id);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, count, error } = await supabaseAdmin
+    const {
+      data: rows,
+      count,
+      error,
+    } = await supabaseAdmin
       .from("clinic_gallery")
       .select("id, image_url, caption, display_order", { count: "exact" })
       .eq("clinic_id", data.clinic_id)
@@ -276,8 +288,6 @@ export const listGallery = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { rows: rows ?? [], total: count ?? 0 };
   });
-
-
 
 export const addGalleryImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -37,12 +37,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -72,18 +67,9 @@ import {
 
 import { Card, SectionShell } from "../shared/SectionShell";
 import { Field, Grid, TextAreaField } from "../shared/FormPrimitives";
-import {
-  DAY_KEYS,
-  DAY_LABELS,
-  clinicHoursToSchedule,
-  type DaySchedule,
-} from "../shared/days";
+import { DAY_KEYS, DAY_LABELS, clinicHoursToSchedule, type DaySchedule } from "../shared/days";
 import type { DashboardClinic, DashboardDoctor } from "../types";
-import {
-  LIMITS,
-  formatServerError,
-  validateDoctorForm,
-} from "@/lib/validation/clinic-forms";
+import { LIMITS, formatServerError, validateDoctorForm } from "@/lib/validation/clinic-forms";
 
 // ============================================================================
 // Top-level: list of doctors + Add button
@@ -112,117 +98,120 @@ export function DoctorsSection({
       <Card className="overflow-hidden p-0">
         <div className="-mx-4 sm:mx-0 overflow-x-auto">
           <Table className="min-w-[760px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Specialization</TableHead>
-              <TableHead>Experience</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-32 text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {doctors.length === 0 && (
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={5} className="p-0">
-                  <EmptyState
-                    icon={Stethoscope}
-                    title="No doctors yet"
-                    description="Add your first doctor so patients can start booking."
-                  />
-                </TableCell>
+                <TableHead>Name</TableHead>
+                <TableHead>Specialization</TableHead>
+                <TableHead>Experience</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="w-32 text-right">Actions</TableHead>
               </TableRow>
-            )}
-            {doctors.map((d) => (
-              <TableRow
-                key={d.id}
-                className="cursor-pointer transition-colors hover:bg-muted/40"
-                onClick={() => setEditing(d)}
-              >
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    {d.photo_url ? (
-                      <img
-                        src={d.photo_url}
-                        alt={d.name}
-                        className="size-9 rounded-full object-cover ring-2 ring-background"
-                      />
-                    ) : (
-                      <span className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/15">
-                        {d.name.slice(0, 1).toUpperCase()}
-                      </span>
-                    )}
-                    <div className="min-w-0">
-                      <div className="truncate font-medium">{d.name}</div>
-                      {d.degree && (
-                        <div className="truncate text-xs text-muted-foreground">
-                          {d.degree}
-                        </div>
+            </TableHeader>
+            <TableBody>
+              {doctors.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="p-0">
+                    <EmptyState
+                      icon={Stethoscope}
+                      title="No doctors yet"
+                      description="Add your first doctor so patients can start booking."
+                    />
+                  </TableCell>
+                </TableRow>
+              )}
+              {doctors.map((d) => (
+                <TableRow
+                  key={d.id}
+                  className="cursor-pointer transition-colors hover:bg-muted/40"
+                  onClick={() => setEditing(d)}
+                >
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      {d.photo_url ? (
+                        <img
+                          src={d.photo_url}
+                          alt={d.name}
+                          className="size-9 rounded-full object-cover ring-2 ring-background"
+                        />
+                      ) : (
+                        <span className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/15">
+                          {d.name.slice(0, 1).toUpperCase()}
+                        </span>
                       )}
+                      <div className="min-w-0">
+                        <div className="truncate font-medium">{d.name}</div>
+                        {d.degree && (
+                          <div className="truncate text-xs text-muted-foreground">{d.degree}</div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm text-muted-foreground">
-                  {d.specialization ?? "—"}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {d.years_experience != null ? (
-                    <span className="inline-flex items-center gap-1 text-muted-foreground">
-                      <Award className="size-3.5" />
-                      {d.years_experience} yrs
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {d.specialization ?? "—"}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {d.years_experience != null ? (
+                      <span className="inline-flex items-center gap-1 text-muted-foreground">
+                        <Award className="size-3.5" />
+                        {d.years_experience} yrs
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={
+                        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium " +
+                        (d.is_active
+                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                          : "border-border bg-muted text-muted-foreground")
+                      }
+                    >
+                      <span
+                        className={
+                          "size-1.5 rounded-full " +
+                          (d.is_active ? "bg-emerald-500" : "bg-muted-foreground/40")
+                        }
+                      />
+                      {d.is_active ? "Active" : "Inactive"}
                     </span>
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={
-                      "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium " +
-                      (d.is_active
-                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                        : "border-border bg-muted text-muted-foreground")
-                    }
-                  >
-                    <span className={"size-1.5 rounded-full " + (d.is_active ? "bg-emerald-500" : "bg-muted-foreground/40")} />
-                    {d.is_active ? "Active" : "Inactive"}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button
-                      asChild
-                      size="icon"
-                      variant="ghost"
-                      aria-label={`View ${d.name} profile`}
-                      className="hover:bg-primary/10 hover:text-primary"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Link
-                        to="/$slug_/clinicmanager/doctors/$doctorId"
-                        params={{ slug: clinic.slug, doctorId: d.id }}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        asChild
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`View ${d.name} profile`}
+                        className="hover:bg-primary/10 hover:text-primary"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <ExternalLink className="size-4" />
-                      </Link>
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      aria-label={`Edit ${d.name}`}
-                      className="hover:bg-primary/10 hover:text-primary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditing(d);
-                      }}
-                    >
-                      <Pencil className="size-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                        <Link
+                          to="/$slug_/clinicmanager/doctors/$doctorId"
+                          params={{ slug: clinic.slug, doctorId: d.id }}
+                        >
+                          <ExternalLink className="size-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Edit ${d.name}`}
+                        className="hover:bg-primary/10 hover:text-primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditing(d);
+                        }}
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </Card>
 
@@ -273,10 +262,7 @@ function DoctorDialog({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   /** Update a single field and clear that field's error (if any). */
-  function setField<K extends keyof typeof form>(
-    key: K,
-    value: (typeof form)[K],
-  ) {
+  function setField<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
     if (errors[key as string]) {
       setErrors((e) => {
@@ -320,9 +306,7 @@ function DoctorDialog({
           name: form.name.trim(),
           specialization: form.specialization.trim(),
           degree: form.degree.trim(),
-          years_experience: form.years_experience
-            ? parseInt(form.years_experience, 10)
-            : null,
+          years_experience: form.years_experience ? parseInt(form.years_experience, 10) : null,
           description: form.description.trim(),
           photo_url: form.photo_url.trim(),
           is_active: form.is_active,
@@ -476,7 +460,8 @@ function DoctorDialog({
                     <p className="text-xs text-destructive">{errors.photo_url}</p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    Square photo works best (e.g. 512×512). JPEG, PNG or WebP — we shrink it for you.
+                    Square photo works best (e.g. 512×512). JPEG, PNG or WebP — we shrink it for
+                    you.
                   </p>
                 </div>
               </div>
@@ -523,17 +508,15 @@ function DoctorDialog({
             </div>
             {!doctor && (
               <p className="text-xs text-muted-foreground">
-                Weekly hours will be copied from your clinic hours. You can
-                fine-tune them and add time off after the doctor is created.
+                Weekly hours will be copied from your clinic hours. You can fine-tune them and add
+                time off after the doctor is created.
               </p>
             )}
           </TabsContent>
 
           {/* Hours tab (only shown for saved doctors) */}
           <TabsContent value="hours" className="mt-4">
-            {doctor && (
-              <WorkingHoursEditor doctorId={doctor.id} clinic={clinic} />
-            )}
+            {doctor && <WorkingHoursEditor doctorId={doctor.id} clinic={clinic} />}
           </TabsContent>
 
           {/* Time off tab (only shown for saved doctors) */}
@@ -552,11 +535,7 @@ function DoctorDialog({
           {doctor ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-destructive"
-                >
+                <Button variant="ghost" size="sm" className="text-destructive">
                   <Trash2 className="size-4" /> Delete
                 </Button>
               </AlertDialogTrigger>
@@ -564,15 +543,12 @@ function DoctorDialog({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete this doctor?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This removes the doctor and their schedule. Existing
-                    appointments stay.
+                    This removes the doctor and their schedule. Existing appointments stay.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={onDelete}>
-                    Delete
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={onDelete}>Delete</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -583,10 +559,7 @@ function DoctorDialog({
             <Button variant="ghost" onClick={onClose} disabled={saving}>
               Cancel
             </Button>
-            <Button
-              onClick={onSubmit}
-              disabled={saving}
-            >
+            <Button onClick={onSubmit} disabled={saving}>
               {saving ? "Saving…" : doctor ? "Save profile" : "Add doctor"}
             </Button>
           </div>
@@ -600,13 +573,7 @@ function DoctorDialog({
 // Per-doctor weekly working hours
 // ============================================================================
 
-function WorkingHoursEditor({
-  doctorId,
-  clinic,
-}: {
-  doctorId: string;
-  clinic: DashboardClinic;
-}) {
+function WorkingHoursEditor({ doctorId, clinic }: { doctorId: string; clinic: DashboardClinic }) {
   const qc = useQueryClient();
 
   // Load saved schedule, projected onto a Sun..Sat array.
@@ -679,9 +646,7 @@ function WorkingHoursEditor({
         .filter((_, idx) => rows[idx].active);
 
       if (inserts.length > 0) {
-        const { error: insErr } = await supabase
-          .from("doctor_schedules")
-          .insert(inserts);
+        const { error: insErr } = await supabase.from("doctor_schedules").insert(inserts);
         if (insErr) throw insErr;
       }
       toast.success("Hours saved");
@@ -706,15 +671,9 @@ function WorkingHoursEditor({
       </div>
       <div className="divide-y divide-border rounded-lg border border-border">
         {rows.map((r, i) => (
-          <div
-            key={i}
-            className="flex flex-wrap items-center justify-between gap-3 p-3"
-          >
+          <div key={i} className="flex flex-wrap items-center justify-between gap-3 p-3">
             <div className="flex items-center gap-3">
-              <Switch
-                checked={r.active}
-                onCheckedChange={(c) => setRow(i, { active: c })}
-              />
+              <Switch checked={r.active} onCheckedChange={(c) => setRow(i, { active: c })} />
               <span className="w-12 text-sm font-medium">{DAY_LABELS[i]}</span>
             </div>
             {r.active ? (
@@ -841,9 +800,7 @@ function TimeOffEditor({
 
   // "Today" in clinic local time — used to hide past time-off by default.
   const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: tz });
-  const visible = (overrides ?? []).filter(
-    (o) => showPast || o.date >= todayKey,
-  );
+  const visible = (overrides ?? []).filter((o) => showPast || o.date >= todayKey);
 
   // --- Add handler -------------------------------------------------------
   async function onAdd() {
@@ -897,9 +854,7 @@ function TimeOffEditor({
         });
       }
 
-      const { error } = await supabase
-        .from("doctor_slot_overrides")
-        .insert(rows);
+      const { error } = await supabase.from("doctor_slot_overrides").insert(rows);
       if (error) throw error;
       toast.success("Time off added");
       setStartDate("");
@@ -916,10 +871,7 @@ function TimeOffEditor({
   // --- Remove handler ----------------------------------------------------
   async function onRemove(id: string) {
     try {
-      const { error } = await supabase
-        .from("doctor_slot_overrides")
-        .delete()
-        .eq("id", id);
+      const { error } = await supabase.from("doctor_slot_overrides").delete().eq("id", id);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["doctor-overrides", doctorId] });
     } catch (e) {
@@ -955,36 +907,24 @@ function TimeOffEditor({
           <Grid>
             <div>
               <Label>From date</Label>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
             </div>
             <div>
               <Label>To date (optional)</Label>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
+              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </div>
           </Grid>
         ) : (
           <div className="space-y-3">
             <div>
               <Label>Date</Label>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
             </div>
 
             {startDate && daySlots && daySlots.dayOff && (
               <p className="text-xs text-muted-foreground">
-                Doctor doesn't work on {DOCTOR_WEEKDAY_LABELS[daySlots.weekday]}s.
-                Use <span className="font-medium">Full day(s)</span> instead.
+                Doctor doesn't work on {DOCTOR_WEEKDAY_LABELS[daySlots.weekday]}s. Use{" "}
+                <span className="font-medium">Full day(s)</span> instead.
               </p>
             )}
 
@@ -994,9 +934,7 @@ function TimeOffEditor({
                   <span className="text-muted-foreground">
                     Works{" "}
                     <span className="font-mono text-foreground">
-                      {daySlots.windows
-                        .map((w) => formatRange12(w.start, w.end))
-                        .join(", ")}
+                      {daySlots.windows.map((w) => formatRange12(w.start, w.end)).join(", ")}
                     </span>{" "}
                     on {DOCTOR_WEEKDAY_LABELS[daySlots.weekday]}
                   </span>
@@ -1007,8 +945,7 @@ function TimeOffEditor({
                     onClick={() => {
                       // One-click: block the entire working window.
                       const first = daySlots.windows[0];
-                      const last =
-                        daySlots.windows[daySlots.windows.length - 1];
+                      const last = daySlots.windows[daySlots.windows.length - 1];
                       if (first && last) {
                         setStartTime(first.start);
                         setEndTime(last.end);
@@ -1061,9 +998,7 @@ function TimeOffEditor({
             )}
 
             {startDate && !daySlots && (
-              <p className="text-xs text-muted-foreground">
-                Loading doctor schedule…
-              </p>
+              <p className="text-xs text-muted-foreground">Loading doctor schedule…</p>
             )}
 
             {!startDate && (
@@ -1106,33 +1041,21 @@ function TimeOffEditor({
       ) : (
         <div className="divide-y divide-border rounded-lg border border-border">
           {visible.map((o) => (
-            <div
-              key={o.id}
-              className="flex items-center justify-between gap-3 p-3"
-            >
+            <div key={o.id} className="flex items-center justify-between gap-3 p-3">
               <div className="text-sm">
                 <div className="font-medium">
                   {o.date}
                   {o.start_time && o.end_time ? (
                     <span className="ml-2 text-muted-foreground">
-                      {formatRange12(
-                        o.start_time.slice(0, 5),
-                        o.end_time.slice(0, 5),
-                      )}
+                      {formatRange12(o.start_time.slice(0, 5), o.end_time.slice(0, 5))}
                     </span>
                   ) : (
                     <span className="ml-2 text-muted-foreground">All day</span>
                   )}
                 </div>
-                {o.reason && (
-                  <div className="text-xs text-muted-foreground">{o.reason}</div>
-                )}
+                {o.reason && <div className="text-xs text-muted-foreground">{o.reason}</div>}
               </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => onRemove(o.id)}
-              >
+              <Button size="icon" variant="ghost" onClick={() => onRemove(o.id)}>
                 <Trash2 className="size-4" />
               </Button>
             </div>
