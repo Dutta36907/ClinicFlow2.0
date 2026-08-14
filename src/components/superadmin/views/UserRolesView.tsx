@@ -92,7 +92,12 @@ export function UserRolesView() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Delete this role? Users currently assigned will keep their permissions but lose the role link.")) return;
+    if (
+      !confirm(
+        "Delete this role? Users currently assigned will keep their permissions but lose the role link.",
+      )
+    )
+      return;
     try {
       await del({ data: { id } });
       toast.success("Role deleted");
@@ -181,9 +186,7 @@ export function UserRolesView() {
       <Dialog open={!!editing} onOpenChange={(v) => !v && setEditing(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
-              {editing?.id ? "Edit role" : "New role"}
-            </DialogTitle>
+            <DialogTitle>{editing?.id ? "Edit role" : "New role"}</DialogTitle>
             <DialogDescription>
               {editing?.is_system
                 ? "Built-in role — name is locked, permissions can be changed."

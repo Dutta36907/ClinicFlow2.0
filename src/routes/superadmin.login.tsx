@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  bootstrapFirstSuperAdmin,
-  getSignupStatus,
-} from "@/lib/superadmin.functions";
+import { bootstrapFirstSuperAdmin, getSignupStatus } from "@/lib/superadmin.functions";
 import { applyRememberMe } from "@/lib/rememberMe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,7 +69,6 @@ function LoginPage() {
     setErrorMsg(null);
   }, [bootstrapMode]);
 
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -88,8 +84,7 @@ function LoginPage() {
           );
         }
         // Auto sign-in with the new credentials.
-        const { error: signInErr } =
-          await supabase.auth.signInWithPassword({ email, password });
+        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) throw signInErr;
         applyRememberMe(rememberMe);
         toast.success("Platform admin created. Welcome!");
@@ -108,7 +103,6 @@ function LoginPage() {
       setLoading(false);
     }
   }
-
 
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-2">
@@ -135,7 +129,8 @@ function LoginPage() {
             The whole platform, one console.
           </h1>
           <p className="mt-4 max-w-md text-base text-primary-foreground/85">
-            Onboard clinics, assign managers, and keep every tenant healthy from a single super admin workspace.
+            Onboard clinics, assign managers, and keep every tenant healthy from a single super
+            admin workspace.
           </p>
 
           <ul className="mt-10 space-y-4">
@@ -201,9 +196,7 @@ function LoginPage() {
                 )}
               </span>
               <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                {mode === "signin"
-                  ? "Sign in to the platform"
-                  : "Create the platform admin"}
+                {mode === "signin" ? "Sign in to the platform" : "Create the platform admin"}
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {mode === "signin"
@@ -344,7 +337,6 @@ function LoginPage() {
               )}
             </div>
 
-
             {/* Trust chips */}
             <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground sm:mt-6">
               {[
@@ -364,7 +356,10 @@ function LoginPage() {
 
             <p className="mt-6 text-center text-xs text-muted-foreground">
               Clinic manager? Sign in at{" "}
-              <Link to="/clinicmanager" className="font-medium text-primary hover:underline">/clinicmanager</Link>.
+              <Link to="/clinicmanager" className="font-medium text-primary hover:underline">
+                /clinicmanager
+              </Link>
+              .
             </p>
           </div>
         </div>

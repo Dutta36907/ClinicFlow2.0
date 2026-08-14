@@ -12,11 +12,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { AlertCircle, Loader2, RotateCw, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import {
   verifyPatientOtp,
   createAppointment,
@@ -165,9 +161,7 @@ export function VerifyStep({
       onConfirmed({ id: res.appointmentId, scheduledAt: res.scheduledAt });
     } catch (e) {
       const msg =
-        e instanceof Error
-          ? e.message
-          : "Something went wrong while confirming your booking.";
+        e instanceof Error ? e.message : "Something went wrong while confirming your booking.";
       const lower = msg.toLowerCase();
       if (
         lower.includes("just booked") ||
@@ -230,10 +224,7 @@ export function VerifyStep({
       setAttempts(0);
       setLastSentAt(new Date());
     } catch (e) {
-      const msg =
-        e instanceof Error
-          ? e.message
-          : "We couldn't generate a new code right now.";
+      const msg = e instanceof Error ? e.message : "We couldn't generate a new code right now.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -255,25 +246,21 @@ export function VerifyStep({
         <p className="text-sm text-muted-foreground">
           {isOnScreen ? (
             <>
-              For your security, this booking uses an on-screen code tied to
-              this browser tab. Phone on file:{" "}
-              <span className="font-medium text-foreground">{patient.phone}</span>.
+              For your security, this booking uses an on-screen code tied to this browser tab. Phone
+              on file: <span className="font-medium text-foreground">{patient.phone}</span>.
             </>
           ) : (
             <>
               We sent a 6-digit code to{" "}
-              <span className="font-medium text-foreground">{patient.phone}</span>.
-              Enter it below to confirm your appointment.
+              <span className="font-medium text-foreground">{patient.phone}</span>. Enter it below
+              to confirm your appointment.
             </>
           )}
         </p>
       </div>
 
       {isOnScreen && onScreenCode ? (
-        <OnScreenOtpCard
-          code={onScreenCode}
-          onExpire={() => setCodeExpired(true)}
-        />
+        <OnScreenOtpCard code={onScreenCode} onExpire={() => setCodeExpired(true)} />
       ) : null}
 
       {isDev && devCode ? (
@@ -297,8 +284,8 @@ export function VerifyStep({
             ))}
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            Shown here because the platform is configured with the development
-            SMS provider. Real providers never display the code on screen.
+            Shown here because the platform is configured with the development SMS provider. Real
+            providers never display the code on screen.
           </p>
         </div>
       ) : null}
@@ -355,11 +342,7 @@ export function VerifyStep({
         </div>
       ) : null}
 
-      <Button
-        className="w-full"
-        disabled={otpCode.length !== 6 || inputDisabled}
-        onClick={confirm}
-      >
+      <Button className="w-full" disabled={otpCode.length !== 6 || inputDisabled} onClick={confirm}>
         {submitting ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />
@@ -387,9 +370,7 @@ export function VerifyStep({
           {!isOnScreen ? (
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                cooldown > 0
-                  ? "bg-primary/10 text-primary"
-                  : "bg-emerald-500/10 text-emerald-600"
+                cooldown > 0 ? "bg-primary/10 text-primary" : "bg-emerald-500/10 text-emerald-600"
               }`}
             >
               {cooldown > 0 ? (

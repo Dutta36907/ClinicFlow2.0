@@ -1,9 +1,5 @@
 // React Query hooks for enquiry admin operations.
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   createEnquiry,
@@ -36,8 +32,7 @@ export function useUpdateEnquiryStatus() {
   const fn = useServerFn(updateEnquiryStatus);
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (vars: { id: string; status: EnquiryStatus }) =>
-      fn({ data: vars }),
+    mutationFn: (vars: { id: string; status: EnquiryStatus }) => fn({ data: vars }),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["enquiries"] });
     },

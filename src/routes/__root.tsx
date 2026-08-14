@@ -15,7 +15,6 @@ import { setNotFoundStatus } from "@/lib/set-not-found-status";
 
 import appCss from "../styles.css?url";
 
-
 function NotFoundComponent() {
   // M1: set HTTP 404 during SSR so crawlers see a proper not-found, not 200.
   setNotFoundStatus();
@@ -82,13 +81,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "ClinicFlow V2" },
-      { name: "description", content: "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings." },
+      {
+        name: "description",
+        content:
+          "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings.",
+      },
       { property: "og:title", content: "ClinicFlow V2" },
-      { property: "og:description", content: "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings." },
+      {
+        property: "og:description",
+        content:
+          "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "ClinicFlow V2" },
-      { name: "twitter:description", content: "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings." },
+      {
+        name: "twitter:description",
+        content:
+          "ClinicFlow Suite is a multi-tenant SaaS platform for managing clinic appointments and patient bookings.",
+      },
       // og:image / twitter:image are intentionally NOT set at the root.
       // TanStack concatenates root meta into every match, so a global image
       // would override every leaf route's share preview.
@@ -102,7 +113,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap",
       },
     ],
-
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -194,4 +204,3 @@ function AuthEventBridge() {
 
   return null;
 }
-

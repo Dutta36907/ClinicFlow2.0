@@ -3,14 +3,8 @@ import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type * as React from "react";
 import { ensureSuperAdmin } from "@/components/SuperAdminLayout";
-import {
-  useSuperAdminView,
-  type SuperAdminView,
-} from "@/stores/superadminViewStore";
-import {
-  useSuperAdminPermissions,
-  canViewSection,
-} from "@/hooks/useSuperAdminPermissions";
+import { useSuperAdminView, type SuperAdminView } from "@/stores/superadminViewStore";
+import { useSuperAdminPermissions, canViewSection } from "@/hooks/useSuperAdminPermissions";
 import { toast } from "sonner";
 import { DashboardView } from "@/components/superadmin/views/DashboardView";
 import { ClinicsView } from "@/components/superadmin/views/ClinicsView";

@@ -136,7 +136,9 @@
     font-family: var(--font-sans);
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }
@@ -144,10 +146,16 @@
 
 /* SuperAdminLoader pulse: gentle scale + opacity, no extra dependencies. */
 @keyframes pulse-soft {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.65; transform: scale(0.96); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(0.96);
+  }
 }
 .animate-pulse-soft {
   animation: pulse-soft 1.8s ease-in-out infinite;
 }
-

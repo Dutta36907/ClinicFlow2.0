@@ -29,9 +29,7 @@ export function DoctorPickStep({
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">
-        Choose a doctor to see their available slots.
-      </p>
+      <p className="text-sm text-muted-foreground">Choose a doctor to see their available slots.</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {doctors.map((d) => (
           <DoctorCard key={d.id} doctor={d} onPick={onPick} />
@@ -41,13 +39,7 @@ export function DoctorPickStep({
   );
 }
 
-function DoctorCard({
-  doctor: d,
-  onPick,
-}: {
-  doctor: Doctor;
-  onPick: (d: Doctor) => void;
-}) {
+function DoctorCard({ doctor: d, onPick }: { doctor: Doctor; onPick: (d: Doctor) => void }) {
   const initials = d.name
     .split(/\s+/)
     .map((p) => p[0])

@@ -171,18 +171,15 @@ export function SystemUsersView() {
             <DialogHeader>
               <DialogTitle>Add a system user</DialogTitle>
               <DialogDescription>
-                Creates a super_admin account. New users start <strong>disabled</strong> — enable them from the list to grant access.
+                Creates a super_admin account. New users start <strong>disabled</strong> — enable
+                them from the list to grant access.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={submitAdd} className="space-y-4">
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Full name</Label>
-                  <Input
-                    required
-                    value={addName}
-                    onChange={(e) => setAddName(e.target.value)}
-                  />
+                  <Input required value={addName} onChange={(e) => setAddName(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label>Email</Label>
@@ -273,7 +270,6 @@ export function SystemUsersView() {
                   </td>
                 </tr>
               ) : (
-
                 q.data!.users.map((u: SystemUser) => {
                   const enabled = PERMISSION_LABELS.filter((p) => u.permissions[p.key]).length;
                   return (

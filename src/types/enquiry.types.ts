@@ -2,13 +2,7 @@
 export const ENQUIRY_TYPES = ["request_demo", "sign_up"] as const;
 export type EnquiryType = (typeof ENQUIRY_TYPES)[number];
 
-export const ENQUIRY_STATUSES = [
-  "new",
-  "contacted",
-  "in_progress",
-  "converted",
-  "closed",
-] as const;
+export const ENQUIRY_STATUSES = ["new", "contacted", "in_progress", "converted", "closed"] as const;
 export type EnquiryStatus = (typeof ENQUIRY_STATUSES)[number];
 
 export interface Enquiry {

@@ -72,9 +72,7 @@ export function PricingTeaser({ onCta }: { onCta: () => void }) {
                 )}
                 <div className="text-sm font-semibold text-[#2d8a9e]">{t.name}</div>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-display text-4xl font-bold text-[#0c2340]">
-                    {t.price}
-                  </span>
+                  <span className="font-display text-4xl font-bold text-[#0c2340]">{t.price}</span>
                   <span className="text-sm text-[#1a4a6e]/60">{t.period}</span>
                 </div>
                 <p className="mt-3 text-sm text-[#1a4a6e]/70">{t.body}</p>

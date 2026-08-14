@@ -147,9 +147,7 @@ export function DateTimeStep({
             >
               <AlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-destructive">
-                  Couldn't load available times
-                </p>
+                <p className="font-medium text-destructive">Couldn't load available times</p>
                 <p className="mt-1 text-muted-foreground">
                   Please check your connection and try again.
                 </p>
@@ -178,9 +176,7 @@ export function DateTimeStep({
               tone="warn"
               icon={Clock}
               title={`${doctor.name} is on time off all day`}
-              body={
-                "No appointments are available on this date. Please choose a different day."
-              }
+              body={"No appointments are available on this date. Please choose a different day."}
             />
           )}
 
@@ -248,7 +244,9 @@ export function DateTimeStep({
               <summary className="cursor-pointer list-none px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center justify-between">
                 <span>{doctor.name}'s weekly availability</span>
                 <span className="text-[10px] text-muted-foreground group-open:hidden">Show</span>
-                <span className="text-[10px] text-muted-foreground hidden group-open:inline">Hide</span>
+                <span className="text-[10px] text-muted-foreground hidden group-open:inline">
+                  Hide
+                </span>
               </summary>
               <div className="px-3 pb-3">
                 <ul className="space-y-1">
@@ -276,11 +274,7 @@ export function DateTimeStep({
           )}
 
           {/* Desktop continue */}
-          <Button
-            className="mt-4 hidden w-full md:inline-flex"
-            disabled={!slot}
-            onClick={onNext}
-          >
+          <Button className="mt-4 hidden w-full md:inline-flex" disabled={!slot} onClick={onNext}>
             <CalendarCheck className="mr-2 size-4" /> Continue
           </Button>
         </div>
@@ -291,9 +285,7 @@ export function DateTimeStep({
         <div className="mx-auto flex max-w-2xl items-center gap-3">
           <div className="min-w-0 flex-1 text-xs">
             <div className="font-medium text-foreground truncate">
-              {slot
-                ? format(new Date(slot), "EEE, MMM d · h:mm a")
-                : "Select a time"}
+              {slot ? format(new Date(slot), "EEE, MMM d · h:mm a") : "Select a time"}
             </div>
             <div className="truncate text-muted-foreground">{doctor.name}</div>
           </div>
@@ -433,9 +425,7 @@ function SlotGrid({
                       onClick={() => !s.booked && onSelect(s.time)}
                       disabled={s.booked}
                       aria-disabled={s.booked}
-                      aria-label={
-                        s.booked ? `${label} — already booked` : label
-                      }
+                      aria-label={s.booked ? `${label} — already booked` : label}
                       title={s.booked ? "Already booked" : undefined}
                       className={cn(
                         "rounded-lg border px-2 py-2 text-[13px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",

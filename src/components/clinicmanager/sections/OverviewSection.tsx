@@ -50,9 +50,8 @@ export function OverviewSection({
     });
     const todayKey = tzDateKey(new Date().toISOString(), clinic.timezone);
     return {
-      todayCount: inWeek.filter(
-        (a) => tzDateKey(a.scheduled_at, clinic.timezone) === todayKey,
-      ).length,
+      todayCount: inWeek.filter((a) => tzDateKey(a.scheduled_at, clinic.timezone) === todayKey)
+        .length,
       weekCount: inWeek.length,
     };
   }, [apptsQ.data, clinic.timezone]);
@@ -70,10 +69,7 @@ export function OverviewSection({
 
   // --- Render --------------------------------------------------------------
   return (
-    <SectionShell
-      title={`Welcome to ${clinic.name}`}
-      description="Your clinic at a glance."
-    >
+    <SectionShell title={`Welcome to ${clinic.name}`} description="Your clinic at a glance.">
       <div className="grid gap-4 sm:grid-cols-3">
         <StatTile
           label="Today"

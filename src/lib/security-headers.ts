@@ -43,7 +43,10 @@ export function applySecurityHeaders(response: Response): Response {
   }
 
   const contentType = headers.get("content-type") ?? "";
-  if (contentType.toLowerCase().startsWith("text/html") && !headers.has("Content-Security-Policy")) {
+  if (
+    contentType.toLowerCase().startsWith("text/html") &&
+    !headers.has("Content-Security-Policy")
+  ) {
     headers.set("Content-Security-Policy", CSP);
   }
 

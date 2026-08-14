@@ -8,10 +8,7 @@ import { Button } from "@/components/ui/button";
 import { UiV2Toggle } from "@/components/ui/ui-v2-toggle";
 import { getManagerDashboard } from "@/lib/clinicmanager.functions";
 import { useClinicAppointments } from "@/components/clinicmanager/hooks/useClinicAppointments";
-import {
-  ManagerSidebar,
-  type ManagerSection,
-} from "@/components/clinicmanager/ManagerSidebar";
+import { ManagerSidebar, type ManagerSection } from "@/components/clinicmanager/ManagerSidebar";
 import {
   AppointmentsSection,
   DashboardSection,
@@ -43,8 +40,7 @@ function ClinicManage() {
     queryFn: () => fetchDashboard({ data: { slug } }),
   });
 
-  const clinicId =
-    dashQ.data && !("unauthorized" in dashQ.data) ? dashQ.data.clinic.id : null;
+  const clinicId = dashQ.data && !("unauthorized" in dashQ.data) ? dashQ.data.clinic.id : null;
 
   // Single shared appointments source — same data the Dashboard /
   // Appointments / Overview sections read from.
@@ -53,10 +49,7 @@ function ClinicManage() {
     const all = apptsQ.data ?? [];
     const start = new Date();
     start.setHours(0, 0, 0, 0);
-    return all.filter(
-      (a) =>
-        new Date(a.scheduled_at) >= start && a.status !== "cancelled",
-    ).length;
+    return all.filter((a) => new Date(a.scheduled_at) >= start && a.status !== "cancelled").length;
   }, [apptsQ.data]);
 
   if (dashQ.isLoading) {
@@ -109,9 +102,7 @@ function ClinicManage() {
             <div className="flex items-center gap-2">
               <SidebarTrigger />
               <span className="text-sm font-medium">{clinic.name}</span>
-              <span className="hidden text-xs text-muted-foreground sm:inline">
-                /{clinic.slug}
-              </span>
+              <span className="hidden text-xs text-muted-foreground sm:inline">/{clinic.slug}</span>
             </div>
             <div className="flex items-center gap-2">
               <UiV2Toggle />
@@ -124,15 +115,11 @@ function ClinicManage() {
           </header>
 
           <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">
-            {section === "dashboard" && (
-              <DashboardSection clinic={clinic} doctors={doctors} />
-            )}
+            {section === "dashboard" && <DashboardSection clinic={clinic} doctors={doctors} />}
             {section === "appointments" && (
               <AppointmentsSection clinic={clinic} doctors={doctors} />
             )}
-            {section === "doctors" && (
-              <DoctorsSection clinic={clinic} doctors={doctors} />
-            )}
+            {section === "doctors" && <DoctorsSection clinic={clinic} doctors={doctors} />}
             {section === "details" && <ProfileSection clinic={clinic} />}
             {section === "cover" && <CoverSection clinic={clinic} />}
             {section === "stats" && <StatsSection clinic={clinic} />}

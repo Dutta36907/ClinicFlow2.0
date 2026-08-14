@@ -11,7 +11,9 @@ async function assertSuperAdmin(userId: string) {
   const admin = await getAdminClient();
   const { data, error } = await admin.rpc("get_user_auth_context", { _uid: userId });
   if (error) throw new Error(error.message);
-  const row = Array.isArray(data) ? data[0] : (data as { is_super?: boolean; is_disabled?: boolean } | null);
+  const row = Array.isArray(data)
+    ? data[0]
+    : (data as { is_super?: boolean; is_disabled?: boolean } | null);
   if (!row?.is_super) throw new Error("Not authorized");
   if (row.is_disabled) throw new Error("Your account is disabled");
 }
@@ -36,7 +38,9 @@ export const listSecurityRuns = createServerFn({ method: "POST" })
     const admin = await getAdminClient();
     const { data: rows, error } = await admin
       .from("security_scan_runs")
-      .select("id, started_at, finished_at, trigger, commit_sha, total, passed, failed, warned, errored, status")
+      .select(
+        "id, started_at, finished_at, trigger, commit_sha, total, passed, failed, warned, errored, status",
+      )
       .order("started_at", { ascending: false })
       .limit(data.limit);
     if (error) throw new Error(error.message);

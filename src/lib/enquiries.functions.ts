@@ -5,11 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertRateLimit, getClientIp } from "@/lib/server/rate-limit";
-import {
-  ENQUIRY_STATUSES,
-  ENQUIRY_TYPES,
-  type Enquiry,
-} from "@/types/enquiry.types";
+import { ENQUIRY_STATUSES, ENQUIRY_TYPES, type Enquiry } from "@/types/enquiry.types";
 
 async function getAdmin() {
   const supabaseAdmin = await getAdmin();
@@ -56,7 +52,9 @@ async function assertSuperAdmin(userId: string) {
   // Single RPC round-trip replaces two serial queries (user_roles + super_admin_permissions).
   const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
   if (error) throw new Error(error.message);
-  const row = Array.isArray(data) ? data[0] : (data as { is_super?: boolean; is_disabled?: boolean } | null);
+  const row = Array.isArray(data)
+    ? data[0]
+    : (data as { is_super?: boolean; is_disabled?: boolean } | null);
   if (!row?.is_super) throw new Error("Not authorized");
   if (row.is_disabled) throw new Error("Your account is disabled");
 }
@@ -76,7 +74,11 @@ export const listEnquiries = createServerFn({ method: "POST" })
     await assertSuperAdmin(context.userId);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, error, count } = await supabaseAdmin
+    const {
+      data: rows,
+      error,
+      count,
+    } = await supabaseAdmin
       .from("enquiries")
       .select(
         "id, full_name, company_name, email, phone, message, enquiry_type, status, created_at, updated_at",
@@ -123,10 +125,7 @@ export const deleteEnquiry = createServerFn({ method: "POST" })
       .eq("user_id", context.userId)
       .maybeSingle();
     if (!perm?.can_enquiries) throw new Error("Not authorized to delete enquiries");
-    const { error } = await supabaseAdmin
-      .from("enquiries")
-      .delete()
-      .eq("id", data.id);
+    const { error } = await supabaseAdmin.from("enquiries").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });

@@ -14,9 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Card, SectionShell } from "../shared/SectionShell";
 import { MediaLibraryDialog } from "../shared/MediaLibraryDialog";
-import {
-  listGallery, addGalleryImage, deleteGalleryImage,
-} from "@/lib/pagecontent.functions";
+import { listGallery, addGalleryImage, deleteGalleryImage } from "@/lib/pagecontent.functions";
 import type { DashboardClinic } from "../types";
 
 type G = { id: string; image_url: string; caption: string | null; display_order: number };
@@ -31,7 +29,10 @@ export function GallerySection({ clinic }: { clinic: DashboardClinic }) {
   const q = useQuery({
     queryKey: ["gallery", clinic.id, { page, size }],
     queryFn: () =>
-      list({ data: { clinic_id: clinic.id, page, pageSize: size } }) as Promise<{ rows: G[]; total: number }>,
+      list({ data: { clinic_id: clinic.id, page, pageSize: size } }) as Promise<{
+        rows: G[];
+        total: number;
+      }>,
     placeholderData: keepPreviousData,
   });
 
@@ -96,8 +97,15 @@ export function GallerySection({ clinic }: { clinic: DashboardClinic }) {
           <>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {rows.map((g) => (
-                <div key={g.id} className="group relative overflow-hidden rounded-xl border border-border bg-muted/30 aspect-square transition duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5">
-                  <img src={g.image_url} alt={g.caption ?? ""} className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
+                <div
+                  key={g.id}
+                  className="group relative overflow-hidden rounded-xl border border-border bg-muted/30 aspect-square transition duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5"
+                >
+                  <img
+                    src={g.image_url}
+                    alt={g.caption ?? ""}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                  />
                   <Button
                     size="icon"
                     variant="destructive"
@@ -114,7 +122,6 @@ export function GallerySection({ clinic }: { clinic: DashboardClinic }) {
           </>
         )}
       </Card>
-
     </SectionShell>
   );
 }

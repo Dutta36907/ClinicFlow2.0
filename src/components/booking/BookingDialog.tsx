@@ -91,8 +91,7 @@ export function BookingDialog({
     setDevCode(null);
   }, [open, presetDoctor]);
 
-  const stepLabel =
-    step === "done" ? "Appointment confirmed" : "Book an appointment";
+  const stepLabel = step === "done" ? "Appointment confirmed" : "Book an appointment";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -127,7 +126,6 @@ export function BookingDialog({
             </div>
           </div>
         </DialogHeader>
-
 
         {step !== "done" && <DialogStepper step={step} />}
 
@@ -194,7 +192,9 @@ export function BookingDialog({
               setStep("done");
             }}
             onSlotTaken={(msg) => {
-              toast.error(msg || "This slot was just booked by someone else. Please pick another time.");
+              toast.error(
+                msg || "This slot was just booked by someone else. Please pick another time.",
+              );
               setSlot(null);
               if (doctor && date) {
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;

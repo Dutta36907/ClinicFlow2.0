@@ -5,7 +5,11 @@
  */
 import { z } from "zod";
 
-export const nameSchema = z.string().trim().min(2, "At least 2 characters").max(120, "Max 120 characters");
+export const nameSchema = z
+  .string()
+  .trim()
+  .min(2, "At least 2 characters")
+  .max(120, "Max 120 characters");
 
 export const slugSchema = z
   .string()
@@ -19,13 +23,9 @@ export const phoneSchema = optional(
   z.string().regex(/^\+?[0-9\s\-()]{7,20}$/, "Enter a valid phone number"),
 );
 
-export const emailSchema = optional(
-  z.string().email("Enter a valid email").max(255),
-);
+export const emailSchema = optional(z.string().email("Enter a valid email").max(255));
 
-export const urlSchema = optional(
-  z.string().url("Enter a valid URL (https://…)").max(1000),
-);
+export const urlSchema = optional(z.string().url("Enter a valid URL (https://…)").max(1000));
 
 export const mapsUrlSchema = optional(
   z
@@ -33,10 +33,7 @@ export const mapsUrlSchema = optional(
     .url("Enter a valid URL (https://…)")
     .max(1000)
     .refine(
-      (v) =>
-        /(google\.com\/maps|maps\.google\.com|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(
-          v,
-        ),
+      (v) => /(google\.com\/maps|maps\.google\.com|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(v),
       "Must be a Google Maps share link",
     ),
 );
@@ -81,10 +78,7 @@ const FIELD_SCHEMAS: Partial<Record<keyof WizardForm, z.ZodTypeAny>> = {
   manager_password: passwordSchema,
 };
 
-export function validateField(
-  key: keyof WizardForm,
-  value: string,
-): string | null {
+export function validateField(key: keyof WizardForm, value: string): string | null {
   const schema = FIELD_SCHEMAS[key];
   if (!schema) return null;
   const r = schema.safeParse(value);

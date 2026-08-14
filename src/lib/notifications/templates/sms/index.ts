@@ -13,8 +13,6 @@ import { maskPhone } from "../../mask";
 
 // Per-event SMS template builders. Each function is independently typed.
 
-
-
 export const SMS_TEMPLATES = {
   appointment_booked: {
     buildVariables: (p: {

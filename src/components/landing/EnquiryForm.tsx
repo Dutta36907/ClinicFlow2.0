@@ -32,11 +32,7 @@ const schema = z.object({
   full_name: z.string().trim().min(2, "Please enter your full name").max(120),
   company_name: z.string().trim().max(160).optional().or(z.literal("")),
   email: z.string().trim().email("Enter a valid email").max(255),
-  phone: z
-    .string()
-    .trim()
-    .min(7, "Enter a valid phone number")
-    .max(20, "Phone number is too long"),
+  phone: z.string().trim().min(7, "Enter a valid phone number").max(20, "Phone number is too long"),
   message: z.string().trim().max(2000, "Message is too long").optional().or(z.literal("")),
   enquiry_type: z.enum(ENQUIRY_TYPES),
 });
@@ -148,12 +144,7 @@ export function EnquiryForm({ defaultType = "request_demo" }: { defaultType?: En
               <FormItem>
                 <FormLabel>Phone *</FormLabel>
                 <FormControl>
-                  <Input
-                    type="tel"
-                    placeholder="+91 98765 43210"
-                    autoComplete="tel"
-                    {...field}
-                  />
+                  <Input type="tel" placeholder="+91 98765 43210" autoComplete="tel" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

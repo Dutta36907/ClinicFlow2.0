@@ -74,7 +74,9 @@ export function CustomersView() {
           />
         </div>
         <div className="flex w-full items-center gap-2 sm:w-auto">
-          <span className="shrink-0 text-xs uppercase tracking-wide text-muted-foreground">Status</span>
+          <span className="shrink-0 text-xs uppercase tracking-wide text-muted-foreground">
+            Status
+          </span>
           <Select value={status} onValueChange={(v) => setStatus(v as StatusFilter)}>
             <SelectTrigger className="h-9 w-full sm:w-[180px]">
               <SelectValue />

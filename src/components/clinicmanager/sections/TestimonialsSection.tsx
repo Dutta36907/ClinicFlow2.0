@@ -17,14 +17,20 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
 import { Card, SectionShell } from "../shared/SectionShell";
 import {
-  listTestimonials, upsertTestimonial, deleteTestimonial,
+  listTestimonials,
+  upsertTestimonial,
+  deleteTestimonial,
 } from "@/lib/pagecontent.functions";
 import type { DashboardClinic } from "../types";
 
@@ -49,7 +55,10 @@ export function TestimonialsSection({ clinic }: { clinic: DashboardClinic }) {
   const q = useQuery({
     queryKey: ["testimonials", clinic.id, { page, size }],
     queryFn: () =>
-      list({ data: { clinic_id: clinic.id, page, pageSize: size } }) as Promise<{ rows: R[]; total: number }>,
+      list({ data: { clinic_id: clinic.id, page, pageSize: size } }) as Promise<{
+        rows: R[];
+        total: number;
+      }>,
     placeholderData: keepPreviousData,
   });
 
@@ -128,9 +137,16 @@ export function TestimonialsSection({ clinic }: { clinic: DashboardClinic }) {
           <>
             <ul className="divide-y divide-border">
               {rows.map((r) => (
-                <li key={r.id} className="flex items-start gap-3 py-3 transition-colors hover:bg-muted/30 rounded-xl px-2 -mx-2">
+                <li
+                  key={r.id}
+                  className="flex items-start gap-3 py-3 transition-colors hover:bg-muted/30 rounded-xl px-2 -mx-2"
+                >
                   {r.photo_url ? (
-                    <img src={r.photo_url} alt="" className="size-10 rounded-full object-cover ring-2 ring-background shadow-sm" />
+                    <img
+                      src={r.photo_url}
+                      alt=""
+                      className="size-10 rounded-full object-cover ring-2 ring-background shadow-sm"
+                    />
                   ) : (
                     <span className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-1 ring-primary/15">
                       {r.patient_name.slice(0, 1)}
@@ -143,7 +159,12 @@ export function TestimonialsSection({ clinic }: { clinic: DashboardClinic }) {
                         {Array.from({ length: 5 }).map((_, i) => (
                           <Star
                             key={i}
-                            className={cn("size-3.5", i < r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40")}
+                            className={cn(
+                              "size-3.5",
+                              i < r.rating
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/40",
+                            )}
                           />
                         ))}
                       </span>
@@ -155,10 +176,21 @@ export function TestimonialsSection({ clinic }: { clinic: DashboardClinic }) {
                     </div>
                     <p className="line-clamp-2 text-sm text-muted-foreground">{r.quote}</p>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => setEditing(r)} aria-label="Edit review">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setEditing(r)}
+                    aria-label="Edit review"
+                  >
                     <Pencil className="size-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10" onClick={() => remove(r.id)} aria-label="Delete review">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:bg-destructive/10"
+                    onClick={() => remove(r.id)}
+                    aria-label="Delete review"
+                  >
                     <Trash2 className="size-4" />
                   </Button>
                 </li>
@@ -168,7 +200,6 @@ export function TestimonialsSection({ clinic }: { clinic: DashboardClinic }) {
           </>
         )}
       </Card>
-
 
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent>
@@ -242,7 +273,9 @@ export function TestimonialsSection({ clinic }: { clinic: DashboardClinic }) {
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
             <Button onClick={save}>Save</Button>
           </DialogFooter>
         </DialogContent>

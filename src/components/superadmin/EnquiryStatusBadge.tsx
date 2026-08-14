@@ -1,7 +1,4 @@
-import {
-  ENQUIRY_STATUS_LABEL,
-  type EnquiryStatus,
-} from "@/types/enquiry.types";
+import { ENQUIRY_STATUS_LABEL, type EnquiryStatus } from "@/types/enquiry.types";
 
 const STYLES: Record<EnquiryStatus, { wrap: string; dot: string }> = {
   new: {

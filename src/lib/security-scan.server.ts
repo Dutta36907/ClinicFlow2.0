@@ -49,12 +49,7 @@ function warn(
 ): Finding {
   return { check_id, category, severity: "low", status: "warn", title, detail: detail ?? {} };
 }
-function errored(
-  check_id: string,
-  category: string,
-  title: string,
-  err: unknown,
-): Finding {
+function errored(check_id: string, category: string, title: string, err: unknown): Finding {
   return {
     check_id,
     category,
@@ -110,9 +105,7 @@ const checkAnonGrants: CheckFn = async ({ admin }) => {
     });
   }
   const rows = (data as Array<{ table_name: string }>) ?? [];
-  const offenders = rows
-    .map((r) => r.table_name)
-    .filter((t) => !ANON_SELECT_ALLOWLIST.has(t));
+  const offenders = rows.map((r) => r.table_name).filter((t) => !ANON_SELECT_ALLOWLIST.has(t));
   if (offenders.length === 0)
     return pass("anon_grants", "config", "Anon SELECT grants on allowlist only");
   return fail(
@@ -154,11 +147,7 @@ async function anonGet(baseUrl: string, anonKey: string, path: string) {
 
 const checkIdorAppointments: CheckFn = async ({ admin, baseUrl, anonKey }) => {
   // Pick any one real appointment id; anon must NOT read it.
-  const { data } = await admin
-    .from("appointments")
-    .select("id")
-    .limit(1)
-    .maybeSingle();
+  const { data } = await admin.from("appointments").select("id").limit(1).maybeSingle();
   if (!data) return pass("idor_appointments", "idor", "No appointments to probe (skipped)");
   const r = await anonGet(baseUrl, anonKey, `appointments?id=eq.${data.id}&select=id`);
   const leaked = Array.isArray(r.body) && (r.body as unknown[]).length > 0;
@@ -171,11 +160,7 @@ const checkIdorAppointments: CheckFn = async ({ admin, baseUrl, anonKey }) => {
 };
 
 const checkIdorEnquiries: CheckFn = async ({ admin, baseUrl, anonKey }) => {
-  const { data } = await admin
-    .from("enquiries")
-    .select("id")
-    .limit(1)
-    .maybeSingle();
+  const { data } = await admin.from("enquiries").select("id").limit(1).maybeSingle();
   if (!data) return pass("idor_enquiries", "idor", "No enquiries to probe (skipped)");
   const r = await anonGet(baseUrl, anonKey, `enquiries?id=eq.${data.id}&select=id`);
   const leaked = Array.isArray(r.body) && (r.body as unknown[]).length > 0;
@@ -197,29 +182,16 @@ const checkIdorPatientOtp: CheckFn = async ({ baseUrl, anonKey }) => {
 
 const checkIdorOverrideReason: CheckFn = async ({ admin, baseUrl, anonKey }) => {
   // 'reason' was removed from anon grants in a prior migration. Confirm it stays out.
-  const { data } = await admin
-    .from("doctor_slot_overrides")
-    .select("id")
-    .limit(1)
-    .maybeSingle();
-  if (!data)
-    return pass("idor_override_reason", "idor", "No overrides to probe (skipped)");
-  const r = await anonGet(
-    baseUrl,
-    anonKey,
-    `doctor_slot_overrides?id=eq.${data.id}&select=reason`,
-  );
+  const { data } = await admin.from("doctor_slot_overrides").select("id").limit(1).maybeSingle();
+  if (!data) return pass("idor_override_reason", "idor", "No overrides to probe (skipped)");
+  const r = await anonGet(baseUrl, anonKey, `doctor_slot_overrides?id=eq.${data.id}&select=reason`);
   // PostgREST returns 401/403 or a row-shaped error if the column is denied.
   const arr = Array.isArray(r.body) ? (r.body as Array<Record<string, unknown>>) : [];
   const leakedValue = arr.some((row) => "reason" in row && row.reason != null);
   return leakedValue
-    ? fail(
-        "idor_override_reason",
-        "idor",
-        "high",
-        "Anon can read doctor_slot_overrides.reason",
-        { override_id: data.id },
-      )
+    ? fail("idor_override_reason", "idor", "high", "Anon can read doctor_slot_overrides.reason", {
+        override_id: data.id,
+      })
     : pass("idor_override_reason", "idor", "Override 'reason' column hidden from anon");
 };
 
@@ -241,13 +213,9 @@ const checkSignupStatusShape: CheckFn = async ({ baseUrl }) => {
   const ok = keys.length === 1 && keys[0] === "bootstrapMode";
   return ok
     ? pass("signup_status_shape", "auth_bypass", "getSignupStatus exposes only {bootstrapMode}")
-    : fail(
-        "signup_status_shape",
-        "auth_bypass",
-        "high",
-        "getSignupStatus exposes extra fields",
-        { keys },
-      );
+    : fail("signup_status_shape", "auth_bypass", "high", "getSignupStatus exposes extra fields", {
+        keys,
+      });
 };
 
 const checkAdminEndpointNeedsAuth: CheckFn = async ({ baseUrl }) => {
@@ -269,7 +237,11 @@ const checkAdminEndpointNeedsAuth: CheckFn = async ({ baseUrl }) => {
       );
     }
   }
-  return pass("admin_needs_auth", "auth_bypass", "Privileged server fns reject unauthenticated calls");
+  return pass(
+    "admin_needs_auth",
+    "auth_bypass",
+    "Privileged server fns reject unauthenticated calls",
+  );
 };
 
 const checkRateLimitConsumes: CheckFn = async ({ admin }) => {
@@ -283,7 +255,8 @@ const checkRateLimitConsumes: CheckFn = async ({ admin }) => {
       _capacity: capacity,
       _refill_seconds: 3600,
     });
-    if (error) return errored("rate_limit_consume", "rate_limit", "consume_rate_limit RPC failed", error);
+    if (error)
+      return errored("rate_limit_consume", "rate_limit", "consume_rate_limit RPC failed", error);
     results.push(Boolean(data));
   }
   // Cleanup
@@ -295,13 +268,11 @@ const checkRateLimitConsumes: CheckFn = async ({ admin }) => {
         "rate_limit",
         `Rate limiter denied after capacity reached (${granted}/${results.length} granted)`,
       )
-    : fail(
-        "rate_limit_consume",
-        "rate_limit",
-        "high",
-        "Rate limiter did not deny past capacity",
-        { granted, attempts: results.length, capacity },
-      );
+    : fail("rate_limit_consume", "rate_limit", "high", "Rate limiter did not deny past capacity", {
+        granted,
+        attempts: results.length,
+        capacity,
+      });
 };
 
 const checkRateLimitKeyNormalization: CheckFn = async ({ admin }) => {
@@ -312,10 +283,7 @@ const checkRateLimitKeyNormalization: CheckFn = async ({ admin }) => {
   const k2 = `${base}_A`;
   await admin.rpc("consume_rate_limit", { _key: k1, _capacity: 1, _refill_seconds: 3600 });
   await admin.rpc("consume_rate_limit", { _key: k2, _capacity: 1, _refill_seconds: 3600 });
-  const { data } = await admin
-    .from("rate_limit_buckets")
-    .select("key")
-    .in("key", [k1, k2]);
+  const { data } = await admin.from("rate_limit_buckets").select("key").in("key", [k1, k2]);
   await admin.from("rate_limit_buckets").delete().in("key", [k1, k2]);
   const rows = (data as Array<{ key: string }>) ?? [];
   return rows.length === 2
@@ -381,20 +349,18 @@ export async function runSecurityScan(opts: {
     errored: findings.filter((f) => f.status === "error").length,
   };
 
-  const { error: findingsErr } = await supabaseAdmin
-    .from("security_scan_findings")
-    .insert(
-      findings.map((f) => ({
-        run_id: run.id,
-        check_id: f.check_id,
-        category: f.category,
-        severity: f.severity,
-        status: f.status,
-        title: f.title,
-        detail: (f.detail ?? {}) as never,
-        evidence: (f.evidence ?? {}) as never,
-      })),
-    );
+  const { error: findingsErr } = await supabaseAdmin.from("security_scan_findings").insert(
+    findings.map((f) => ({
+      run_id: run.id,
+      check_id: f.check_id,
+      category: f.category,
+      severity: f.severity,
+      status: f.status,
+      title: f.title,
+      detail: (f.detail ?? {}) as never,
+      evidence: (f.evidence ?? {}) as never,
+    })),
+  );
   if (findingsErr) {
     await supabaseAdmin
       .from("security_scan_runs")

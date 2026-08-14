@@ -8,7 +8,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { CalendarClock, CalendarPlus, ChevronLeft, ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  CalendarClock,
+  CalendarPlus,
+  ChevronLeft,
+  ChevronRight,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { invalidateClinicAppointments } from "../hooks/useClinicAppointments";
@@ -94,8 +102,7 @@ export function AppointmentsSection({
       return { gte: tzDayStart(tz, 0).toISOString(), lt: tzDayStart(tz, 7).toISOString() };
     if (dateF === "30d")
       return { gte: tzDayStart(tz, 0).toISOString(), lt: tzDayStart(tz, 30).toISOString() };
-    if (dateF === "past")
-      return { lt: new Date().toISOString() };
+    if (dateF === "past") return { lt: new Date().toISOString() };
     return null;
   }, [dateF, tz]);
 
@@ -146,8 +153,6 @@ export function AppointmentsSection({
     [doctors],
   );
 
-
-
   async function deleteAppt(a: AppointmentRow) {
     const { error } = await supabase.from("appointments").delete().eq("id", a.id);
     if (error) {
@@ -159,8 +164,6 @@ export function AppointmentsSection({
     qc.invalidateQueries({ queryKey: ["mgr-appts-page", clinic.id] });
     setConfirmDelete(null);
   }
-
-
 
   return (
     <SectionShell
@@ -178,7 +181,6 @@ export function AppointmentsSection({
           <span className="text-xs tabular-nums text-muted-foreground">
             {total} {total === 1 ? "appointment" : "appointments"}
           </span>
-
         }
       >
         <Input
@@ -189,7 +191,10 @@ export function AppointmentsSection({
           aria-label="Search appointments"
         />
         <Select value={statusF} onValueChange={(v) => setStatusF(v as ApptStatusFilter)}>
-          <SelectTrigger className="h-9 w-full sm:w-[150px] capitalize" aria-label="Filter by status">
+          <SelectTrigger
+            className="h-9 w-full sm:w-[150px] capitalize"
+            aria-label="Filter by status"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -245,14 +250,22 @@ export function AppointmentsSection({
               {apptsQ.isLoading &&
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={`sk-${i}`}>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
                     <TableCell>
                       <Skeleton className="h-4 w-28" />
                       <Skeleton className="mt-1.5 h-3 w-36" />
                     </TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20 rounded-full" />
+                    </TableCell>
                     <TableCell className="text-right">
                       <Skeleton className="ml-auto h-8 w-20 rounded-md" />
                     </TableCell>
@@ -279,12 +292,13 @@ export function AppointmentsSection({
                 </TableRow>
               )}
               {rows.map((a) => {
-                const initials = a.patient_name
-                  .split(" ")
-                  .filter(Boolean)
-                  .slice(0, 2)
-                  .map((p) => p[0]?.toUpperCase())
-                  .join("") || "?";
+                const initials =
+                  a.patient_name
+                    .split(" ")
+                    .filter(Boolean)
+                    .slice(0, 2)
+                    .map((p) => p[0]?.toUpperCase())
+                    .join("") || "?";
                 const date = formatInTz(a.scheduled_at, clinic.timezone, {
                   month: "short",
                   day: "numeric",
@@ -317,9 +331,7 @@ export function AppointmentsSection({
                       </div>
                     </TableCell>
                     <TableCell className="text-sm tabular-nums">{a.patient_phone}</TableCell>
-                    <TableCell className="text-sm">
-                      {doctorMap[a.doctor_id] ?? "—"}
-                    </TableCell>
+                    <TableCell className="text-sm">{doctorMap[a.doctor_id] ?? "—"}</TableCell>
                     <TableCell>
                       <StatusBadge status={a.status} />
                     </TableCell>
@@ -397,7 +409,6 @@ export function AppointmentsSection({
         </div>
       </Card>
 
-
       {(editing || creating) && (
         <AppointmentEditDialog
           clinicId={clinic.id}
@@ -421,16 +432,12 @@ export function AppointmentsSection({
         />
       )}
 
-      <AlertDialog
-        open={!!confirmDelete}
-        onOpenChange={(v) => !v && setConfirmDelete(null)}
-      >
+      <AlertDialog open={!!confirmDelete} onOpenChange={(v) => !v && setConfirmDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this appointment?</AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently removes the booking. The patient will not be
-              notified.
+              This permanently removes the booking. The patient will not be notified.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -16,12 +16,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { updateDoctorInterval } from "@/lib/clinicmanager.functions";
 
 import { Card, SectionShell } from "../shared/SectionShell";
@@ -73,12 +68,10 @@ function DoctorIntervalsTab({
   if (doctors.length === 0) {
     return (
       <Card>
-        <h3 className="text-base font-semibold">
-          Per-doctor appointment intervals
-        </h3>
+        <h3 className="text-base font-semibold">Per-doctor appointment intervals</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          No doctors yet. Add a doctor in the Doctors section to configure their
-          appointment interval here.
+          No doctors yet. Add a doctor in the Doctors section to configure their appointment
+          interval here.
         </p>
       </Card>
     );
@@ -86,9 +79,7 @@ function DoctorIntervalsTab({
   return (
     <Card className="p-0">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
-        <h3 className="text-base font-semibold">
-          Per-doctor appointment intervals
-        </h3>
+        <h3 className="text-base font-semibold">Per-doctor appointment intervals</h3>
         <span className="text-xs text-muted-foreground">
           Default 15 min · used for patient booking slot length
         </span>
@@ -102,13 +93,7 @@ function DoctorIntervalsTab({
   );
 }
 
-function DoctorIntervalRow({
-  clinicId,
-  doctor,
-}: {
-  clinicId: string;
-  doctor: DashboardDoctor;
-}) {
+function DoctorIntervalRow({ clinicId, doctor }: { clinicId: string; doctor: DashboardDoctor }) {
   const qc = useQueryClient();
   const save = useServerFn(updateDoctorInterval);
   const initial = doctor.appointment_duration_minutes ?? 15;
@@ -162,9 +147,7 @@ function DoctorIntervalRow({
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">{doctor.name}</div>
         {doctor.specialization && (
-          <div className="truncate text-xs text-muted-foreground">
-            {doctor.specialization}
-          </div>
+          <div className="truncate text-xs text-muted-foreground">{doctor.specialization}</div>
         )}
       </div>
       <select
@@ -200,4 +183,3 @@ function DoctorIntervalRow({
     </div>
   );
 }
-

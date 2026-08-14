@@ -12,8 +12,7 @@
 export function maskPhone(phone: string | undefined | null): string {
   if (!phone) return "XXXXXXXXXX";
   const digits = phone.replace(/\D/g, "");
-  const local =
-    digits.startsWith("91") && digits.length === 12 ? digits.slice(2) : digits;
+  const local = digits.startsWith("91") && digits.length === 12 ? digits.slice(2) : digits;
   if (local.length < 5) return "XXXXXXXXXX";
   return "XXXXX" + local.slice(-5);
 }

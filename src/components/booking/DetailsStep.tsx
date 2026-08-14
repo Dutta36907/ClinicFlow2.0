@@ -104,7 +104,6 @@ export function DetailsStep({
     }
   }
 
-
   return (
     <form
       className="space-y-4"
@@ -116,9 +115,7 @@ export function DetailsStep({
       <BackBtn onClick={onBack} />
 
       <div className="space-y-1">
-        <h3 className="font-display text-lg font-semibold tracking-tight">
-          Your details
-        </h3>
+        <h3 className="font-display text-lg font-semibold tracking-tight">Your details</h3>
         <p className="text-sm text-muted-foreground">
           We'll use these to confirm your booking and send reminders.
         </p>
@@ -167,13 +164,7 @@ export function DetailsStep({
         />
       </Field>
 
-      <Field
-        id="pe"
-        label="Email"
-        optional
-        icon={Mail}
-        error={touched.email ? errors.email : null}
-      >
+      <Field id="pe" label="Email" optional icon={Mail} error={touched.email ? errors.email : null}>
         <Input
           id="pe"
           type="email"
@@ -217,9 +208,14 @@ export function DetailsStep({
           aria-describedby="consent-text"
         />
         <span id="consent-text" className="text-muted-foreground">
-          I consent to the clinic storing my name, phone, and (optional) email
-          to confirm this booking and send reminders, as described in the{" "}
-          <a href="/privacy" target="_blank" rel="noopener" className="text-primary hover:underline">
+          I consent to the clinic storing my name, phone, and (optional) email to confirm this
+          booking and send reminders, as described in the{" "}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener"
+            className="text-primary hover:underline"
+          >
             Privacy Policy
           </a>
           .
@@ -268,9 +264,7 @@ function Field({
           {label}
           {required ? <span className="ml-0.5 text-destructive">*</span> : null}
         </Label>
-        {optional ? (
-          <span className="text-[11px] text-muted-foreground">Optional</span>
-        ) : null}
+        {optional ? <span className="text-[11px] text-muted-foreground">Optional</span> : null}
       </div>
       <div className="relative">
         <Icon

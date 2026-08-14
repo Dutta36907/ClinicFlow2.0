@@ -70,7 +70,14 @@ export function LandingHeader({ onCta }: { onCta: () => void }) {
               <Button asChild size="sm" variant="outline" className="flex-1">
                 <Link to="/login">Sign in</Link>
               </Button>
-              <Button size="sm" className="flex-1" onClick={() => { setOpen(false); onCta(); }}>
+              <Button
+                size="sm"
+                className="flex-1"
+                onClick={() => {
+                  setOpen(false);
+                  onCta();
+                }}
+              >
                 Request Demo
               </Button>
             </div>

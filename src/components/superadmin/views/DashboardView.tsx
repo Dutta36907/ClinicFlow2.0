@@ -8,13 +8,7 @@ import { getSuperAdminDashboard } from "@/lib/dashboard.functions";
 import { SuperAdminLayout } from "@/components/SuperAdminLayout";
 import { useSuperAdminView } from "@/stores/superadminViewStore";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -73,11 +67,17 @@ export function DashboardView() {
               Welcome back, Admin
             </h2>
             <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-              Here's a snapshot of every clinic, doctor, and appointment moving through the platform today.
+              Here's a snapshot of every clinic, doctor, and appointment moving through the platform
+              today.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={() => setView("clinics")} className="gap-1.5 bg-background/70 backdrop-blur">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setView("clinics")}
+              className="gap-1.5 bg-background/70 backdrop-blur"
+            >
               <Building2 className="size-4" /> Manage clinics
             </Button>
             <Button size="sm" onClick={() => setView("appointments")} className="gap-1.5">
@@ -130,7 +130,12 @@ export function DashboardView() {
         <MiniStat label="Active clinics" value={activeClinics} icon={CheckCircle2} tone="chart-2" />
         <MiniStat label="Inactive" value={inactiveClinics} icon={PauseCircle} tone="muted" />
         <MiniStat label="Pending appts" value={pendingAppts} icon={Activity} tone="chart-3" />
-        <MiniStat label="New this week" value={newClinicsWeek + newApptsWeek} icon={TrendingUp} tone="primary" />
+        <MiniStat
+          label="New this week"
+          value={newClinicsWeek + newApptsWeek}
+          icon={TrendingUp}
+          tone="primary"
+        />
       </div>
 
       {/* Lists */}
@@ -167,7 +172,11 @@ export function DashboardView() {
                     </div>
                     <Badge
                       variant={cl.is_active ? "default" : "secondary"}
-                      className={cl.is_active ? "shrink-0 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-300" : "shrink-0"}
+                      className={
+                        cl.is_active
+                          ? "shrink-0 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-300"
+                          : "shrink-0"
+                      }
                     >
                       {cl.is_active ? "Active" : "Inactive"}
                     </Badge>
@@ -186,7 +195,12 @@ export function DashboardView() {
               <CardTitle className="text-base">Upcoming activity</CardTitle>
               <CardDescription>Latest appointments</CardDescription>
             </div>
-            <Button variant="ghost" size="sm" className="gap-1" onClick={() => setView("appointments")}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1"
+              onClick={() => setView("appointments")}
+            >
               View <ArrowUpRight className="size-3.5" />
             </Button>
           </CardHeader>
@@ -202,27 +216,32 @@ export function DashboardView() {
                       a.status === "confirmed"
                         ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
                         : a.status === "pending"
-                        ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
-                        : a.status === "cancelled"
-                        ? "bg-destructive/10 text-destructive border-destructive/30"
-                        : "bg-muted text-muted-foreground border-border";
+                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                          : a.status === "cancelled"
+                            ? "bg-destructive/10 text-destructive border-destructive/30"
+                            : "bg-muted text-muted-foreground border-border";
                     const dot =
                       a.status === "confirmed"
                         ? "bg-emerald-500"
                         : a.status === "pending"
-                        ? "bg-amber-500"
-                        : a.status === "cancelled"
-                        ? "bg-destructive"
-                        : "bg-muted-foreground/50";
+                          ? "bg-amber-500"
+                          : a.status === "cancelled"
+                            ? "bg-destructive"
+                            : "bg-muted-foreground/50";
                     return (
-                      <li key={a.id} className="flex items-start gap-3 px-6 py-3 transition-colors hover:bg-muted/40">
+                      <li
+                        key={a.id}
+                        className="flex items-start gap-3 px-6 py-3 transition-colors hover:bg-muted/40"
+                      >
                         <div className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/15">
                           <CalendarCheck2 className="size-4" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between gap-2">
                             <p className="truncate text-sm font-medium">{a.patient_name}</p>
-                            <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium capitalize ${tone}`}>
+                            <span
+                              className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium capitalize ${tone}`}
+                            >
                               <span className={`size-1.5 rounded-full ${dot}`} />
                               {a.status}
                             </span>

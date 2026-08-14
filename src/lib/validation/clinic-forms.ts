@@ -81,18 +81,15 @@ const tagListInput = (label: string) =>
     .string()
     .trim()
     .max(LIMITS.tag.max * LIMITS.tagList.max + LIMITS.tagList.max * 2)
-    .refine(
-      (v) => {
-        if (!v) return true;
-        const items = v
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean);
-        if (items.length > LIMITS.tagList.max) return false;
-        return items.every((it) => it.length <= LIMITS.tag.max);
-      },
-      `${label} must be a comma-separated list (max ${LIMITS.tagList.max} items, each up to ${LIMITS.tag.max} chars)`,
-    );
+    .refine((v) => {
+      if (!v) return true;
+      const items = v
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      if (items.length > LIMITS.tagList.max) return false;
+      return items.every((it) => it.length <= LIMITS.tag.max);
+    }, `${label} must be a comma-separated list (max ${LIMITS.tagList.max} items, each up to ${LIMITS.tag.max} chars)`);
 
 const doctorSchema = z.object({
   name: z
@@ -192,10 +189,7 @@ type ValidateResult<T> =
   | { ok: true; data: T; errors: Record<string, string> }
   | { ok: false; errors: Record<string, string> };
 
-function run<S extends z.ZodTypeAny>(
-  schema: S,
-  input: unknown,
-): ValidateResult<z.output<S>> {
+function run<S extends z.ZodTypeAny>(schema: S, input: unknown): ValidateResult<z.output<S>> {
   const result = schema.safeParse(input);
   if (result.success) return { ok: true, data: result.data, errors: {} };
   const errors: Record<string, string> = {};
@@ -208,12 +202,9 @@ function run<S extends z.ZodTypeAny>(
 }
 
 export const validateDoctorForm = (input: unknown) => run(doctorSchema, input);
-export const validateClinicProfile = (input: unknown) =>
-  run(clinicProfileSchema, input);
-export const validateTeamMember = (input: unknown) =>
-  run(teamMemberSchema, input);
-export const validateAppointmentPatient = (input: unknown) =>
-  run(appointmentPatientSchema, input);
+export const validateClinicProfile = (input: unknown) => run(clinicProfileSchema, input);
+export const validateTeamMember = (input: unknown) => run(teamMemberSchema, input);
+export const validateAppointmentPatient = (input: unknown) => run(appointmentPatientSchema, input);
 
 // ---------------------------------------------------------------------------
 // Server-error formatter — turns a stringified zod issue array (which is what
@@ -230,9 +221,7 @@ export function formatServerError(err: unknown, fallback = "Something went wrong
       if (Array.isArray(issues) && issues.length > 0) {
         const first = issues[0];
         const field =
-          Array.isArray(first?.path) && first.path.length > 0
-            ? first.path.join(".")
-            : null;
+          Array.isArray(first?.path) && first.path.length > 0 ? first.path.join(".") : null;
         const message = first?.message ?? fallback;
         return field ? `${field}: ${message}` : message;
       }

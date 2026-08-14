@@ -96,14 +96,11 @@ export function useClinicAppointments(clinicId: string | null | undefined) {
           if (payload.eventType === "INSERT" && armedRef.current) {
             const row = payload.new as Partial<AppointmentRow> | null;
             playChime();
-            toast.success(
-              `New booking${row?.patient_name ? ` — ${row.patient_name}` : ""}`,
-              {
-                description: row?.scheduled_at
-                  ? new Date(row.scheduled_at).toLocaleString()
-                  : undefined,
-              },
-            );
+            toast.success(`New booking${row?.patient_name ? ` — ${row.patient_name}` : ""}`, {
+              description: row?.scheduled_at
+                ? new Date(row.scheduled_at).toLocaleString()
+                : undefined,
+            });
           }
         },
       )
@@ -132,4 +129,3 @@ export function invalidateClinicAppointments(
   qc.invalidateQueries({ queryKey: clinicAppointmentsKey(clinicId) });
   qc.invalidateQueries({ queryKey: ["mgr-appts-page", clinicId] });
 }
-

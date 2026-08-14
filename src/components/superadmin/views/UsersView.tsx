@@ -10,16 +10,30 @@ import { useTablePagination } from "./shared/useTablePagination";
 
 const ROLE_META: Record<string, { label: string; icon: typeof Users; tone: string }> = {
   admin: { label: "Admin", icon: ShieldCheck, tone: "bg-primary/10 text-primary ring-primary/20" },
-  doctor: { label: "Doctor", icon: Stethoscope, tone: "bg-chart-1/10 text-[color:var(--chart-1)] ring-[color:var(--chart-1)]/20" },
-  receptionist: { label: "Receptionist", icon: CalendarCheck2, tone: "bg-chart-2/10 text-[color:var(--chart-2)] ring-[color:var(--chart-2)]/20" },
+  doctor: {
+    label: "Doctor",
+    icon: Stethoscope,
+    tone: "bg-chart-1/10 text-[color:var(--chart-1)] ring-[color:var(--chart-1)]/20",
+  },
+  receptionist: {
+    label: "Receptionist",
+    icon: CalendarCheck2,
+    tone: "bg-chart-2/10 text-[color:var(--chart-2)] ring-[color:var(--chart-2)]/20",
+  },
   user: { label: "User", icon: UserCircle, tone: "bg-muted text-muted-foreground ring-border" },
 };
 
 function RoleBadge({ role }: { role: string }) {
-  const meta = ROLE_META[role] ?? { label: role, icon: UserCircle, tone: "bg-muted text-muted-foreground ring-border" };
+  const meta = ROLE_META[role] ?? {
+    label: role,
+    icon: UserCircle,
+    tone: "bg-muted text-muted-foreground ring-border",
+  };
   const Icon = meta.icon;
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${meta.tone}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${meta.tone}`}
+    >
       <Icon className="size-3" />
       {meta.label}
     </span>
@@ -83,9 +97,15 @@ export function UsersView() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3"><Skeleton className="h-3.5 w-24" /></td>
-                    <td className="px-4 py-3"><Skeleton className="h-5 w-20 rounded-full" /></td>
-                    <td className="px-4 py-3"><Skeleton className="h-3.5 w-20" /></td>
+                    <td className="px-4 py-3">
+                      <Skeleton className="h-3.5 w-24" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Skeleton className="h-5 w-20 rounded-full" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Skeleton className="h-3.5 w-20" />
+                    </td>
                   </tr>
                 ))
               ) : rows.length === 0 ? (
@@ -100,7 +120,10 @@ export function UsersView() {
                 </tr>
               ) : (
                 rows.map((u) => (
-                  <tr key={u.id} className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
+                  <tr
+                    key={u.id}
+                    className="border-b border-border last:border-0 transition-colors hover:bg-muted/40"
+                  >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/15">
@@ -108,7 +131,9 @@ export function UsersView() {
                         </div>
                         <div className="min-w-0">
                           <div className="truncate font-medium">{u.full_name || "—"}</div>
-                          <div className="truncate text-xs text-muted-foreground">{u.id.slice(0, 8)}…</div>
+                          <div className="truncate text-xs text-muted-foreground">
+                            {u.id.slice(0, 8)}…
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -136,4 +161,3 @@ export function UsersView() {
     </SuperAdminLayout>
   );
 }
-

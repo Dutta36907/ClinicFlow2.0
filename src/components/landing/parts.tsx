@@ -25,7 +25,9 @@ export function ContactItem({
       </span>
       <div className="min-w-0">
         <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
-        <p className="truncate text-sm font-medium text-foreground group-hover:text-primary">{value}</p>
+        <p className="truncate text-sm font-medium text-foreground group-hover:text-primary">
+          {value}
+        </p>
       </div>
     </a>
   );

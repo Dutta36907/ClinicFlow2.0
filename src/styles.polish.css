@@ -57,20 +57,23 @@
 
 /* ---- Cards: lift on hover (subtle) ---- */
 .ui-v2 .lift-on-hover {
-  transition: transform 0.18s ease, box-shadow 0.18s ease,
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
     border-color 0.18s ease;
 }
 .ui-v2 .lift-on-hover:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 40px -22px
-    color-mix(in oklab, var(--primary) 30%, transparent);
+  box-shadow: 0 14px 40px -22px color-mix(in oklab, var(--primary) 30%, transparent);
   border-color: color-mix(in oklab, var(--border) 70%, var(--primary) 20%);
 }
 
 /* ---- Focus rings on bare buttons (filter pills, range pills) ---- */
 .ui-v2 .focus-pill:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--ring);
 }
 
 /* ---- Skeleton softening so it doesn't shimmer too harshly ---- */
@@ -80,11 +83,7 @@
 
 /* ---- Sidebar active-state contrast bump ---- */
 .ui-v2 [data-sidebar="menu-button"][data-active="true"] {
-  background-color: color-mix(
-    in oklab,
-    var(--sidebar-accent) 100%,
-    var(--sidebar-primary) 12%
-  );
+  background-color: color-mix(in oklab, var(--sidebar-accent) 100%, var(--sidebar-primary) 12%);
   color: var(--sidebar-primary);
   font-weight: 600;
 }

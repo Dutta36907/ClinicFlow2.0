@@ -15,7 +15,11 @@ import { assertRateLimit, getClientIp } from "@/lib/server/rate-limit";
 import { AppError, maskPhone } from "@/lib/errors";
 import { logger } from "@/lib/logger.server";
 
-const slugSchema = z.string().min(1).max(120).regex(/^[a-z0-9-]+$/i);
+const slugSchema = z
+  .string()
+  .min(1)
+  .max(120)
+  .regex(/^[a-z0-9-]+$/i);
 
 // Public booking reads go through the service-role admin client. The three
 // recent security findings (clinics_notification_plan_fields_public,
@@ -35,12 +39,16 @@ export const getClinicBySlug = createServerFn({ method: "GET" })
   .inputValidator((d: { slug: string }) => ({ slug: slugSchema.parse(d.slug.toLowerCase()) }))
   .handler(async ({ data }) => {
     // Cheap public read — generous bucket per IP to absorb crawlers/refresh.
-    await assertRateLimit(`clinic:${getClientIp()}`, { capacity: 120, refillSeconds: 60, label: "page" });
+    await assertRateLimit(`clinic:${getClientIp()}`, {
+      capacity: 120,
+      refillSeconds: 60,
+      label: "page",
+    });
     const sb = await supabasePublic();
     const { data: clinic, error } = await sb
       .from("clinics")
       .select(
-        "id, slug, name, phone, email, whatsapp, website, google_map_url, description, tagline, address, logo_url, cover_image_url, performance_stats, timezone, working_hours, appointment_duration_minutes, is_active, expires_at"
+        "id, slug, name, phone, email, whatsapp, website, google_map_url, description, tagline, address, logo_url, cover_image_url, performance_stats, timezone, working_hours, appointment_duration_minutes, is_active, expires_at",
       )
       .eq("slug", data.slug)
       .maybeSingle();
@@ -58,7 +66,11 @@ export const getClinicBySlug = createServerFn({ method: "GET" })
 export const getClinicPageContent = createServerFn({ method: "GET" })
   .inputValidator((d: { clinicId: string }) => ({ clinicId: z.string().uuid().parse(d.clinicId) }))
   .handler(async ({ data }) => {
-    await assertRateLimit(`pagecontent:${getClientIp()}`, { capacity: 120, refillSeconds: 60, label: "page content" });
+    await assertRateLimit(`pagecontent:${getClientIp()}`, {
+      capacity: 120,
+      refillSeconds: 60,
+      label: "page content",
+    });
     const sb = await supabasePublic();
     const [treatments, testimonials, gallery] = await Promise.all([
       sb
@@ -91,7 +103,11 @@ export const getClinicPageContent = createServerFn({ method: "GET" })
 export const getDoctorsForClinic = createServerFn({ method: "GET" })
   .inputValidator((d: { clinicId: string }) => ({ clinicId: z.string().uuid().parse(d.clinicId) }))
   .handler(async ({ data }) => {
-    await assertRateLimit(`doctors:${getClientIp()}`, { capacity: 120, refillSeconds: 60, label: "doctor list" });
+    await assertRateLimit(`doctors:${getClientIp()}`, {
+      capacity: 120,
+      refillSeconds: 60,
+      label: "doctor list",
+    });
     const sb = await supabasePublic();
     const { data: doctors, error } = await sb
       .from("doctors")
@@ -111,13 +127,17 @@ export const getDoctorsForClinic = createServerFn({ method: "GET" })
 export const getClinicLanding = createServerFn({ method: "GET" })
   .inputValidator((d: { slug: string }) => ({ slug: slugSchema.parse(d.slug.toLowerCase()) }))
   .handler(async ({ data }) => {
-    await assertRateLimit(`landing:${getClientIp()}`, { capacity: 120, refillSeconds: 60, label: "landing page" });
+    await assertRateLimit(`landing:${getClientIp()}`, {
+      capacity: 120,
+      refillSeconds: 60,
+      label: "landing page",
+    });
     const sb = await supabasePublic();
 
     const { data: clinicRow, error: clinicErr } = await sb
       .from("clinics")
       .select(
-        "id, slug, name, phone, email, whatsapp, website, google_map_url, description, tagline, address, logo_url, cover_image_url, performance_stats, timezone, working_hours, appointment_duration_minutes, is_active, expires_at"
+        "id, slug, name, phone, email, whatsapp, website, google_map_url, description, tagline, address, logo_url, cover_image_url, performance_stats, timezone, working_hours, appointment_duration_minutes, is_active, expires_at",
       )
       .eq("slug", data.slug)
       .maybeSingle();
@@ -195,7 +215,11 @@ export const getPublicDoctorProfile = createServerFn({ method: "GET" })
     doctorId: z.string().uuid().parse(d.doctorId),
   }))
   .handler(async ({ data }) => {
-    await assertRateLimit(`doctor:${getClientIp()}`, { capacity: 120, refillSeconds: 60, label: "doctor profile" });
+    await assertRateLimit(`doctor:${getClientIp()}`, {
+      capacity: 120,
+      refillSeconds: 60,
+      label: "doctor profile",
+    });
     const sb = await supabasePublic();
     const { data: doctor, error } = await sb
       .from("doctors")
@@ -241,7 +265,11 @@ export const getAvailableSlots = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => slotsInput.parse(d))
   .handler(async ({ data }) => {
     // Anti-scraping cap on this unauthenticated lookup.
-    await assertRateLimit(`slots:${getClientIp()}`, { capacity: 30, refillSeconds: 60, label: "slot lookup" });
+    await assertRateLimit(`slots:${getClientIp()}`, {
+      capacity: 30,
+      refillSeconds: 60,
+      label: "slot lookup",
+    });
     const { zonedWallTimeToUtc, utcToZonedParts } = await import("./clinic-time");
     const sb = await supabasePublic();
 
@@ -395,7 +423,12 @@ export const getAvailableSlots = createServerFn({ method: "GET" })
 //     existing SMS dispatch path. The plaintext code is never returned
 //     (except for 'dev' in non-production builds).
 
-const phoneSchema = z.string().trim().min(6).max(20).regex(/^[+\d\s()-]+$/);
+const phoneSchema = z
+  .string()
+  .trim()
+  .min(6)
+  .max(20)
+  .regex(/^[+\d\s()-]+$/);
 const sessionIdSchema = z.string().uuid();
 
 function hashCode(code: string) {
@@ -414,25 +447,24 @@ function hashSessionId(sessionId: string) {
 // (operator toggles it once); reading service-role on every page hit is
 // wasteful. Cache TTL keeps response < 1ms in steady state and bounds the
 // staleness window when an operator switches providers.
-let _bookingCfg: { value: { otpProvider: "on_screen" | "sms" | "dev" }; expires: number } | null = null;
-export const getBookingConfig = createServerFn({ method: "GET" }).handler(
-  async () => {
-    const now = Date.now();
-    if (_bookingCfg && _bookingCfg.expires > now) return _bookingCfg.value;
-    const supabaseAdmin = await getAdmin();
-    const { data } = await supabaseAdmin
-      .from("platform_settings")
-      .select("sms")
-      .limit(1)
-      .maybeSingle();
-    const provider = (data?.sms as { provider?: string } | null)?.provider ?? "on_screen";
-    const otpProvider: "on_screen" | "sms" | "dev" =
-      provider === "on_screen" ? "on_screen" : provider === "dev" ? "dev" : "sms";
-    const value = { otpProvider };
-    _bookingCfg = { value, expires: now + 60_000 };
-    return value;
-  },
-);
+let _bookingCfg: { value: { otpProvider: "on_screen" | "sms" | "dev" }; expires: number } | null =
+  null;
+export const getBookingConfig = createServerFn({ method: "GET" }).handler(async () => {
+  const now = Date.now();
+  if (_bookingCfg && _bookingCfg.expires > now) return _bookingCfg.value;
+  const supabaseAdmin = await getAdmin();
+  const { data } = await supabaseAdmin
+    .from("platform_settings")
+    .select("sms")
+    .limit(1)
+    .maybeSingle();
+  const provider = (data?.sms as { provider?: string } | null)?.provider ?? "on_screen";
+  const otpProvider: "on_screen" | "sms" | "dev" =
+    provider === "on_screen" ? "on_screen" : provider === "dev" ? "dev" : "sms";
+  const value = { otpProvider };
+  _bookingCfg = { value, expires: now + 60_000 };
+  return value;
+});
 
 /**
  * Request an on-screen OTP. The plaintext code is generated using Node's
@@ -491,7 +523,10 @@ export const requestOnScreenOtp = createServerFn({ method: "POST" })
       method: "on_screen",
     });
     if (error) {
-      throw new AppError("Could not generate verification code.", { code: "INTERNAL_ERROR", cause: error });
+      throw new AppError("Could not generate verification code.", {
+        code: "INTERNAL_ERROR",
+        cause: error,
+      });
     }
 
     // Audit (no plaintext code, no full phone, no full session id).
@@ -527,7 +562,10 @@ export const requestOnScreenOtp = createServerFn({ method: "POST" })
 export const verifyOnScreenOtp = createServerFn({ method: "POST" })
   .inputValidator((d: { phone: string; code: string; sessionId: string }) => ({
     phone: phoneSchema.parse(d.phone),
-    code: z.string().regex(/^\d{6}$/).parse(d.code),
+    code: z
+      .string()
+      .regex(/^\d{6}$/)
+      .parse(d.code),
     sessionId: sessionIdSchema.parse(d.sessionId),
   }))
   .handler(async ({ data }) => {
@@ -552,10 +590,18 @@ export const verifyOnScreenOtp = createServerFn({ method: "POST" })
     const row = rows?.[0];
 
     if (!row) {
-      return { ok: false as const, code: "OTP_NOT_FOUND" as const, error: "No active code found. Please request a new one." };
+      return {
+        ok: false as const,
+        code: "OTP_NOT_FOUND" as const,
+        error: "No active code found. Please request a new one.",
+      };
     }
     if (new Date(row.expires_at) < new Date()) {
-      return { ok: false as const, code: "OTP_EXPIRED" as const, error: "Your code has expired. Please request a new one." };
+      return {
+        ok: false as const,
+        code: "OTP_EXPIRED" as const,
+        error: "Your code has expired. Please request a new one.",
+      };
     }
     if ((row.attempts ?? 0) >= 5) {
       // Brute-force alert: count recent max-attempts hits from this IP in last 10 min.
@@ -584,7 +630,11 @@ export const verifyOnScreenOtp = createServerFn({ method: "POST" })
       } catch {
         /* best-effort */
       }
-      return { ok: false as const, code: "OTP_MAX_ATTEMPTS" as const, error: "Too many incorrect attempts. Request a new code." };
+      return {
+        ok: false as const,
+        code: "OTP_MAX_ATTEMPTS" as const,
+        error: "Too many incorrect attempts. Request a new code.",
+      };
     }
     if (row.session_id_hash !== sessionIdHash) {
       logger.warn({
@@ -601,14 +651,22 @@ export const verifyOnScreenOtp = createServerFn({ method: "POST" })
       } catch {
         /* best-effort */
       }
-      return { ok: false as const, code: "OTP_SESSION_MISMATCH" as const, error: "Verification failed. Please request a new code." };
+      return {
+        ok: false as const,
+        code: "OTP_SESSION_MISMATCH" as const,
+        error: "Verification failed. Please request a new code.",
+      };
     }
     if (row.code_hash !== hashCode(data.code)) {
       await supabaseAdmin
         .from("patient_otp")
         .update({ attempts: (row.attempts ?? 0) + 1 })
         .eq("id", row.id);
-      return { ok: false as const, code: "OTP_INVALID" as const, error: "Incorrect code. Please try again." };
+      return {
+        ok: false as const,
+        code: "OTP_INVALID" as const,
+        error: "Incorrect code. Please try again.",
+      };
     }
 
     // Success: consume the OTP row, mint a verification token. The token is
@@ -641,12 +699,28 @@ export const requestPatientOtp = createServerFn({ method: "POST" })
     try {
       // 30s cooldown per phone+IP — matches the client-side resend timer and
       // blocks scripted resends that bypass the UI countdown.
-      await assertRateLimit(`otp:cooldown:phone:${data.phone}`, { capacity: 1, refillSeconds: 30, label: "verification code (please wait 30s between requests)" });
-      await assertRateLimit(`otp:cooldown:ip:${clientIp}`, { capacity: 1, refillSeconds: 30, label: "verification code (please wait 30s between requests)" });
+      await assertRateLimit(`otp:cooldown:phone:${data.phone}`, {
+        capacity: 1,
+        refillSeconds: 30,
+        label: "verification code (please wait 30s between requests)",
+      });
+      await assertRateLimit(`otp:cooldown:ip:${clientIp}`, {
+        capacity: 1,
+        refillSeconds: 30,
+        label: "verification code (please wait 30s between requests)",
+      });
       // Hourly limits: per phone (stops targeting one number) + per IP (stops botnets).
       // DPDP / abuse hardening: keep both layers tight.
-      await assertRateLimit(`otp:req:phone:${data.phone}`, { capacity: 3, refillSeconds: 3600, label: "verification code" });
-      await assertRateLimit(`otp:req:ip:${clientIp}`, { capacity: 10, refillSeconds: 3600, label: "verification code" });
+      await assertRateLimit(`otp:req:phone:${data.phone}`, {
+        capacity: 3,
+        refillSeconds: 3600,
+        label: "verification code",
+      });
+      await assertRateLimit(`otp:req:ip:${clientIp}`, {
+        capacity: 10,
+        refillSeconds: 3600,
+        label: "verification code",
+      });
     } catch (e) {
       blocked = true;
       blockReason = e instanceof Error ? e.message : undefined;
@@ -729,18 +803,28 @@ export const requestPatientOtp = createServerFn({ method: "POST" })
     };
   });
 
-
 export const verifyPatientOtp = createServerFn({ method: "POST" })
   .inputValidator((d: { phone: string; code: string }) => ({
     phone: phoneSchema.parse(d.phone),
-    code: z.string().regex(/^\d{6}$/).parse(d.code),
+    code: z
+      .string()
+      .regex(/^\d{6}$/)
+      .parse(d.code),
   }))
   .handler(async ({ data }) => {
     const clientIp = getClientIp();
     // M4: tighten brute-force protection on the SMS verify path.
     // Phone: 5 attempts / 10 min. IP: 30 / 10 min. Parity with on-screen path.
-    await assertRateLimit(`otp:vfy:phone:${data.phone}`, { capacity: 5, refillSeconds: 600, label: "verification" });
-    await assertRateLimit(`otp:vfy:ip:${clientIp}`, { capacity: 30, refillSeconds: 600, label: "verification" });
+    await assertRateLimit(`otp:vfy:phone:${data.phone}`, {
+      capacity: 5,
+      refillSeconds: 600,
+      label: "verification",
+    });
+    await assertRateLimit(`otp:vfy:ip:${clientIp}`, {
+      capacity: 30,
+      refillSeconds: 600,
+      label: "verification",
+    });
     const supabaseAdmin = await getAdmin();
     const { data: rows } = await supabaseAdmin
       .from("patient_otp")
@@ -787,7 +871,10 @@ export const verifyPatientOtp = createServerFn({ method: "POST" })
       return { ok: false, error: GENERIC };
     }
     if (row.code_hash !== hashCode(data.code)) {
-      await supabaseAdmin.from("patient_otp").update({ attempts: row.attempts + 1 }).eq("id", row.id);
+      await supabaseAdmin
+        .from("patient_otp")
+        .update({ attempts: row.attempts + 1 })
+        .eq("id", row.id);
       return { ok: false, error: GENERIC };
     }
     const token = randomBytes(24).toString("hex");
@@ -812,15 +899,23 @@ const createApptInput = z.object({
   verifyToken: z.string().min(20),
   // DPDP Act 2023: explicit consent required before storing patient PII.
   consent: z.literal(true, {
-    errorMap: () => ({ message: "Consent is required to book an appointment." }),
+    message: "Consent is required to book an appointment.",
   }),
 });
 
 export const createAppointment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => createApptInput.parse(d))
   .handler(async ({ data }) => {
-    await assertRateLimit(`book:phone:${data.patientPhone}`, { capacity: 5, refillSeconds: 600, label: "booking" });
-    await assertRateLimit(`book:ip:${getClientIp()}`, { capacity: 20, refillSeconds: 600, label: "booking" });
+    await assertRateLimit(`book:phone:${data.patientPhone}`, {
+      capacity: 5,
+      refillSeconds: 600,
+      label: "booking",
+    });
+    await assertRateLimit(`book:ip:${getClientIp()}`, {
+      capacity: 20,
+      refillSeconds: 600,
+      label: "booking",
+    });
     const supabaseAdmin = await getAdmin();
     // Validate verify token (it replaced code_hash on success)
     const { data: otpRow } = await supabaseAdmin
@@ -886,8 +981,7 @@ export const createAppointment = createServerFn({ method: "POST" })
       // permitted when the window itself is at least one duration long. This
       // mirrors generateDoctorSlots / getDoctorSlots which surface that slot.
       const isTrailing =
-        scheduledMs === windowEndMs &&
-        windowEndMs - windowStartMs >= docDuration * 60_000;
+        scheduledMs === windowEndMs && windowEndMs - windowStartMs >= docDuration * 60_000;
       if (!isTrailing && scheduledMs + docDuration * 60_000 > windowEndMs) return false;
       const offsetMin = (scheduledMs - windowStartMs) / 60_000;
       return Number.isInteger(offsetMin) && offsetMin % docDuration === 0;
@@ -976,11 +1070,19 @@ export const createAppointment = createServerFn({ method: "POST" })
         .select("name")
         .eq("id", data.doctorId)
         .maybeSingle();
-      const local2 = tz2(new Date(appt.scheduled_at), (clinic as { timezone?: string | null }).timezone || "UTC");
+      const local2 = tz2(
+        new Date(appt.scheduled_at),
+        (clinic as { timezone?: string | null }).timezone || "UTC",
+      );
       const apptDate = local2.date;
       const apptTime = (() => {
         const d = new Date(appt.scheduled_at);
-        return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: (clinic as { timezone?: string | null }).timezone || "UTC" });
+        return d.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+          timeZone: (clinic as { timezone?: string | null }).timezone || "UTC",
+        });
       })();
       const clinicName = (clinic as { name?: string }).name ?? "the clinic";
       const clinicAddress = ((clinic as { address?: string | null }).address ?? "").toString();
@@ -1024,7 +1126,11 @@ export const createAppointment = createServerFn({ method: "POST" })
         });
       }
     } catch (err) {
-      logger.error({ action: "appointment.email_dispatch_failed", appointment_id: appt.id, error: err instanceof Error ? err.message : String(err) });
+      logger.error({
+        action: "appointment.email_dispatch_failed",
+        appointment_id: appt.id,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
 
     return { ok: true, appointmentId: appt.id, scheduledAt: appt.scheduled_at };

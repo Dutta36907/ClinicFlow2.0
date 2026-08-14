@@ -17,15 +17,23 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
 import { Card, SectionShell } from "../shared/SectionShell";
-import {
-  listTreatments, upsertTreatment, deleteTreatment,
-} from "@/lib/pagecontent.functions";
+import { listTreatments, upsertTreatment, deleteTreatment } from "@/lib/pagecontent.functions";
 import { TREATMENT_ICONS, TreatmentIcon } from "@/components/landing/treatment-icons";
 import type { DashboardClinic } from "../types";
 
@@ -47,7 +55,11 @@ export function TreatmentsSection({ clinic }: { clinic: DashboardClinic }) {
 
   const q = useQuery({
     queryKey: ["treatments", clinic.id, { page, size }],
-    queryFn: () => list({ data: { clinic_id: clinic.id, page, pageSize: size } }) as Promise<{ rows: T[]; total: number }>,
+    queryFn: () =>
+      list({ data: { clinic_id: clinic.id, page, pageSize: size } }) as Promise<{
+        rows: T[];
+        total: number;
+      }>,
     placeholderData: keepPreviousData,
   });
 
@@ -81,7 +93,6 @@ export function TreatmentsSection({ clinic }: { clinic: DashboardClinic }) {
       toast.error(e instanceof Error ? e.message : "Failed");
     }
   }
-
 
   async function remove(id: string) {
     if (!confirm("Delete this treatment?")) return;
@@ -180,7 +191,6 @@ export function TreatmentsSection({ clinic }: { clinic: DashboardClinic }) {
         )}
       </Card>
 
-
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent>
           <DialogHeader>
@@ -211,10 +221,14 @@ export function TreatmentsSection({ clinic }: { clinic: DashboardClinic }) {
                   value={editing.icon ?? ""}
                   onValueChange={(v) => setEditing({ ...editing, icon: v })}
                 >
-                  <SelectTrigger><SelectValue placeholder="Pick an icon" /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pick an icon" />
+                  </SelectTrigger>
                   <SelectContent>
                     {TREATMENT_ICONS.map((i) => (
-                      <SelectItem key={i.name} value={i.name}>{i.label}</SelectItem>
+                      <SelectItem key={i.name} value={i.name}>
+                        {i.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -229,7 +243,9 @@ export function TreatmentsSection({ clinic }: { clinic: DashboardClinic }) {
             </div>
           )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
             <Button onClick={save}>Save</Button>
           </DialogFooter>
         </DialogContent>

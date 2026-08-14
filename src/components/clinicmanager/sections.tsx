@@ -19,12 +19,7 @@
  */
 
 // ── Types ──────────────────────────────────────────────────────
-export type {
-  DashboardClinic,
-  DashboardDoctor,
-  AppointmentRow,
-  ApptStatus,
-} from "./types";
+export type { DashboardClinic, DashboardDoctor, AppointmentRow, ApptStatus } from "./types";
 export { APPT_STATUSES } from "./types";
 
 // ── Shared layout primitives ───────────────────────────────────

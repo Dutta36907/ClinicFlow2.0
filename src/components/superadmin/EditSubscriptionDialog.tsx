@@ -15,18 +15,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Flag, CreditCard, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  updateClinicSubscription,
-  type Customer,
-} from "@/lib/superadmin.functions";
+import { updateClinicSubscription, type Customer } from "@/lib/superadmin.functions";
 
 type Preset = "30" | "60" | "90" | "365" | "custom" | "none";
 
@@ -40,8 +33,7 @@ function presetFromExpiry(expiresAt: string | null): {
 
 function statusKind(c: { is_active: boolean; expires_at: string | null }) {
   if (!c.is_active) return "inactive" as const;
-  if (c.expires_at && new Date(c.expires_at).getTime() < Date.now())
-    return "expired" as const;
+  if (c.expires_at && new Date(c.expires_at).getTime() < Date.now()) return "expired" as const;
   return "active" as const;
 }
 
@@ -109,8 +101,7 @@ export function EditSubscriptionDialog({
                       "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ring-1 ring-inset",
                       currentStatus === "active" &&
                         "bg-emerald-500/15 text-emerald-700 ring-emerald-500/25 dark:text-emerald-300",
-                      currentStatus === "inactive" &&
-                        "bg-muted text-muted-foreground ring-border",
+                      currentStatus === "inactive" && "bg-muted text-muted-foreground ring-border",
                       currentStatus === "expired" &&
                         "bg-destructive/10 text-destructive ring-destructive/25",
                     )}
@@ -149,8 +140,7 @@ export function EditSubscriptionDialog({
 
           {currentStatus === "expired" && (
             <p className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
-              This clinic's subscription has expired. Pick a new expiry date below
-              to reactivate.
+              This clinic's subscription has expired. Pick a new expiry date below to reactivate.
             </p>
           )}
 

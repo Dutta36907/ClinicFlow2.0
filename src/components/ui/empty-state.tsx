@@ -35,8 +35,7 @@ export function EmptyState({
       role="status"
       className={cn(
         "flex flex-col items-center justify-center gap-3 px-6 py-12 text-center",
-        variant === "card" &&
-          "rounded-2xl border border-dashed border-border/70 bg-muted/30",
+        variant === "card" && "rounded-2xl border border-dashed border-border/70 bg-muted/30",
         className,
       )}
     >
@@ -46,13 +45,9 @@ export function EmptyState({
         </span>
       ) : null}
       <div className="space-y-1">
-        <p className="font-display text-base font-semibold text-foreground">
-          {title}
-        </p>
+        <p className="font-display text-base font-semibold text-foreground">{title}</p>
         {description ? (
-          <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-            {description}
-          </p>
+          <p className="mx-auto max-w-sm text-sm text-muted-foreground">{description}</p>
         ) : null}
       </div>
       {action ? <div className="mt-1">{action}</div> : null}

@@ -15,8 +15,7 @@ export const colors = {
 
 export const main = {
   backgroundColor: colors.bg,
-  fontFamily:
-    "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
+  fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
   color: colors.text,
   padding: "0",
   margin: "0",

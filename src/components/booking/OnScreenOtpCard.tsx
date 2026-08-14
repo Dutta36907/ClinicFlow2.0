@@ -72,11 +72,7 @@ export function OnScreenOtpCard({
         <span>Your verification code</span>
       </div>
 
-      <div
-        className="mt-4 flex justify-center gap-2"
-        aria-live="polite"
-        aria-atomic="true"
-      >
+      <div className="mt-4 flex justify-center gap-2" aria-live="polite" aria-atomic="true">
         {Array.from(displayCode).map((digit, i) => (
           <div
             key={i}
@@ -105,11 +101,7 @@ export function OnScreenOtpCard({
           <div
             className={cn(
               "h-full rounded-full transition-[width] duration-1000 ease-linear",
-              expired
-                ? "bg-muted-foreground/40"
-                : warn
-                  ? "bg-amber-500"
-                  : "bg-primary",
+              expired ? "bg-muted-foreground/40" : warn ? "bg-amber-500" : "bg-primary",
             )}
             style={{ width: `${progressPct}%` }}
           />
@@ -126,8 +118,8 @@ export function OnScreenOtpCard({
 
       <div className="mt-4 space-y-1 text-xs text-muted-foreground">
         <p>
-          Type this code in the field below. It expires in {DURATION_S} seconds
-          and works only in this browser tab.
+          Type this code in the field below. It expires in {DURATION_S} seconds and works only in
+          this browser tab.
         </p>
         <p>Do not share this code with anyone.</p>
       </div>

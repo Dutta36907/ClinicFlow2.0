@@ -51,14 +51,46 @@ const EMPTY: Form = {
 };
 
 const EVENT_LABELS: { key: EventKey; label: string; help: string }[] = [
-  { key: "clinic_welcome", label: "New clinic welcome", help: "Sent to the manager when a new clinic is added." },
-  { key: "clinic_manager_invite", label: "Manager invite / credentials", help: "Sign-in details for a newly provisioned manager." },
-  { key: "subscription_expiry", label: "Subscription expiry reminders", help: "Sent on each configured day-before-expiry threshold." },
-  { key: "account_suspended", label: "Account suspended notice", help: "Sent once when a clinic transitions to suspended/expired." },
-  { key: "appointment_booked_patient", label: "Appointment booked — patient", help: "Confirmation email to the patient." },
-  { key: "appointment_booked_clinic", label: "Appointment booked — clinic", help: "New-booking alert to the clinic inbox." },
-  { key: "appointment_rescheduled", label: "Appointment rescheduled", help: "Sent to the patient when their slot changes." },
-  { key: "appointment_cancelled", label: "Appointment cancelled", help: "Sent to the patient when an appointment is cancelled." },
+  {
+    key: "clinic_welcome",
+    label: "New clinic welcome",
+    help: "Sent to the manager when a new clinic is added.",
+  },
+  {
+    key: "clinic_manager_invite",
+    label: "Manager invite / credentials",
+    help: "Sign-in details for a newly provisioned manager.",
+  },
+  {
+    key: "subscription_expiry",
+    label: "Subscription expiry reminders",
+    help: "Sent on each configured day-before-expiry threshold.",
+  },
+  {
+    key: "account_suspended",
+    label: "Account suspended notice",
+    help: "Sent once when a clinic transitions to suspended/expired.",
+  },
+  {
+    key: "appointment_booked_patient",
+    label: "Appointment booked — patient",
+    help: "Confirmation email to the patient.",
+  },
+  {
+    key: "appointment_booked_clinic",
+    label: "Appointment booked — clinic",
+    help: "New-booking alert to the clinic inbox.",
+  },
+  {
+    key: "appointment_rescheduled",
+    label: "Appointment rescheduled",
+    help: "Sent to the patient when their slot changes.",
+  },
+  {
+    key: "appointment_cancelled",
+    label: "Appointment cancelled",
+    help: "Sent to the patient when an appointment is cancelled.",
+  },
 ];
 
 export function EmailSettingsPanel() {
@@ -157,10 +189,9 @@ export function EmailSettingsPanel() {
           <div className="flex-1">
             <h2 className="text-base font-semibold">Email Notifications</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Transactional emails sent via <strong>Resend</strong> for clinic
-              onboarding, subscription reminders, and booking activity. The
-              dispatcher deduplicates by event so the same notification is
-              never sent twice.
+              Transactional emails sent via <strong>Resend</strong> for clinic onboarding,
+              subscription reminders, and booking activity. The dispatcher deduplicates by event so
+              the same notification is never sent twice.
             </p>
           </div>
           <div className="flex items-center gap-2">

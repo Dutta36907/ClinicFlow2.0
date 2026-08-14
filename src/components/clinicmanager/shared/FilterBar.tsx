@@ -27,9 +27,7 @@ export function FilterBar({
       )}
     >
       {children}
-      {right && (
-        <div className="flex items-center gap-2 sm:ml-auto">{right}</div>
-      )}
+      {right && <div className="flex items-center gap-2 sm:ml-auto">{right}</div>}
     </div>
   );
 }

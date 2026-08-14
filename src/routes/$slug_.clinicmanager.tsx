@@ -9,10 +9,7 @@ import { ShieldCheck, Stethoscope } from "lucide-react";
 import { toast } from "sonner";
 import { getManagerDashboard } from "@/lib/clinicmanager.functions";
 import { useClinicAppointments } from "@/components/clinicmanager/hooks/useClinicAppointments";
-import {
-  ManagerSidebar,
-  type ManagerSection,
-} from "@/components/clinicmanager/ManagerSidebar";
+import { ManagerSidebar, type ManagerSection } from "@/components/clinicmanager/ManagerSidebar";
 import {
   AppointmentsSection,
   DashboardSection,
@@ -72,10 +69,7 @@ function LoginShell({
             {note ?? (
               <>
                 Sign in to manage{" "}
-                <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">
-                  /{slug}
-                </code>
-                .
+                <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">/{slug}</code>.
               </>
             )}
           </p>
@@ -153,18 +147,14 @@ function ClinicManagerDashboard() {
   });
 
   const clinicId =
-    hasSession && dashQ.data && !("unauthorized" in dashQ.data)
-      ? dashQ.data.clinic.id
-      : null;
+    hasSession && dashQ.data && !("unauthorized" in dashQ.data) ? dashQ.data.clinic.id : null;
 
   const apptsQ = useClinicAppointments(clinicId);
   const apptCount = useMemo(() => {
     const all = apptsQ.data ?? [];
     const start = new Date();
     start.setHours(0, 0, 0, 0);
-    return all.filter(
-      (a) => new Date(a.scheduled_at) >= start && a.status !== "cancelled",
-    ).length;
+    return all.filter((a) => new Date(a.scheduled_at) >= start && a.status !== "cancelled").length;
   }, [apptsQ.data]);
 
   if (!sessionChecked) {
@@ -196,10 +186,8 @@ function ClinicManagerDashboard() {
         note={
           <>
             This account doesn&apos;t have manager access to{" "}
-            <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">
-              /{slug}
-            </code>
-            . Sign in with a manager account.
+            <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">/{slug}</code>. Sign in
+            with a manager account.
           </>
         }
         extra={
@@ -233,11 +221,8 @@ function ClinicManagerDashboard() {
         note={
           <>
             You&apos;re signed in as a Super Admin. To manage{" "}
-            <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">
-              /{slug}
-            </code>
-            , open it from the Super Admin Clinics tab, or sign in with a
-            manager account below.
+            <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">/{slug}</code>, open it
+            from the Super Admin Clinics tab, or sign in with a manager account below.
           </>
         }
         extra={
@@ -297,9 +282,7 @@ function ClinicManagerDashboard() {
             <div className="flex items-center gap-2">
               <SidebarTrigger />
               <span className="text-sm font-medium">{clinic.name}</span>
-              <span className="hidden text-xs text-muted-foreground sm:inline">
-                /{clinic.slug}
-              </span>
+              <span className="hidden text-xs text-muted-foreground sm:inline">/{clinic.slug}</span>
             </div>
             <div className="flex items-center gap-2">
               <MuteToggle />
@@ -311,15 +294,11 @@ function ClinicManagerDashboard() {
           </header>
 
           <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">
-            {section === "dashboard" && (
-              <DashboardSection clinic={clinic} doctors={doctors} />
-            )}
+            {section === "dashboard" && <DashboardSection clinic={clinic} doctors={doctors} />}
             {section === "appointments" && (
               <AppointmentsSection clinic={clinic} doctors={doctors} />
             )}
-            {section === "doctors" && (
-              <DoctorsSection clinic={clinic} doctors={doctors} />
-            )}
+            {section === "doctors" && <DoctorsSection clinic={clinic} doctors={doctors} />}
             {section === "details" && <ProfileSection clinic={clinic} />}
             {section === "cover" && <CoverSection clinic={clinic} />}
             {section === "stats" && <StatsSection clinic={clinic} />}

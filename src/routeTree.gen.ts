@@ -9,54 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as SlugRouteImport } from './routes/$slug'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as ClinicmanagerRouteImport } from './routes/clinicmanager'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SlugClinicmanagerRouteImport } from './routes/$slug_.clinicmanager'
-import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ClinicmanagerRouteImport } from './routes/clinicmanager'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as SlugRouteImport } from './routes/$slug'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as SuperadminIndexRouteImport } from './routes/superadmin.index'
-import { Route as SuperadminLoginRouteImport } from './routes/superadmin.login'
 import { Route as SuperadminLogoutRouteImport } from './routes/superadmin.logout'
-import { Route as SlugDoctorsDoctorIdRouteImport } from './routes/$slug.doctors.$doctorId'
-import { Route as AuthenticatedSlugManageRouteImport } from './routes/_authenticated/$slug.manage'
-import { Route as AuthenticatedSuperadminSecurityRouteImport } from './routes/_authenticated/superadmin.security'
+import { Route as SuperadminLoginRouteImport } from './routes/superadmin.login'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as SlugClinicmanagerRouteImport } from './routes/$slug_.clinicmanager'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
-import { Route as SlugClinicmanagerDoctorsDoctorIdRouteImport } from './routes/$slug_.clinicmanager.doctors.$doctorId'
-import { Route as ApiPublicHooksEmailExpirySweepRouteImport } from './routes/api/public/hooks/email-expiry-sweep'
+import { Route as AuthenticatedSuperadminSecurityRouteImport } from './routes/_authenticated/superadmin.security'
+import { Route as AuthenticatedSlugManageRouteImport } from './routes/_authenticated/$slug.manage'
+import { Route as SlugDoctorsDoctorIdRouteImport } from './routes/$slug.doctors.$doctorId'
 import { Route as ApiPublicHooksSecurityScanRouteImport } from './routes/api/public/hooks/security-scan'
+import { Route as ApiPublicHooksEmailExpirySweepRouteImport } from './routes/api/public/hooks/email-expiry-sweep'
+import { Route as SlugClinicmanagerDoctorsDoctorIdRouteImport } from './routes/$slug_.clinicmanager.doctors.$doctorId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SlugRoute = SlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClinicmanagerRoute = ClinicmanagerRouteImport.update({
-  id: '/clinicmanager',
-  path: '/clinicmanager',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -64,29 +40,38 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SlugClinicmanagerRoute = SlugClinicmanagerRouteImport.update({
-  id: '/$slug_/clinicmanager',
-  path: '/$slug/clinicmanager',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => AuthenticatedRoute,
+const ClinicmanagerRoute = ClinicmanagerRouteImport.update({
+  id: '/clinicmanager',
+  path: '/clinicmanager',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SuperadminIndexRoute = SuperadminIndexRouteImport.update({
   id: '/superadmin/',
   path: '/superadmin/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SuperadminLoginRoute = SuperadminLoginRouteImport.update({
-  id: '/superadmin/login',
-  path: '/superadmin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SuperadminLogoutRoute = SuperadminLogoutRouteImport.update({
@@ -94,15 +79,25 @@ const SuperadminLogoutRoute = SuperadminLogoutRouteImport.update({
   path: '/superadmin/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SlugDoctorsDoctorIdRoute = SlugDoctorsDoctorIdRouteImport.update({
-  id: '/doctors/$doctorId',
-  path: '/doctors/$doctorId',
-  getParentRoute: () => SlugRoute,
+const SuperadminLoginRoute = SuperadminLoginRouteImport.update({
+  id: '/superadmin/login',
+  path: '/superadmin/login',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSlugManageRoute = AuthenticatedSlugManageRouteImport.update({
-  id: '/$slug/manage',
-  path: '/$slug/manage',
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const SlugClinicmanagerRoute = SlugClinicmanagerRouteImport.update({
+  id: '/$slug_/clinicmanager',
+  path: '/$slug/clinicmanager',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSuperadminSecurityRoute =
   AuthenticatedSuperadminSecurityRouteImport.update({
@@ -110,16 +105,21 @@ const AuthenticatedSuperadminSecurityRoute =
     path: '/superadmin/security',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
-  id: '/api/public/health',
-  path: '/api/public/health',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedSlugManageRoute = AuthenticatedSlugManageRouteImport.update({
+  id: '/$slug/manage',
+  path: '/$slug/manage',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const SlugClinicmanagerDoctorsDoctorIdRoute =
-  SlugClinicmanagerDoctorsDoctorIdRouteImport.update({
-    id: '/doctors/$doctorId',
-    path: '/doctors/$doctorId',
-    getParentRoute: () => SlugClinicmanagerRoute,
+const SlugDoctorsDoctorIdRoute = SlugDoctorsDoctorIdRouteImport.update({
+  id: '/doctors/$doctorId',
+  path: '/doctors/$doctorId',
+  getParentRoute: () => SlugRoute,
+} as any)
+const ApiPublicHooksSecurityScanRoute =
+  ApiPublicHooksSecurityScanRouteImport.update({
+    id: '/api/public/hooks/security-scan',
+    path: '/api/public/hooks/security-scan',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksEmailExpirySweepRoute =
   ApiPublicHooksEmailExpirySweepRouteImport.update({
@@ -127,11 +127,11 @@ const ApiPublicHooksEmailExpirySweepRoute =
     path: '/api/public/hooks/email-expiry-sweep',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksSecurityScanRoute =
-  ApiPublicHooksSecurityScanRouteImport.update({
-    id: '/api/public/hooks/security-scan',
-    path: '/api/public/hooks/security-scan',
-    getParentRoute: () => rootRouteImport,
+const SlugClinicmanagerDoctorsDoctorIdRoute =
+  SlugClinicmanagerDoctorsDoctorIdRouteImport.update({
+    id: '/doctors/$doctorId',
+    path: '/doctors/$doctorId',
+    getParentRoute: () => SlugClinicmanagerRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -286,46 +286,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$slug': {
-      id: '/$slug'
-      path: '/$slug'
-      fullPath: '/$slug'
-      preLoaderRoute: typeof SlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/clinicmanager': {
-      id: '/clinicmanager'
-      path: '/clinicmanager'
-      fullPath: '/clinicmanager'
-      preLoaderRoute: typeof ClinicmanagerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -335,39 +300,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$slug_/clinicmanager': {
-      id: '/$slug_/clinicmanager'
-      path: '/$slug/clinicmanager'
-      fullPath: '/$slug/clinicmanager'
-      preLoaderRoute: typeof SlugClinicmanagerRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/app': {
-      id: '/_authenticated/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AuthenticatedAppRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/clinicmanager': {
+      id: '/clinicmanager'
+      path: '/clinicmanager'
+      fullPath: '/clinicmanager'
+      preLoaderRoute: typeof ClinicmanagerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/superadmin/': {
       id: '/superadmin/'
       path: '/superadmin'
       fullPath: '/superadmin/'
       preLoaderRoute: typeof SuperadminIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/superadmin/login': {
-      id: '/superadmin/login'
-      path: '/superadmin/login'
-      fullPath: '/superadmin/login'
-      preLoaderRoute: typeof SuperadminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/superadmin/logout': {
@@ -377,26 +356,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperadminLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$slug/doctors/$doctorId': {
-      id: '/$slug/doctors/$doctorId'
-      path: '/doctors/$doctorId'
-      fullPath: '/$slug/doctors/$doctorId'
-      preLoaderRoute: typeof SlugDoctorsDoctorIdRouteImport
-      parentRoute: typeof SlugRoute
+    '/superadmin/login': {
+      id: '/superadmin/login'
+      path: '/superadmin/login'
+      fullPath: '/superadmin/login'
+      preLoaderRoute: typeof SuperadminLoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/$slug/manage': {
-      id: '/_authenticated/$slug/manage'
-      path: '/$slug/manage'
-      fullPath: '/$slug/manage'
-      preLoaderRoute: typeof AuthenticatedSlugManageRouteImport
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/superadmin/security': {
-      id: '/_authenticated/superadmin/security'
-      path: '/superadmin/security'
-      fullPath: '/superadmin/security'
-      preLoaderRoute: typeof AuthenticatedSuperadminSecurityRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/$slug_/clinicmanager': {
+      id: '/$slug_/clinicmanager'
+      path: '/$slug/clinicmanager'
+      fullPath: '/$slug/clinicmanager'
+      preLoaderRoute: typeof SlugClinicmanagerRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/health': {
       id: '/api/public/health'
@@ -405,12 +384,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$slug_/clinicmanager/doctors/$doctorId': {
-      id: '/$slug_/clinicmanager/doctors/$doctorId'
+    '/_authenticated/superadmin/security': {
+      id: '/_authenticated/superadmin/security'
+      path: '/superadmin/security'
+      fullPath: '/superadmin/security'
+      preLoaderRoute: typeof AuthenticatedSuperadminSecurityRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/$slug/manage': {
+      id: '/_authenticated/$slug/manage'
+      path: '/$slug/manage'
+      fullPath: '/$slug/manage'
+      preLoaderRoute: typeof AuthenticatedSlugManageRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/$slug/doctors/$doctorId': {
+      id: '/$slug/doctors/$doctorId'
       path: '/doctors/$doctorId'
-      fullPath: '/$slug/clinicmanager/doctors/$doctorId'
-      preLoaderRoute: typeof SlugClinicmanagerDoctorsDoctorIdRouteImport
-      parentRoute: typeof SlugClinicmanagerRoute
+      fullPath: '/$slug/doctors/$doctorId'
+      preLoaderRoute: typeof SlugDoctorsDoctorIdRouteImport
+      parentRoute: typeof SlugRoute
+    }
+    '/api/public/hooks/security-scan': {
+      id: '/api/public/hooks/security-scan'
+      path: '/api/public/hooks/security-scan'
+      fullPath: '/api/public/hooks/security-scan'
+      preLoaderRoute: typeof ApiPublicHooksSecurityScanRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/email-expiry-sweep': {
       id: '/api/public/hooks/email-expiry-sweep'
@@ -419,12 +419,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksEmailExpirySweepRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/security-scan': {
-      id: '/api/public/hooks/security-scan'
-      path: '/api/public/hooks/security-scan'
-      fullPath: '/api/public/hooks/security-scan'
-      preLoaderRoute: typeof ApiPublicHooksSecurityScanRouteImport
-      parentRoute: typeof rootRouteImport
+    '/$slug_/clinicmanager/doctors/$doctorId': {
+      id: '/$slug_/clinicmanager/doctors/$doctorId'
+      path: '/doctors/$doctorId'
+      fullPath: '/$slug/clinicmanager/doctors/$doctorId'
+      preLoaderRoute: typeof SlugClinicmanagerDoctorsDoctorIdRouteImport
+      parentRoute: typeof SlugClinicmanagerRoute
     }
   }
 }

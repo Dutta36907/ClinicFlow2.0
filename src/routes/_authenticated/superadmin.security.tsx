@@ -45,11 +45,16 @@ type Finding = {
 
 function sevColor(s: Finding["severity"]) {
   switch (s) {
-    case "critical": return "bg-red-600 text-white";
-    case "high": return "bg-red-500 text-white";
-    case "medium": return "bg-amber-500 text-white";
-    case "low": return "bg-yellow-400 text-black";
-    default: return "bg-slate-300 text-black";
+    case "critical":
+      return "bg-red-600 text-white";
+    case "high":
+      return "bg-red-500 text-white";
+    case "medium":
+      return "bg-amber-500 text-white";
+    case "low":
+      return "bg-yellow-400 text-black";
+    default:
+      return "bg-slate-300 text-black";
   }
 }
 function statusIcon(s: Finding["status"]) {
@@ -109,7 +114,9 @@ function SecurityScansPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Recent runs</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Recent runs</CardTitle>
+        </CardHeader>
         <CardContent>
           {runsQ.isLoading ? (
             <p className="text-sm text-muted-foreground">Loading…</p>
@@ -133,7 +140,9 @@ function SecurityScansPage() {
                 {runs.map((r) => (
                   <tr key={r.id} className="border-t">
                     <td className="py-2">{new Date(r.started_at).toLocaleString()}</td>
-                    <td><Badge variant="secondary">{r.trigger}</Badge></td>
+                    <td>
+                      <Badge variant="secondary">{r.trigger}</Badge>
+                    </td>
                     <td>{r.status}</td>
                     <td>{r.passed}</td>
                     <td className={r.failed > 0 ? "text-red-600 font-semibold" : ""}>{r.failed}</td>

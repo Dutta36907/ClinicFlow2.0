@@ -12,18 +12,15 @@ export type StatTone = "primary" | "success" | "warning" | "info" | "muted";
 const TONE: Record<StatTone, { chip: string; bar: string }> = {
   primary: { chip: "bg-primary/10 text-primary ring-primary/20", bar: "bg-primary" },
   success: {
-    chip:
-      "bg-[color:var(--success,oklch(0.62_0.14_155))]/12 text-[color:var(--success,oklch(0.45_0.14_155))] ring-[color:var(--success,oklch(0.62_0.14_155))]/20",
+    chip: "bg-[color:var(--success,oklch(0.62_0.14_155))]/12 text-[color:var(--success,oklch(0.45_0.14_155))] ring-[color:var(--success,oklch(0.62_0.14_155))]/20",
     bar: "bg-[color:var(--success,oklch(0.62_0.14_155))]",
   },
   warning: {
-    chip:
-      "bg-[color:var(--warning,oklch(0.78_0.16_75))]/15 text-[color:var(--warning,oklch(0.55_0.16_75))] ring-[color:var(--warning,oklch(0.78_0.16_75))]/25",
+    chip: "bg-[color:var(--warning,oklch(0.78_0.16_75))]/15 text-[color:var(--warning,oklch(0.55_0.16_75))] ring-[color:var(--warning,oklch(0.78_0.16_75))]/25",
     bar: "bg-[color:var(--warning,oklch(0.78_0.16_75))]",
   },
   info: {
-    chip:
-      "bg-[color:var(--info,oklch(0.62_0.14_235))]/12 text-[color:var(--info,oklch(0.45_0.14_235))] ring-[color:var(--info,oklch(0.62_0.14_235))]/20",
+    chip: "bg-[color:var(--info,oklch(0.62_0.14_235))]/12 text-[color:var(--info,oklch(0.45_0.14_235))] ring-[color:var(--info,oklch(0.62_0.14_235))]/20",
     bar: "bg-[color:var(--info,oklch(0.62_0.14_235))]",
   },
   muted: { chip: "bg-muted text-muted-foreground ring-border", bar: "bg-muted-foreground/40" },
@@ -60,9 +57,7 @@ export function StatTile({
               {typeof value === "number" ? value.toLocaleString() : value}
             </p>
           )}
-          {caption && (
-            <p className="mt-1 text-xs text-muted-foreground">{caption}</p>
-          )}
+          {caption && <p className="mt-1 text-xs text-muted-foreground">{caption}</p>}
         </div>
         <span
           className={cn(
