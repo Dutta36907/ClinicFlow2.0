@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { assertLoginRateLimit, assertSignupRateLimit } from "@/lib/login-rate-limit.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +45,8 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const rateLimitLoginFn = useServerFn(assertLoginRateLimit);
+  const rateLimitSignupFn = useServerFn(assertSignupRateLimit);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,6 +54,7 @@ function LoginPage() {
     setErrorMsg(null);
     try {
       if (mode === "signup") {
+        await rateLimitSignupFn();
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -62,6 +67,7 @@ function LoginPage() {
         toast.success("Account created. You can sign in now.");
         setMode("signin");
       } else {
+        await rateLimitLoginFn({ data: { email } });
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         const redirectMatch = redirect?.match(/^\/([a-z0-9-]+)\/clinicmanager$/i);
