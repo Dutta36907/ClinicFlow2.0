@@ -11,12 +11,17 @@
 // client picks it up normally. sessionStorage is cleared by the browser when
 // the last tab for the origin closes, giving us session-only persistence.
 
-const PROJECT_REF = "xvcjkvjopmpnxuddlikb";
-const AUTH_KEY = `sb-${PROJECT_REF}-auth-token`;
-const FLAG_KEY = `${AUTH_KEY}-session-only`;
+// Supabase derives its localStorage key from the project ref in the URL
+// (`sb-<ref>-auth-token`) — read it the same way rather than hardcoding a
+// ref that goes stale the moment the Supabase project changes per
+// environment (preprod vs prod use different projects).
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+const PROJECT_REF = SUPABASE_URL ? new URL(SUPABASE_URL).hostname.split(".")[0] : "";
+export const AUTH_KEY = PROJECT_REF ? `sb-${PROJECT_REF}-auth-token` : "";
+export const FLAG_KEY = AUTH_KEY ? `${AUTH_KEY}-session-only` : "";
 
 export function rehydrateSessionAuth() {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !AUTH_KEY) return;
   try {
     const stashed = sessionStorage.getItem(AUTH_KEY);
     if (stashed && !localStorage.getItem(AUTH_KEY)) {
@@ -29,7 +34,7 @@ export function rehydrateSessionAuth() {
 }
 
 export function applyRememberMe(remember: boolean) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !AUTH_KEY) return;
   try {
     if (remember) {
       // Persistent across restarts — leave token in localStorage.
@@ -50,7 +55,7 @@ export function applyRememberMe(remember: boolean) {
 // Keep sessionStorage stash in sync with token refreshes while the tab is
 // open, so a refreshed token isn't lost on the next page load.
 export function startSessionOnlySync() {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !AUTH_KEY) return;
   window.addEventListener("storage", () => {
     if (sessionStorage.getItem(FLAG_KEY) !== "1") return;
     const latest = localStorage.getItem(AUTH_KEY);

@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { UiV2Bootstrap } from "@/components/ui/ui-v2-toggle";
 import { supabase } from "@/integrations/supabase/client";
 import { setNotFoundStatus } from "@/lib/set-not-found-status";
+import { AUTH_KEY, FLAG_KEY } from "@/lib/rememberMe";
 
 import appCss from "../styles.css?url";
 
@@ -185,12 +186,10 @@ function AuthEventBridge() {
           // remember-me flag. supabase.auth.signOut() handles its own
           // localStorage key, but the sessionStorage mirror (used when
           // "Remember me" is off) is ours to clean up.
-          if (typeof window !== "undefined") {
+          if (typeof window !== "undefined" && AUTH_KEY) {
             try {
-              const PROJECT_REF = "xvcjkvjopmpnxuddlikb";
-              const AUTH_KEY = `sb-${PROJECT_REF}-auth-token`;
               sessionStorage.removeItem(AUTH_KEY);
-              sessionStorage.removeItem(`${AUTH_KEY}-session-only`);
+              sessionStorage.removeItem(FLAG_KEY);
             } catch {
               /* storage unavailable; ignore */
             }
