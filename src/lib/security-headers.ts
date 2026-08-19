@@ -6,8 +6,8 @@
  *   are applied to every response.
  */
 
-const SUPABASE_ORIGIN = "https://ndmlkadsvmbskaddhzvg.supabase.co";
-const SUPABASE_WS = "wss://ndmlkadsvmbskaddhzvg.supabase.co";
+const SUPABASE_ORIGIN = process.env.SUPABASE_URL ?? "https://ndmlkadsvmbskaddhzvg.supabase.co";
+const SUPABASE_WS = SUPABASE_ORIGIN.replace(/^https:/, "wss:");
 
 const CSP = [
   "default-src 'self'",
