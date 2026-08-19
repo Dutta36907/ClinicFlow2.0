@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-// Total time with no activity before auto sign-out.
-export const IDLE_MS = 20 * 1000; // TEMP-TEST-VALUE: real value is 15 * 60 * 1000
-// How long before IDLE_MS the warning dialog appears (with a live countdown).
-export const WARNING_MS = 10 * 1000; // TEMP-TEST-VALUE: real value is 60 * 1000
+// Idle time before auto sign-out, per role/surface.
+export const SUPER_ADMIN_IDLE_MS = 20 * 60 * 1000;
+export const CLINIC_MANAGER_IDLE_MS = 30 * 60 * 1000;
+// How long before the idle deadline the warning dialog appears (with a live countdown).
+export const WARNING_MS = 60 * 1000;
 
 const ACTIVITY_EVENTS = [
   "mousemove",
@@ -20,11 +21,13 @@ const THROTTLE_MS = 2000;
 interface UseInactivityLogoutOptions {
   /** Timers/listeners are only attached while true (e.g. once a session exists). */
   enabled: boolean;
+  /** Total idle time before sign-out (use SUPER_ADMIN_IDLE_MS / CLINIC_MANAGER_IDLE_MS). */
+  idleMs: number;
   /** Called once the full idle window elapses without the user staying active. */
   onTimeout: () => void;
 }
 
-export function useInactivityLogout({ enabled, onTimeout }: UseInactivityLogoutOptions) {
+export function useInactivityLogout({ enabled, idleMs, onTimeout }: UseInactivityLogoutOptions) {
   const [warningOpen, setWarningOpen] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(Math.ceil(WARNING_MS / 1000));
 
@@ -33,6 +36,8 @@ export function useInactivityLogout({ enabled, onTimeout }: UseInactivityLogoutO
   const lastResetAt = useRef(0);
   const onTimeoutRef = useRef(onTimeout);
   onTimeoutRef.current = onTimeout;
+  const idleMsRef = useRef(idleMs);
+  idleMsRef.current = idleMs;
 
   const clearTimers = useCallback(() => {
     clearTimeout(idleTimer.current);
@@ -55,7 +60,7 @@ export function useInactivityLogout({ enabled, onTimeout }: UseInactivityLogoutO
           onTimeoutRef.current();
         }
       }, 1000);
-    }, IDLE_MS - WARNING_MS);
+    }, idleMsRef.current - WARNING_MS);
   }, [clearTimers]);
 
   const stayActive = useCallback(() => {
