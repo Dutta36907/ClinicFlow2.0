@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { bootstrapFirstSuperAdmin, getSignupStatus } from "@/lib/superadmin.functions";
+import { assertLoginRateLimit } from "@/lib/login-rate-limit.functions";
 import { applyRememberMe } from "@/lib/rememberMe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +43,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const fetchStatus = useServerFn(getSignupStatus);
   const bootstrapFn = useServerFn(bootstrapFirstSuperAdmin);
+  const rateLimitFn = useServerFn(assertLoginRateLimit);
 
   const statusQ = useQuery({
     queryKey: ["sa-signup-status"],
@@ -91,6 +93,7 @@ function LoginPage() {
         toast.success("Platform admin created. Welcome!");
         navigate({ to: "/superadmin" });
       } else {
+        await rateLimitFn({ data: { email } });
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         applyRememberMe(rememberMe);
