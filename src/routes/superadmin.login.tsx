@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { bootstrapFirstSuperAdmin, getSignupStatus } from "@/lib/superadmin.functions";
 import { assertLoginRateLimit } from "@/lib/login-rate-limit.functions";
 import { applyRememberMe } from "@/lib/rememberMe";
+import { consumeInactivityLogoutFlag } from "@/lib/logout-reason";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,6 +72,12 @@ function LoginPage() {
     if (bootstrapMode) setEmail(ALLOWED_BOOTSTRAP_EMAIL);
     setErrorMsg(null);
   }, [bootstrapMode]);
+
+  useEffect(() => {
+    if (consumeInactivityLogoutFlag()) {
+      toast.info("You were signed out due to inactivity.");
+    }
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

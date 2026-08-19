@@ -34,6 +34,9 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { signOutSuperAdmin } from "@/lib/superadminAuth";
+import { markInactivityLogout } from "@/lib/logout-reason";
+import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import { InactivityWarningDialog } from "@/components/InactivityWarningDialog";
 import { toast } from "sonner";
 import { useSuperAdminView, type SuperAdminView } from "@/stores/superadminViewStore";
 import {
@@ -188,6 +191,14 @@ export function SuperAdminLayout({
   actions?: ReactNode;
   children: ReactNode;
 }) {
+  const { warningOpen, secondsLeft, stayActive } = useInactivityLogout({
+    enabled: true,
+    onTimeout: () => {
+      markInactivityLogout();
+      void signOutSuperAdmin();
+    },
+  });
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -209,6 +220,11 @@ export function SuperAdminLayout({
           <main className="flex-1 px-4 py-6 sm:px-6 sm:py-8">{children}</main>
         </div>
       </div>
+      <InactivityWarningDialog
+        open={warningOpen}
+        secondsLeft={secondsLeft}
+        onStayActive={stayActive}
+      />
     </SidebarProvider>
   );
 }

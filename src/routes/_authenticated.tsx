@@ -4,6 +4,9 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Stethoscope, LogOut } from "lucide-react";
 import { AppLoadingSplash } from "@/components/common/AppLoadingSplash";
+import { markInactivityLogout } from "@/lib/logout-reason";
+import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import { InactivityWarningDialog } from "@/components/InactivityWarningDialog";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
@@ -16,6 +19,14 @@ function AuthLayout() {
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
+
+  const { warningOpen, secondsLeft, stayActive } = useInactivityLogout({
+    enabled: !loading && !!user,
+    onTimeout: () => {
+      markInactivityLogout();
+      void signOut();
+    },
+  });
 
   if (loading || !user) {
     return <AppLoadingSplash message="Verifying your session…" delayMs={0} />;
@@ -51,6 +62,11 @@ function AuthLayout() {
         </div>
       </header>
       <Outlet />
+      <InactivityWarningDialog
+        open={warningOpen}
+        secondsLeft={secondsLeft}
+        onStayActive={stayActive}
+      />
     </div>
   );
 }
