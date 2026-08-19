@@ -30,6 +30,8 @@ import { ClinicInactive } from "@/components/landing/ClinicInactive";
 import { ClinicExpired } from "@/components/landing/ClinicExpired";
 import { ClinicManagerLoginForm } from "@/components/clinicmanager/ClinicManagerLoginForm";
 import { ClinicManagerSplash } from "@/components/clinicmanager/ClinicManagerSplash";
+import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import { InactivityWarningDialog } from "@/components/InactivityWarningDialog";
 
 export const Route = createFileRoute("/$slug_/clinicmanager")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -156,6 +158,17 @@ function ClinicManagerDashboard() {
     start.setHours(0, 0, 0, 0);
     return all.filter((a) => new Date(a.scheduled_at) >= start && a.status !== "cancelled").length;
   }, [apptsQ.data]);
+
+  const { warningOpen, secondsLeft, stayActive } = useInactivityLogout({
+    enabled: hasSession,
+    onTimeout: () => {
+      // No page reload happens here (hasSession flips via onAuthStateChange,
+      // re-rendering LoginShell in place) — show the toast directly rather
+      // than the sessionStorage-flag handoff the other two surfaces need.
+      toast.info("You were signed out due to inactivity.");
+      void supabase.auth.signOut();
+    },
+  });
 
   if (!sessionChecked) {
     return <ClinicManagerSplash message="Verifying access…" />;
@@ -310,6 +323,11 @@ function ClinicManagerDashboard() {
           </main>
         </div>
       </div>
+      <InactivityWarningDialog
+        open={warningOpen}
+        secondsLeft={secondsLeft}
+        onStayActive={stayActive}
+      />
     </SidebarProvider>
   );
 }
