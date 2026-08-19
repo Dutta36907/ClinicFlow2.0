@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -32,11 +33,14 @@ export const getSignupStatus = createServerFn({ method: "GET" }).handler(async (
  * account when — and only when — no super_admin exists yet. After the first
  * success, every subsequent call returns
  * { bootstrapped: false, reason: 'super_admin_exists' } and the path is
- * permanently sealed. No env var, no override, no second chance.
+ * permanently sealed.
  *
- * Unauthenticated by necessity (there is no admin yet). The DB function
- * inserts the role atomically with a WHERE NOT EXISTS guard, so concurrent
- * callers cannot both win.
+ * Unauthenticated by necessity (there is no admin yet). Gated two ways:
+ * `token` must match BOOTSTRAP_SETUP_TOKEN, a secret only the deployer knows
+ * (never shipped to the client — unlike the email allowlist below, which is
+ * visible in the browser bundle and so isn't a secret on its own). The DB
+ * function independently re-checks the email and inserts the role atomically
+ * with a WHERE NOT EXISTS guard, so concurrent callers cannot both win.
  */
 const ALLOWED_BOOTSTRAP_EMAIL = "priyabrata.dutta.slg@gmail.com";
 
@@ -52,11 +56,23 @@ const bootstrapSchema = z.object({
     }),
   password: z.string().min(12).max(72),
   fullName: z.string().trim().min(2).max(120),
+  token: z.string().min(1),
 });
+
+function isValidBootstrapToken(candidate: string): boolean {
+  const expected = process.env.BOOTSTRAP_SETUP_TOKEN;
+  if (!expected) return false; // fail closed: bootstrap is disabled unless a token is configured
+  const a = Buffer.from(candidate);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 export const bootstrapFirstSuperAdmin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => bootstrapSchema.parse(d))
   .handler(async ({ data }) => {
+    if (!isValidBootstrapToken(data.token)) {
+      throw new Error("Invalid or missing setup token.");
+    }
     const supabaseAdmin = await getAdmin();
     // Pre-flight: refuse if a super admin already exists. The DB function is
     // the source of truth (atomic) but this avoids creating an orphan auth

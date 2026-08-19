@@ -56,6 +56,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [setupToken, setSetupToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [showPw, setShowPw] = useState(false);
@@ -76,7 +77,7 @@ function LoginPage() {
     try {
       if (mode === "setup") {
         const res = await bootstrapFn({
-          data: { email, password, fullName },
+          data: { email, password, fullName, token: setupToken },
         });
         if (!res.bootstrapped) {
           throw new Error(
@@ -207,6 +208,27 @@ function LoginPage() {
 
             <div className="rounded-2xl border border-border bg-card p-5 shadow-[0_10px_40px_-20px_oklch(0.55_0.22_265/0.35)] sm:p-7">
               <form onSubmit={onSubmit} className="space-y-4">
+                {mode === "setup" && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="setupToken">Setup token</Label>
+                    <div className="relative">
+                      <ShieldCheck className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="setupToken"
+                        type="password"
+                        value={setupToken}
+                        onChange={(e) => setSetupToken(e.target.value)}
+                        placeholder="One-time setup token"
+                        className="h-11 pl-9"
+                        required
+                        autoComplete="off"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      From your deployment's BOOTSTRAP_SETUP_TOKEN environment variable.
+                    </p>
+                  </div>
+                )}
                 {mode === "setup" && (
                   <div className="space-y-1.5">
                     <Label htmlFor="name">Full name</Label>
