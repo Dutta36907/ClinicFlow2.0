@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Stethoscope, LogOut } from "lucide-react";
 import { AppLoadingSplash } from "@/components/common/AppLoadingSplash";
 import { markInactivityLogout } from "@/lib/logout-reason";
-import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import {
+  useInactivityLogout,
+  SUPER_ADMIN_IDLE_MS,
+  CLINIC_MANAGER_IDLE_MS,
+} from "@/hooks/useInactivityLogout";
 import { InactivityWarningDialog } from "@/components/InactivityWarningDialog";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -22,6 +26,7 @@ function AuthLayout() {
 
   const { warningOpen, secondsLeft, stayActive } = useInactivityLogout({
     enabled: !loading && !!user,
+    idleMs: isSuperAdmin ? SUPER_ADMIN_IDLE_MS : CLINIC_MANAGER_IDLE_MS,
     onTimeout: () => {
       markInactivityLogout();
       void signOut();

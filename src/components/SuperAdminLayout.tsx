@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 import { signOutSuperAdmin } from "@/lib/superadminAuth";
 import { markInactivityLogout } from "@/lib/logout-reason";
-import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import { useInactivityLogout, SUPER_ADMIN_IDLE_MS } from "@/hooks/useInactivityLogout";
 import { InactivityWarningDialog } from "@/components/InactivityWarningDialog";
 import { toast } from "sonner";
 import { useSuperAdminView, type SuperAdminView } from "@/stores/superadminViewStore";
@@ -193,6 +193,7 @@ export function SuperAdminLayout({
 }) {
   const { warningOpen, secondsLeft, stayActive } = useInactivityLogout({
     enabled: true,
+    idleMs: SUPER_ADMIN_IDLE_MS,
     onTimeout: () => {
       markInactivityLogout();
       void signOutSuperAdmin();

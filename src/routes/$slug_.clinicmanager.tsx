@@ -30,7 +30,7 @@ import { ClinicInactive } from "@/components/landing/ClinicInactive";
 import { ClinicExpired } from "@/components/landing/ClinicExpired";
 import { ClinicManagerLoginForm } from "@/components/clinicmanager/ClinicManagerLoginForm";
 import { ClinicManagerSplash } from "@/components/clinicmanager/ClinicManagerSplash";
-import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import { useInactivityLogout, CLINIC_MANAGER_IDLE_MS } from "@/hooks/useInactivityLogout";
 import { InactivityWarningDialog } from "@/components/InactivityWarningDialog";
 
 export const Route = createFileRoute("/$slug_/clinicmanager")({
@@ -161,6 +161,7 @@ function ClinicManagerDashboard() {
 
   const { warningOpen, secondsLeft, stayActive } = useInactivityLogout({
     enabled: hasSession,
+    idleMs: CLINIC_MANAGER_IDLE_MS,
     onTimeout: () => {
       // No page reload happens here (hasSession flips via onAuthStateChange,
       // re-rendering LoginShell in place) — show the toast directly rather
