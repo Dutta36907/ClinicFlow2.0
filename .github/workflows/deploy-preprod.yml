@@ -23,6 +23,10 @@ jobs:
         with:
           ref: preproduction
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Push database migrations
         uses: supabase/setup-cli@v1
         with:
