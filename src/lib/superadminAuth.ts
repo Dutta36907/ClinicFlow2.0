@@ -1,10 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { clearSuperAdminCache } from "@/components/SuperAdminLayout";
-import { applyRememberMe } from "@/lib/rememberMe";
-
-const PROJECT_REF = "xvcjkvjopmpnxuddlikb";
-const AUTH_KEY = `sb-${PROJECT_REF}-auth-token`;
-const FLAG_KEY = `${AUTH_KEY}-session-only`;
+import { applyRememberMe, AUTH_KEY, FLAG_KEY } from "@/lib/rememberMe";
 
 /**
  * Dedicated super-admin sign-out.
