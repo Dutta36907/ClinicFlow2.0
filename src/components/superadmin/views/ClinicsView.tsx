@@ -3,7 +3,11 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { deleteClinic, listClinicsForSuperAdmin, setClinicActive } from "@/lib/superadmin.functions";
+import {
+  deleteClinic,
+  listClinicsForSuperAdmin,
+  setClinicActive,
+} from "@/lib/superadmin.functions";
 import { SuperAdminLayout } from "@/components/SuperAdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,12 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,10 +49,7 @@ import {
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { AddClinicWizard } from "@/components/superadmin/AddClinicWizard";
-import {
-  EditClinicDialog,
-  type EditableClinic,
-} from "@/components/superadmin/EditClinicDialog";
+import { EditClinicDialog, type EditableClinic } from "@/components/superadmin/EditClinicDialog";
 
 type StatusFilter = "all" | "active" | "inactive" | "expired";
 type SortKey = "name" | "expires_at" | "created_at";
@@ -131,8 +127,7 @@ export function ClinicsView() {
 
   const deleteFn = useServerFn(deleteClinic);
   const deleteMut = useMutation({
-    mutationFn: (vars: { clinicId: string; confirmSlug: string }) =>
-      deleteFn({ data: vars }),
+    mutationFn: (vars: { clinicId: string; confirmSlug: string }) => deleteFn({ data: vars }),
     onSuccess: () => {
       toast.success("Clinic deleted");
       qc.invalidateQueries({ queryKey: ["all-clinics"] });
@@ -146,8 +141,7 @@ export function ClinicsView() {
 
   const setActiveFn = useServerFn(setClinicActive);
   const toggleMut = useMutation({
-    mutationFn: (vars: { clinicId: string; isActive: boolean }) =>
-      setActiveFn({ data: vars }),
+    mutationFn: (vars: { clinicId: string; isActive: boolean }) => setActiveFn({ data: vars }),
     onSuccess: (_res, vars) => {
       toast.success(vars.isActive ? "Clinic activated" : "Clinic deactivated");
       qc.invalidateQueries({ queryKey: ["all-clinics"] });
@@ -198,7 +192,6 @@ export function ClinicsView() {
     );
   }
 
-
   return (
     <SuperAdminLayout
       title="Clinics"
@@ -236,7 +229,6 @@ export function ClinicsView() {
             </Select>
           </FilterBar>
         </div>
-
 
         <div className="rounded-2xl border border-border bg-card shadow-sm">
           <div className="overflow-x-auto">
@@ -307,16 +299,24 @@ export function ClinicsView() {
                           s === "expired" ? "text-destructive" : "text-muted-foreground"
                         }`}
                       >
-                        {c.expires_at
-                          ? format(new Date(c.expires_at), "MMM d, yyyy")
-                          : "Never"}
+                        {c.expires_at ? format(new Date(c.expires_at), "MMM d, yyyy") : "Never"}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex justify-center">
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="size-8 hover:bg-primary/10 hover:text-primary" asChild>
-                                <a href={`/${c.slug}`} target="_blank" rel="noreferrer" aria-label={`Open ${c.name} booking page`}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8 hover:bg-primary/10 hover:text-primary"
+                                asChild
+                              >
+                                <a
+                                  href={`/${c.slug}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  aria-label={`Open ${c.name} booking page`}
+                                >
                                   <ExternalLink className="size-4" />
                                 </a>
                               </Button>
@@ -329,7 +329,12 @@ export function ClinicsView() {
                         <div className="flex justify-center">
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="size-8 hover:bg-primary/10 hover:text-primary" asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8 hover:bg-primary/10 hover:text-primary"
+                                asChild
+                              >
                                 <a
                                   href={`/${c.slug}/clinicmanager?via=superadmin`}
                                   target="_blank"
@@ -398,12 +403,28 @@ export function ClinicsView() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3"><Skeleton className="h-5 w-20 rounded-full" /></td>
-                      <td className="px-4 py-3"><Skeleton className="h-4 w-24" /></td>
-                      <td className="px-4 py-3"><div className="mx-auto size-8"><Skeleton className="size-8 rounded-md" /></div></td>
-                      <td className="px-4 py-3"><div className="mx-auto size-8"><Skeleton className="size-8 rounded-md" /></div></td>
-                      <td className="px-4 py-3"><Skeleton className="ml-auto size-8 rounded-md" /></td>
-                      <td className="px-4 py-3"><Skeleton className="ml-auto size-8 rounded-md" /></td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-5 w-20 rounded-full" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="mx-auto size-8">
+                          <Skeleton className="size-8 rounded-md" />
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="mx-auto size-8">
+                          <Skeleton className="size-8 rounded-md" />
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="ml-auto size-8 rounded-md" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="ml-auto size-8 rounded-md" />
+                      </td>
                     </tr>
                   ))}
                 {!clinicsQ.isLoading && total === 0 && (
@@ -412,9 +433,7 @@ export function ClinicsView() {
                       <EmptyState
                         icon={Building2}
                         title={
-                          debouncedSearch || status !== "all"
-                            ? "No matches"
-                            : "No clinics yet"
+                          debouncedSearch || status !== "all" ? "No matches" : "No clinics yet"
                         }
                         description={
                           debouncedSearch || status !== "all"
@@ -433,13 +452,9 @@ export function ClinicsView() {
             <div className="flex flex-col items-stretch gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span>
-                  Showing {pageStart + 1}–{Math.min(pageStart + pageSize, total)} of{" "}
-                  {total}
+                  Showing {pageStart + 1}–{Math.min(pageStart + pageSize, total)} of {total}
                 </span>
-                <Select
-                  value={String(pageSize)}
-                  onValueChange={(v) => setPageSize(Number(v))}
-                >
+                <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
                   <SelectTrigger className="h-8 w-[88px]">
                     <SelectValue />
                   </SelectTrigger>
@@ -482,7 +497,6 @@ export function ClinicsView() {
         </div>
       </TooltipProvider>
 
-
       {editing && (
         <EditClinicDialog
           clinic={editing}
@@ -504,9 +518,9 @@ export function ClinicsView() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete {toDelete?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently removes the clinic and all of its appointments,
-              doctors, schedules, media, testimonials, treatments, and manager
-              assignments. This action cannot be undone.
+              This permanently removes the clinic and all of its appointments, doctors, schedules,
+              media, testimonials, treatments, and manager assignments. This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-2">
@@ -524,11 +538,7 @@ export function ClinicsView() {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleteMut.isPending}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              disabled={
-                !toDelete ||
-                confirmSlug !== toDelete.slug ||
-                deleteMut.isPending
-              }
+              disabled={!toDelete || confirmSlug !== toDelete.slug || deleteMut.isPending}
               onClick={(e) => {
                 e.preventDefault();
                 if (!toDelete) return;
@@ -545,10 +555,7 @@ export function ClinicsView() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog
-        open={!!toToggle}
-        onOpenChange={(v) => !v && setToToggle(null)}
-      >
+      <AlertDialog open={!!toToggle} onOpenChange={(v) => !v && setToToggle(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
@@ -573,11 +580,7 @@ export function ClinicsView() {
                 });
               }}
             >
-              {toggleMut.isPending
-                ? "Saving…"
-                : toToggle?.is_active
-                  ? "Deactivate"
-                  : "Activate"}
+              {toggleMut.isPending ? "Saving…" : toToggle?.is_active ? "Deactivate" : "Activate"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

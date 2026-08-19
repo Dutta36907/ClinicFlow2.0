@@ -49,19 +49,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  addClinicUser,
-  listClinicMembers,
-  removeClinicUser,
-} from "@/lib/clinicmanager.functions";
+import { addClinicUser, listClinicMembers, removeClinicUser } from "@/lib/clinicmanager.functions";
 
 import { Card, SectionShell } from "../shared/SectionShell";
 import { Field } from "../shared/FormPrimitives";
-import {
-  LIMITS,
-  formatServerError,
-  validateTeamMember,
-} from "@/lib/validation/clinic-forms";
+import { LIMITS, formatServerError, validateTeamMember } from "@/lib/validation/clinic-forms";
 import type { DashboardClinic } from "../types";
 
 export function TeamSection({ clinic }: { clinic: DashboardClinic }) {
@@ -91,7 +83,6 @@ export function TeamSection({ clinic }: { clinic: DashboardClinic }) {
     }
   }
 
-
   return (
     <SectionShell
       title="Team & access"
@@ -109,119 +100,122 @@ export function TeamSection({ clinic }: { clinic: DashboardClinic }) {
     >
       <Card className="p-0">
         <div className="-mx-4 sm:mx-0 overflow-x-auto">
-        <Table className="min-w-[680px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="w-24 text-right">Remove</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {membersQ.isLoading &&
-              Array.from({ length: 3 }).map((_, i) => (
-                <TableRow key={`sk-${i}`}>
-                  <TableCell>
-                    <div className="flex items-center gap-2.5">
-                      <Skeleton className="size-9 rounded-lg" />
-                      <Skeleton className="h-4 w-28" />
-                    </div>
-                  </TableCell>
-                  <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                  <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
-                  <TableCell className="text-right">
-                    <Skeleton className="ml-auto size-9 rounded-md" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            {!membersQ.isLoading && rows.length === 0 && (
+          <Table className="min-w-[680px]">
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={4} className="p-0">
-                  <EmptyState
-                    icon={Users}
-                    title="No team members yet"
-                    description="Invite a clinic user to share access to appointments and the dashboard."
-                  />
-                </TableCell>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead className="w-24 text-right">Remove</TableHead>
               </TableRow>
-            )}
-            {rows.map((m) => {
-              const initials = (m.full_name ?? m.email ?? "?")
-                .split(/[\s@]+/)
-                .map((p) => p[0])
-                .filter(Boolean)
-                .slice(0, 2)
-                .join("")
-                .toUpperCase();
-              return (
-                <TableRow key={m.role_id} className="transition-colors hover:bg-muted/30">
-                  <TableCell>
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className="grid size-9 place-items-center rounded-lg bg-gradient-to-br from-primary/15 to-primary/5 text-xs font-semibold text-primary ring-1 ring-primary/15"
-                        aria-hidden
-                      >
-                        {initials || "?"}
+            </TableHeader>
+            <TableBody>
+              {membersQ.isLoading &&
+                Array.from({ length: 3 }).map((_, i) => (
+                  <TableRow key={`sk-${i}`}>
+                    <TableCell>
+                      <div className="flex items-center gap-2.5">
+                        <Skeleton className="size-9 rounded-lg" />
+                        <Skeleton className="h-4 w-28" />
                       </div>
-                      <span className="truncate font-medium">{m.full_name ?? "—"}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {m.email ?? "—"}
-                  </TableCell>
-                  <TableCell>
-                    {m.role === "clinic_manager" ? (
-                      <Badge className="gap-1">
-                        <ShieldCheck className="size-3" /> Manager
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary">User</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {/* Only `clinic_user` rows are removable here. */}
-                    {m.role === "clinic_user" ? (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="text-destructive hover:bg-destructive/10"
-                            aria-label={`Remove ${m.full_name ?? m.email ?? "user"}`}
-                          >
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Remove access?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {m.email ?? "This user"} will no longer be able to
-                              view this clinic. Their login account is preserved.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => onRemove(m.user_id)}>
-                              Remove
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">Locked</span>
-                    )}
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20 rounded-full" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="ml-auto size-9 rounded-md" />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              {!membersQ.isLoading && rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="p-0">
+                    <EmptyState
+                      icon={Users}
+                      title="No team members yet"
+                      description="Invite a clinic user to share access to appointments and the dashboard."
+                    />
                   </TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              )}
+              {rows.map((m) => {
+                const initials = (m.full_name ?? m.email ?? "?")
+                  .split(/[\s@]+/)
+                  .map((p) => p[0])
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase();
+                return (
+                  <TableRow key={m.role_id} className="transition-colors hover:bg-muted/30">
+                    <TableCell>
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="grid size-9 place-items-center rounded-lg bg-gradient-to-br from-primary/15 to-primary/5 text-xs font-semibold text-primary ring-1 ring-primary/15"
+                          aria-hidden
+                        >
+                          {initials || "?"}
+                        </div>
+                        <span className="truncate font-medium">{m.full_name ?? "—"}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {m.email ?? "—"}
+                    </TableCell>
+                    <TableCell>
+                      {m.role === "clinic_manager" ? (
+                        <Badge className="gap-1">
+                          <ShieldCheck className="size-3" /> Manager
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">User</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {/* Only `clinic_user` rows are removable here. */}
+                      {m.role === "clinic_user" ? (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="text-destructive hover:bg-destructive/10"
+                              aria-label={`Remove ${m.full_name ?? m.email ?? "user"}`}
+                            >
+                              <Trash2 className="size-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Remove access?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                {m.email ?? "This user"} will no longer be able to view this clinic.
+                                Their login account is preserved.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => onRemove(m.user_id)}>
+                                Remove
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Locked</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </div>
         <TablePagination total={total} />
       </Card>
-
 
       <Card>
         <div className="flex items-start gap-3 text-sm">
@@ -230,9 +224,8 @@ export function TeamSection({ clinic }: { clinic: DashboardClinic }) {
             <p className="font-medium">Managers vs users</p>
             <p className="mt-1 text-muted-foreground">
               <strong>Managers</strong> can edit this clinic profile and team.
-              <strong className="ml-1">Users</strong> can view appointments and
-              doctors but cannot change clinic settings. Manager assignments are
-              controlled by a super admin.
+              <strong className="ml-1">Users</strong> can view appointments and doctors but cannot
+              change clinic settings. Manager assignments are controlled by a super admin.
             </p>
           </div>
         </div>
@@ -241,13 +234,7 @@ export function TeamSection({ clinic }: { clinic: DashboardClinic }) {
   );
 }
 
-function AddUserDialog({
-  clinicId,
-  onDone,
-}: {
-  clinicId: string;
-  onDone: () => void;
-}) {
+function AddUserDialog({ clinicId, onDone }: { clinicId: string; onDone: () => void }) {
   const qc = useQueryClient();
   const add = useServerFn(addClinicUser);
   const [form, setForm] = useState({ full_name: "", email: "", password: "" });
@@ -321,8 +308,8 @@ function AddUserDialog({
         />
         <p className="text-xs text-muted-foreground">
           The user can sign in at{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5">/clinicmanager</code>{" "}
-          with these credentials. Share the password securely.
+          <code className="rounded bg-muted px-1.5 py-0.5">/clinicmanager</code> with these
+          credentials. Share the password securely.
         </p>
       </div>
       <DialogFooter>

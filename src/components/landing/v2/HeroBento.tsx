@@ -45,8 +45,8 @@ export function HeroBento({
           </h1>
 
           <p className="mt-7 max-w-xl text-lg text-[#1a4a6e]/80 leading-relaxed">
-            Publish a branded booking page, manage doctors, and accept verified appointments
-            online — without juggling spreadsheets, calls, or no-shows.
+            Publish a branded booking page, manage doctors, and accept verified appointments online
+            — without juggling spreadsheets, calls, or no-shows.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">

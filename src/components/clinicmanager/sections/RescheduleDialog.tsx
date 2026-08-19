@@ -25,11 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import {
-  formatTime12,
-  utcToZonedParts,
-  zonedWallTimeToUtc,
-} from "@/lib/clinic-time";
+import { formatTime12, utcToZonedParts, zonedWallTimeToUtc } from "@/lib/clinic-time";
 import {
   generateDoctorSlots,
   WEEKDAY_LABELS as DOCTOR_WEEKDAY_LABELS,
@@ -38,7 +34,10 @@ import {
 } from "@/lib/doctor-slots";
 import { formatServerError } from "@/lib/validation/clinic-forms";
 
-import { invalidateClinicAppointments, useClinicAppointments } from "../hooks/useClinicAppointments";
+import {
+  invalidateClinicAppointments,
+  useClinicAppointments,
+} from "../hooks/useClinicAppointments";
 import type { AppointmentRow, DashboardDoctor } from "../types";
 import {
   SlotValidationAlert,
@@ -169,8 +168,7 @@ export function RescheduleDialog({
     ? scheduleValidation
     : overlapValidation;
 
-  const slotChanged =
-    localValue !== initialLocal || doctorId !== appointment.doctor_id;
+  const slotChanged = localValue !== initialLocal || doctorId !== appointment.doctor_id;
 
   async function onSave() {
     if (!validation.ok) {
@@ -271,9 +269,7 @@ export function RescheduleDialog({
                 className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 font-mono text-sm disabled:opacity-50"
                 value={pickedTime ?? ""}
                 disabled={!daySlots || timeOptions.length === 0}
-                onChange={(e) =>
-                  setLocalValue(`${pickedDate}T${e.target.value}`)
-                }
+                onChange={(e) => setLocalValue(`${pickedDate}T${e.target.value}`)}
                 aria-invalid={!validation.ok}
               >
                 {timeOptions.length === 0 ? (
@@ -287,9 +283,7 @@ export function RescheduleDialog({
                 )}
               </select>
               {availLoading && (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Checking availability…
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">Checking availability…</p>
               )}
               {!availLoading && daySlots && daySlots.dayOff && (
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -297,14 +291,9 @@ export function RescheduleDialog({
                   {DOCTOR_WEEKDAY_LABELS[daySlots.weekday]}s.
                 </p>
               )}
-              {!availLoading &&
-                daySlots &&
-                !daySlots.dayOff &&
-                daySlots.fullyBlocked && (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    On time off all day.
-                  </p>
-                )}
+              {!availLoading && daySlots && !daySlots.dayOff && daySlots.fullyBlocked && (
+                <p className="mt-1 text-xs text-muted-foreground">On time off all day.</p>
+              )}
               {!availLoading &&
                 daySlots &&
                 !daySlots.dayOff &&
@@ -320,8 +309,8 @@ export function RescheduleDialog({
           <SlotValidationAlert v={validation} />
 
           <p className="text-xs text-muted-foreground">
-            Saving will mark this appointment as <strong>Rescheduled</strong>{" "}
-            and move it to the selected slot.
+            Saving will mark this appointment as <strong>Rescheduled</strong> and move it to the
+            selected slot.
           </p>
         </div>
 

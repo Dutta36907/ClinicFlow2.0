@@ -27,11 +27,7 @@ import {
   optimizeImage,
   type OptimizeBucket,
 } from "@/lib/image-optimize";
-import {
-  listClinicMedia,
-  uploadClinicMedia,
-  type MediaItem,
-} from "@/lib/media.functions";
+import { listClinicMedia, uploadClinicMedia, type MediaItem } from "@/lib/media.functions";
 
 type Props = {
   bucket: OptimizeBucket;
@@ -117,9 +113,7 @@ function Body({
     pickFromBuckets.includes(m.bucket as OptimizeBucket),
   );
 
-  const [tab, setTab] = useState<"existing" | "upload">(
-    items.length > 0 ? "existing" : "upload",
-  );
+  const [tab, setTab] = useState<"existing" | "upload">(items.length > 0 ? "existing" : "upload");
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -157,7 +151,8 @@ function Body({
               <ImagePlus className="size-5" />
             </div>
             <p className="text-sm text-muted-foreground">
-              Nothing uploaded yet — switch to <span className="font-medium text-foreground">Upload new</span>.
+              Nothing uploaded yet — switch to{" "}
+              <span className="font-medium text-foreground">Upload new</span>.
             </p>
           </div>
         ) : (
@@ -185,9 +180,7 @@ function Body({
             </div>
             {multi && (
               <div className="sticky bottom-0 mt-3 flex items-center justify-between border-t border-border bg-background/95 py-3 backdrop-blur">
-                <p className="text-sm text-muted-foreground">
-                  {selectedUrls.length} selected
-                </p>
+                <p className="text-sm text-muted-foreground">{selectedUrls.length} selected</p>
                 <Button
                   type="button"
                   disabled={selectedUrls.length === 0}
@@ -311,10 +304,10 @@ function UploadPane({
     bucket === "clinic-logos"
       ? "Square logo. We auto-crop to 512×512 and compress to WebP."
       : bucket === "clinic-covers"
-      ? "Wide banner. We auto-crop to 1920×480 and compress to WebP."
-      : multi
-      ? "Pick one or many. We resize the longest side to 1920 px and compress to WebP."
-      : "Any photo. We resize the longest side to 1920 px and compress to WebP.";
+        ? "Wide banner. We auto-crop to 1920×480 and compress to WebP."
+        : multi
+          ? "Pick one or many. We resize the longest side to 1920 px and compress to WebP."
+          : "Any photo. We resize the longest side to 1920 px and compress to WebP.";
 
   async function uploadOne(file: File): Promise<string | null> {
     const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -348,23 +341,17 @@ function UploadPane({
     try {
       for (let i = 0; i < files.length; i++) {
         setStatus(
-          files.length > 1
-            ? `Uploading ${i + 1} of ${files.length}…`
-            : "Optimizing & uploading…",
+          files.length > 1 ? `Uploading ${i + 1} of ${files.length}…` : "Optimizing & uploading…",
         );
         try {
           const url = await uploadOne(files[i]);
           if (url) uploaded.push(url);
         } catch (e) {
-          toast.error(
-            `${files[i].name}: ${e instanceof Error ? e.message : "upload failed"}`,
-          );
+          toast.error(`${files[i].name}: ${e instanceof Error ? e.message : "upload failed"}`);
         }
       }
       if (uploaded.length > 0) {
-        toast.success(
-          uploaded.length === 1 ? "Uploaded" : `Uploaded ${uploaded.length} images`,
-        );
+        toast.success(uploaded.length === 1 ? "Uploaded" : `Uploaded ${uploaded.length} images`);
         await onUploadedBatch(uploaded);
       }
     } finally {
@@ -420,8 +407,8 @@ function UploadPane({
           {dragging
             ? "Release to upload"
             : multi
-            ? "Drop images or click Browse (pick many)"
-            : "Drop an image or click Browse"}
+              ? "Drop images or click Browse (pick many)"
+              : "Drop an image or click Browse"}
         </p>
         <p className="text-xs text-muted-foreground">
           {recipe}
@@ -430,15 +417,9 @@ function UploadPane({
         <p className="text-xs font-medium text-muted-foreground">
           JPEG, PNG or WebP · up to 20 MB each — we shrink them for you
         </p>
-        {busy && status ? (
-          <p className="text-xs font-medium text-primary">{status}</p>
-        ) : null}
+        {busy && status ? <p className="text-xs font-medium text-primary">{status}</p> : null}
       </div>
-      <Button
-        type="button"
-        disabled={busy}
-        onClick={() => inputRef.current?.click()}
-      >
+      <Button type="button" disabled={busy} onClick={() => inputRef.current?.click()}>
         {busy ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
         {busy ? (status ?? "Working…") : "Browse"}
       </Button>

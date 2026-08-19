@@ -14,12 +14,16 @@ export function FinalCTA({
         <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#1a4a6e] via-[#0c2340] to-[#0c2340] p-12 text-center md:p-16">
           <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-[#2d8a9e]/30 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-24 -left-24 size-72 rounded-full bg-[#5cbdb9]/20 blur-3xl" />
-          <svg
-            aria-hidden
-            className="pointer-events-none absolute inset-0 size-full opacity-10"
-          >
+          <svg aria-hidden className="pointer-events-none absolute inset-0 size-full opacity-10">
             <defs>
-              <pattern id="cta-dots" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
+              <pattern
+                id="cta-dots"
+                x="0"
+                y="0"
+                width="32"
+                height="32"
+                patternUnits="userSpaceOnUse"
+              >
                 <circle cx="2" cy="2" r="1" fill="white" />
               </pattern>
             </defs>

@@ -53,4 +53,3 @@ export function useTablePagination() {
     [page, size, from, to, setPage, setSize, resetPage],
   );
 }
-

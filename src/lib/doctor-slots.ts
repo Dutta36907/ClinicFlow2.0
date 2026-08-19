@@ -57,10 +57,10 @@ function subtractBlocks(windows: Window[], blocks: Window[]): Window[] {
 
 export type DoctorDaySlots = {
   weekday: number;
-  dayOff: boolean;        // no active schedule for this weekday
-  fullyBlocked: boolean;  // an all-day time-off override exists for this date
-  windows: Window[];      // working windows for this weekday (raw, from schedule)
-  freeWindows: Window[];  // working windows minus time-off blocks
+  dayOff: boolean; // no active schedule for this weekday
+  fullyBlocked: boolean; // an all-day time-off override exists for this date
+  windows: Window[]; // working windows for this weekday (raw, from schedule)
+  freeWindows: Window[]; // working windows minus time-off blocks
   startOptions: string[]; // every interval step inside freeWindows
   endOptionsFor: (start: string) => string[];
 };

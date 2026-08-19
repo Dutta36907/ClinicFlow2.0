@@ -32,21 +32,39 @@ export function AppointmentRescheduledEmail(p: AppointmentRescheduledEmailProps)
       <Body style={main}>
         <Container style={container}>
           <Text style={{ color: "#64748B", fontSize: "13px", margin: 0 }}>{p.clinicName}</Text>
-          <Heading as="h1" style={heroTeal}>Your appointment has been rescheduled</Heading>
+          <Heading as="h1" style={heroTeal}>
+            Your appointment has been rescheduled
+          </Heading>
           <Text style={{ fontSize: "15px", margin: "0 0 16px" }}>
             Hi {p.patientName}, your appointment with {p.doctorName} has been moved.
           </Text>
           <Section style={card}>
             <Text style={rowLabel}>Previous</Text>
-            <Text style={{ fontSize: "15px", textDecoration: "line-through", color: colors.muted, margin: "0 0 12px" }}>
+            <Text
+              style={{
+                fontSize: "15px",
+                textDecoration: "line-through",
+                color: colors.muted,
+                margin: "0 0 12px",
+              }}
+            >
               {p.oldDate} at {p.oldTime}
             </Text>
             <Text style={rowLabel}>New</Text>
-            <Text style={{ fontSize: "16px", fontWeight: 700, color: colors.primary, margin: "0 0 12px" }}>
+            <Text
+              style={{
+                fontSize: "16px",
+                fontWeight: 700,
+                color: colors.primary,
+                margin: "0 0 12px",
+              }}
+            >
               {p.appointmentDate} at {p.appointmentTime}
             </Text>
             <Text style={rowLabel}>Doctor</Text>
-            <Text style={{ fontSize: "15px", fontWeight: 600, margin: "0 0 12px" }}>{p.doctorName}</Text>
+            <Text style={{ fontSize: "15px", fontWeight: 600, margin: "0 0 12px" }}>
+              {p.doctorName}
+            </Text>
             <Text style={rowLabel}>Address</Text>
             <Text style={{ fontSize: "15px", margin: 0 }}>{p.clinicAddress}</Text>
           </Section>

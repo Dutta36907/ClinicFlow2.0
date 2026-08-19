@@ -39,17 +39,9 @@ import {
 } from "@/components/ui/table";
 
 import { Card, SectionShell } from "../shared/SectionShell";
-import {
-  formatInTz,
-  formatNice,
-  tzDateKey,
-  tzDayStart,
-} from "../shared/tz-format";
+import { formatInTz, formatNice, tzDateKey, tzDayStart } from "../shared/tz-format";
 import type { AppointmentRow, DashboardClinic, DashboardDoctor } from "../types";
-import {
-  AppointmentDetailSheet,
-  AppointmentEditDialog,
-} from "./AppointmentDialogs";
+import { AppointmentDetailSheet, AppointmentEditDialog } from "./AppointmentDialogs";
 
 // --- Local filter / range types --------------------------------------------
 
@@ -80,16 +72,12 @@ export function DashboardSection({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [selectedAppt, setSelectedAppt] = useState<AppointmentRow | null>(null);
   const [editing, setEditing] = useState<AppointmentRow | null>(null);
-  
 
   const days = RANGES.find((r) => r.key === range)!.days;
 
   // --- Data fetching: shared hook (single source of truth) ----------------
   const apptsQ = useClinicAppointments(clinic.id);
-  const allAppts = useMemo<AppointmentRow[]>(
-    () => apptsQ.data ?? [],
-    [apptsQ.data],
-  );
+  const allAppts = useMemo<AppointmentRow[]>(() => apptsQ.data ?? [], [apptsQ.data]);
 
   // --- Derived data ------------------------------------------------------
   const doctorMap = useMemo(
@@ -104,17 +92,11 @@ export function DashboardSection({
     if (range === "past") {
       return allAppts
         .filter((a) => new Date(a.scheduled_at) < todayStart)
-        .sort(
-          (a, b) =>
-            new Date(b.scheduled_at).getTime() -
-            new Date(a.scheduled_at).getTime(),
-        );
+        .sort((a, b) => new Date(b.scheduled_at).getTime() - new Date(a.scheduled_at).getTime());
     }
     if (range === "all") {
       return [...allAppts].sort(
-        (a, b) =>
-          new Date(b.scheduled_at).getTime() -
-          new Date(a.scheduled_at).getTime(),
+        (a, b) => new Date(b.scheduled_at).getTime() - new Date(a.scheduled_at).getTime(),
       );
     }
     const end = tzDayStart(clinic.timezone, days);
@@ -123,37 +105,26 @@ export function DashboardSection({
         const t = new Date(a.scheduled_at);
         return t >= todayStart && t < end;
       })
-      .sort(
-        (a, b) =>
-          new Date(a.scheduled_at).getTime() -
-          new Date(b.scheduled_at).getTime(),
-      );
+      .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
   }, [allAppts, range, days, clinic.timezone]);
 
   const all = inRange;
   const todayKey = tzDateKey(new Date().toISOString(), clinic.timezone);
   const todayCount = all.filter(
-    (a) =>
-      tzDateKey(a.scheduled_at, clinic.timezone) === todayKey &&
-      a.status !== "cancelled",
+    (a) => tzDateKey(a.scheduled_at, clinic.timezone) === todayKey && a.status !== "cancelled",
   ).length;
   const pendingCount = all.filter((a) => a.status === "pending").length;
   const confirmedCount = all.filter((a) => a.status === "confirmed").length;
   const activeDoctors = doctors.filter((d) => d.is_active).length;
   const nowMs = Date.now();
   const nextAppt = all.find(
-    (a) =>
-      new Date(a.scheduled_at).getTime() >= nowMs && a.status !== "cancelled",
+    (a) => new Date(a.scheduled_at).getTime() >= nowMs && a.status !== "cancelled",
   );
 
-  const filtered =
-    statusFilter === "all"
-      ? all
-      : all.filter((a) => a.status === statusFilter);
+  const filtered = statusFilter === "all" ? all : all.filter((a) => a.status === statusFilter);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const bookingUrl = `${origin}/${clinic.slug}`;
-
 
   // --- Render -------------------------------------------------------------
   return (
@@ -279,26 +250,22 @@ export function DashboardSection({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-lg font-semibold">
-          Upcoming appointments
-        </h2>
+        <h2 className="font-display text-lg font-semibold">Upcoming appointments</h2>
         <div className="inline-flex rounded-lg border border-border bg-card p-1">
-          {(["all", "pending", "confirmed", "completed"] as StatusFilter[]).map(
-            (s) => (
-              <button
-                key={s}
-                onClick={() => setStatusFilter(s)}
-                className={
-                  "focus-pill rounded-md px-3 py-1.5 text-xs font-medium capitalize transition " +
-                  (statusFilter === s
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground")
-                }
-              >
-                {s}
-              </button>
-            ),
-          )}
+          {(["all", "pending", "confirmed", "completed"] as StatusFilter[]).map((s) => (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={
+                "focus-pill rounded-md px-3 py-1.5 text-xs font-medium capitalize transition " +
+                (statusFilter === s
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground")
+              }
+            >
+              {s}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -322,10 +289,18 @@ export function DashboardSection({
                       <Skeleton className="h-4 w-32" />
                       <Skeleton className="mt-1.5 h-3 w-24" />
                     </TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="ml-auto size-8 rounded-md" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20 rounded-full" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="ml-auto size-8 rounded-md" />
+                    </TableCell>
                   </TableRow>
                 ))}
               {!apptsQ.isLoading && filtered.length === 0 && (
@@ -340,11 +315,7 @@ export function DashboardSection({
                 </TableRow>
               )}
               {filtered.map((a) => (
-                <TableRow
-                  key={a.id}
-                  className="cursor-pointer"
-                  onClick={() => setSelectedAppt(a)}
-                >
+                <TableRow key={a.id} className="cursor-pointer" onClick={() => setSelectedAppt(a)}>
                   <TableCell>
                     <div className="font-medium">{a.patient_name}</div>
                     <div className="text-xs text-muted-foreground">
@@ -352,9 +323,7 @@ export function DashboardSection({
                       {a.patient_email ? ` · ${a.patient_email}` : ""}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {doctorMap[a.doctor_id] ?? "—"}
-                  </TableCell>
+                  <TableCell className="text-sm">{doctorMap[a.doctor_id] ?? "—"}</TableCell>
                   <TableCell className="text-sm">
                     {formatInTz(a.scheduled_at, clinic.timezone, {
                       month: "short",

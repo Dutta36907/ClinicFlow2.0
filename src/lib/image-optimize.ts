@@ -10,12 +10,7 @@ import type { ClinicBucket } from "./image-limits";
 export type OptimizeBucket = ClinicBucket;
 
 // Re-export shared limits/labels so existing imports from this module keep working.
-export {
-  MAX_BYTES_BY_BUCKET,
-  BUCKET_LABEL,
-  ALLOWED_IMAGE_MIME,
-  formatBytes,
-} from "./image-limits";
+export { MAX_BYTES_BY_BUCKET, BUCKET_LABEL, ALLOWED_IMAGE_MIME, formatBytes } from "./image-limits";
 
 type Target = {
   /** Target output width (cover-fit) or undefined to keep ratio. */
@@ -70,8 +65,7 @@ export async function optimizeImage(
   bitmap.close?.();
 
   const webp = await canvasToBlob(canvas, "image/webp", quality);
-  const final =
-    webp ?? (await canvasToBlob(canvas, "image/jpeg", quality)) ?? null;
+  const final = webp ?? (await canvasToBlob(canvas, "image/jpeg", quality)) ?? null;
   if (!final) return file;
 
   // If optimized is somehow larger than the source, keep source.

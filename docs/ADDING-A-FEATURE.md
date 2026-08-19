@@ -26,10 +26,7 @@ import type { DashboardClinic } from "../types";
  */
 export function ReportsSection({ clinic }: { clinic: DashboardClinic }) {
   return (
-    <SectionShell
-      title="Reports"
-      subtitle="Monthly summaries for your clinic."
-    >
+    <SectionShell title="Reports" subtitle="Monthly summaries for your clinic.">
       <Card>
         <p className="text-sm text-muted-foreground">
           Reports for <strong>{clinic.name}</strong> will appear here.
@@ -143,7 +140,7 @@ using (
 );
 ```
 
-2. Run it via the migration tool (Lovable does this on approval).
+2. Run it against each environment: `supabase db push` (see `docs/CI_CD_SETUP.md`).
 3. Wait for `src/integrations/supabase/types.ts` to regenerate — never
    edit that file by hand.
 
@@ -232,16 +229,16 @@ or `notification_log` row is written.
 import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
 
 await dispatchNotification({
-  event: "appointment_booked",              // one of 5 event keys
-  clinicId,                                  // drives per-clinic + per-event toggles
+  event: "appointment_booked", // one of 5 event keys
+  clinicId, // drives per-clinic + per-event toggles
   recipient: {
-    phone: patientPhone,                     // raw — dispatcher masks it
+    phone: patientPhone, // raw — dispatcher masks it
     email: patientEmail ?? undefined,
   },
   templateData: {
     clinicName,
     doctorName,
-    date,                                    // strings only — no PII keys
+    date, // strings only — no PII keys
     time,
     appointmentId,
   },
@@ -263,17 +260,17 @@ the caller's perspective; never block the user response on it.
 
 ## Where to put what — cheat sheet
 
-| You're adding…                       | Put it in…                                    |
-|--------------------------------------|-----------------------------------------------|
-| A new page (URL)                     | `src/routes/<path>.tsx`                       |
-| A dashboard section                  | `src/components/clinicmanager/sections/`      |
+| You're adding…                       | Put it in…                                                     |
+| ------------------------------------ | -------------------------------------------------------------- |
+| A new page (URL)                     | `src/routes/<path>.tsx`                                        |
+| A dashboard section                  | `src/components/clinicmanager/sections/`                       |
 | A reusable form input                | `src/components/clinicmanager/shared/` or `src/components/ui/` |
-| A booking-dialog step                | `src/components/booking/`                     |
-| A super-admin view                   | `src/components/superadmin/views/`            |
-| A typed RPC                          | `src/lib/<feature>.functions.ts`              |
-| A server-only helper (no client use) | `src/lib/<feature>.server.ts`                 |
-| A webhook                            | `src/routes/api/public/<name>.ts`             |
-| A DB schema change                   | `supabase/migrations/<timestamp>_<name>.sql`  |
-| A design token                       | `src/styles.css`                              |
-| A notification template              | `src/lib/notifications/templates/<channel>/`  |
-| A notification provider adapter      | `src/lib/notifications/providers/<name>.server.ts` |
+| A booking-dialog step                | `src/components/booking/`                                      |
+| A super-admin view                   | `src/components/superadmin/views/`                             |
+| A typed RPC                          | `src/lib/<feature>.functions.ts`                               |
+| A server-only helper (no client use) | `src/lib/<feature>.server.ts`                                  |
+| A webhook                            | `src/routes/api/public/<name>.ts`                              |
+| A DB schema change                   | `supabase/migrations/<timestamp>_<name>.sql`                   |
+| A design token                       | `src/styles.css`                                               |
+| A notification template              | `src/lib/notifications/templates/<channel>/`                   |
+| A notification provider adapter      | `src/lib/notifications/providers/<name>.server.ts`             |

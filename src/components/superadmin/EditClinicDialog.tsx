@@ -16,16 +16,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Building2, Check, Power } from "lucide-react";
-import { checkSlugAvailable, updateClinic, listClinicManagers, setClinicManagerPassword } from "@/lib/superadmin.functions";
+import {
+  checkSlugAvailable,
+  updateClinic,
+  listClinicManagers,
+  setClinicManagerPassword,
+} from "@/lib/superadmin.functions";
 import { useSuperAdminPermissions } from "@/hooks/useSuperAdminPermissions";
 import { useQuery } from "@tanstack/react-query";
 import { Copy, Eye, EyeOff, KeyRound } from "lucide-react";
@@ -54,9 +55,7 @@ function detectPreset(expires_at: string | null): {
   if (!expires_at) return { preset: "none", customDate: undefined };
   const d = new Date(expires_at);
   const now = new Date();
-  const diffDays = Math.round(
-    (d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-  );
+  const diffDays = Math.round((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   if ([1, 30, 60, 90, 365].includes(diffDays)) {
     return { preset: String(diffDays) as Preset, customDate: undefined };
   }
@@ -94,9 +93,9 @@ export function EditClinicDialog({
     preset: seed.preset,
     customDate: seed.customDate,
   });
-  const [slugState, setSlugState] = useState<
-    "idle" | "checking" | "ok" | "taken" | "invalid"
-  >("ok");
+  const [slugState, setSlugState] = useState<"idle" | "checking" | "ok" | "taken" | "invalid">(
+    "ok",
+  );
   const [saving, setSaving] = useState(false);
 
   // Reseed on row change
@@ -277,7 +276,10 @@ export function EditClinicDialog({
               />
               <div className="mt-1.5 flex items-center justify-between text-xs">
                 <span className="text-muted-foreground truncate">
-                  Booking: <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">/{form.slug}</code>
+                  Booking:{" "}
+                  <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">
+                    /{form.slug}
+                  </code>
                 </span>
                 <SlugBadge state={slugState} />
               </div>
@@ -290,10 +292,28 @@ export function EditClinicDialog({
           <section className="space-y-4">
             <SectionTitle>Contact</SectionTitle>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Phone" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
-              <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
-              <Field label="WhatsApp" value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} />
-              <Field label="Website" type="url" value={form.website} onChange={(v) => setForm({ ...form, website: v })} />
+              <Field
+                label="Phone"
+                value={form.phone}
+                onChange={(v) => setForm({ ...form, phone: v })}
+              />
+              <Field
+                label="Email"
+                type="email"
+                value={form.email}
+                onChange={(v) => setForm({ ...form, email: v })}
+              />
+              <Field
+                label="WhatsApp"
+                value={form.whatsapp}
+                onChange={(v) => setForm({ ...form, whatsapp: v })}
+              />
+              <Field
+                label="Website"
+                type="url"
+                value={form.website}
+                onChange={(v) => setForm({ ...form, website: v })}
+              />
             </div>
           </section>
 
@@ -378,9 +398,7 @@ export function EditClinicDialog({
                   <Label className="mb-2 block">Active till</Label>
                   <RadioGroup
                     value={form.preset}
-                    onValueChange={(v) =>
-                      setForm({ ...form, preset: v as Preset })
-                    }
+                    onValueChange={(v) => setForm({ ...form, preset: v as Preset })}
                     className="grid grid-cols-2 gap-2 sm:grid-cols-3"
                   >
                     {[
@@ -426,9 +444,7 @@ export function EditClinicDialog({
                           mode="single"
                           selected={form.customDate}
                           onSelect={(d) => setForm({ ...form, customDate: d })}
-                          disabled={(d) =>
-                            d < new Date(new Date().setHours(0, 0, 0, 0))
-                          }
+                          disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus
                           className={cn("p-3 pointer-events-auto")}
                         />
@@ -446,8 +462,6 @@ export function EditClinicDialog({
           )}
 
           <Separator />
-
-
 
           {/* Manager credentials */}
           <section className="space-y-4">
@@ -497,20 +511,12 @@ function Field({
   return (
     <div>
       <Label>{label}</Label>
-      <Input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }
 
-function SlugBadge({
-  state,
-}: {
-  state: "idle" | "checking" | "ok" | "taken" | "invalid";
-}) {
+function SlugBadge({ state }: { state: "idle" | "checking" | "ok" | "taken" | "invalid" }) {
   if (state === "idle") return null;
   const map = {
     checking: { t: "Checking…", c: "text-muted-foreground" },
@@ -612,12 +618,8 @@ function ManagerRow({
     <div className="rounded-xl border border-border bg-card px-4 py-3">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">
-            {fullName || email || userId}
-          </p>
-          {email && (
-            <p className="truncate text-xs text-muted-foreground">{email}</p>
-          )}
+          <p className="truncate text-sm font-medium">{fullName || email || userId}</p>
+          {email && <p className="truncate text-xs text-muted-foreground">{email}</p>}
         </div>
         <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary">
           <KeyRound className="size-3" /> Manager
@@ -665,4 +667,3 @@ function ManagerRow({
     </div>
   );
 }
-

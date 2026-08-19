@@ -3,8 +3,21 @@
  * the picker stays scannable and the public page stays on-brand.
  */
 import {
-  Stethoscope, HeartPulse, Brain, Baby, Smile, Eye, Ear, Bone,
-  Pill, Syringe, Microscope, Activity, Sparkles, ShieldCheck, Bandage,
+  Stethoscope,
+  HeartPulse,
+  Brain,
+  Baby,
+  Smile,
+  Eye,
+  Ear,
+  Bone,
+  Pill,
+  Syringe,
+  Microscope,
+  Activity,
+  Sparkles,
+  ShieldCheck,
+  Bandage,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ComponentProps } from "react";

@@ -24,12 +24,12 @@ ClinicFlow uses Supabase for Postgres, Auth, Storage, and Row-Level Security. Th
 
 From **Project Settings → API** copy:
 
-| Value                          | Used as env var                                    |
-| ------------------------------ | -------------------------------------------------- |
-| Project URL                    | `SUPABASE_URL` and `VITE_SUPABASE_URL`             |
-| `anon` / publishable key       | `SUPABASE_PUBLISHABLE_KEY` and `VITE_SUPABASE_PUBLISHABLE_KEY` |
-| `service_role` key (**secret**) | `SUPABASE_SERVICE_ROLE_KEY`                       |
-| Project ref (in URL)            | `VITE_SUPABASE_PROJECT_ID`                        |
+| Value                           | Used as env var                                                |
+| ------------------------------- | -------------------------------------------------------------- |
+| Project URL                     | `SUPABASE_URL` and `VITE_SUPABASE_URL`                         |
+| `anon` / publishable key        | `SUPABASE_PUBLISHABLE_KEY` and `VITE_SUPABASE_PUBLISHABLE_KEY` |
+| `service_role` key (**secret**) | `SUPABASE_SERVICE_ROLE_KEY`                                    |
+| Project ref (in URL)            | `VITE_SUPABASE_PROJECT_ID`                                     |
 
 > ⚠️ Never expose `service_role` to the browser. It bypasses RLS.
 
@@ -55,7 +55,7 @@ supabase db remote commit --dry-run   # should be a no-op
 In **Authentication → Providers**:
 
 - **Email**: enable. Disable "Confirm email" only if you want instant sign-up; production should leave it on.
-- **Google** (recommended): enable, paste OAuth client ID + secret from Google Cloud Console. Add this to *Authorized redirect URIs* in Google:
+- **Google** (recommended): enable, paste OAuth client ID + secret from Google Cloud Console. Add this to _Authorized redirect URIs_ in Google:
   ```
   https://<project-ref>.supabase.co/auth/v1/callback
   ```
@@ -108,7 +108,7 @@ git push -u origin main
 ### 2.2 Import into Vercel
 
 1. <https://vercel.com/new> → **Import Git Repository** → pick the repo.
-2. **Framework Preset**: *Other* (Vercel auto-detects Vite/TanStack Start).
+2. **Framework Preset**: _Other_ (Vercel auto-detects Vite/TanStack Start).
 3. **Build Command**: `bun run build` (or `npm run build` if you don't use Bun).
 4. **Output Directory**: leave default — TanStack Start's Vite plugin emits the correct output.
 5. **Install Command**: `bun install` (or `npm install`).
@@ -116,24 +116,24 @@ git push -u origin main
 
 ### 2.3 Environment variables
 
-Add these under **Project Settings → Environment Variables** (set for *Production*, *Preview*, and *Development*):
+Add these under **Project Settings → Environment Variables** (set for _Production_, _Preview_, and _Development_):
 
 #### Public (browser-visible — prefixed `VITE_`)
 
-| Name                            | Value                                    |
-| ------------------------------- | ---------------------------------------- |
-| `VITE_SUPABASE_URL`             | `https://<ref>.supabase.co`              |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | publishable / anon key                   |
-| `VITE_SUPABASE_PROJECT_ID`      | project ref                              |
+| Name                            | Value                       |
+| ------------------------------- | --------------------------- |
+| `VITE_SUPABASE_URL`             | `https://<ref>.supabase.co` |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | publishable / anon key      |
+| `VITE_SUPABASE_PROJECT_ID`      | project ref                 |
 
 #### Server-only (never `VITE_`)
 
-| Name                          | Value                                    |
-| ----------------------------- | ---------------------------------------- |
-| `SUPABASE_URL`                | same as `VITE_SUPABASE_URL`              |
-| `SUPABASE_PUBLISHABLE_KEY`    | same as `VITE_SUPABASE_PUBLISHABLE_KEY`  |
-| `SUPABASE_SERVICE_ROLE_KEY`   | **secret** — service role key            |
-| `BOOTSTRAP_SUPER_ADMIN_EMAIL` | e.g. `priyabrata.dutta.slg@gmail.com`    |
+| Name                          | Value                                   |
+| ----------------------------- | --------------------------------------- |
+| `SUPABASE_URL`                | same as `VITE_SUPABASE_URL`             |
+| `SUPABASE_PUBLISHABLE_KEY`    | same as `VITE_SUPABASE_PUBLISHABLE_KEY` |
+| `SUPABASE_SERVICE_ROLE_KEY`   | **secret** — service role key           |
+| `BOOTSTRAP_SUPER_ADMIN_EMAIL` | e.g. `priyabrata.dutta.slg@gmail.com`   |
 
 Mark `SUPABASE_SERVICE_ROLE_KEY` as **Sensitive** in Vercel.
 
@@ -150,11 +150,13 @@ Click **Deploy**. Vercel will:
 
 After the first deploy, go back to Supabase → **Authentication → URL Configuration** and replace the placeholder Site URL with the actual Vercel URL (or your custom domain).
 
-Also update Google OAuth *Authorized redirect URIs* if you added Google sign-in:
+Also update Google OAuth _Authorized redirect URIs_ if you added Google sign-in:
+
 ```
 https://<ref>.supabase.co/auth/v1/callback
 ```
-(unchanged — still points at Supabase, not Vercel) plus your custom domain in *Authorized JavaScript origins*.
+
+(unchanged — still points at Supabase, not Vercel) plus your custom domain in _Authorized JavaScript origins_.
 
 ### 2.6 Custom domain
 
@@ -204,14 +206,14 @@ Vercel → **Deployments** → pick a previous build → **Promote to Production
 
 ## Troubleshooting
 
-| Symptom                                              | Fix                                                                  |
-| ---------------------------------------------------- | -------------------------------------------------------------------- |
-| `Unsupported provider` on Google sign-in             | Enable Google provider in Supabase Auth.                             |
-| `Unauthorized: No authorization header provided`     | Confirm `src/start.ts` registers `attachSupabaseAuth`.               |
-| Server function returns 500, logs show `process.env.X is undefined` | Env var missing in Vercel for the current environment.    |
-| Browser sees `permission denied for table ...`       | Missing `GRANT` in migration. Add `GRANT ... TO authenticated`.      |
-| Public page works locally, blank on Vercel SSR       | A protected serverFn is being called from a public loader — move the call into a component with `useServerFn` + `useQuery`. |
-| Super admin bootstrap link 404s                      | App not deployed yet, or route file `src/routes/superadmin/login.tsx` missing. |
+| Symptom                                                             | Fix                                                                                                                         |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `Unsupported provider` on Google sign-in                            | Enable Google provider in Supabase Auth.                                                                                    |
+| `Unauthorized: No authorization header provided`                    | Confirm `src/start.ts` registers `attachSupabaseAuth`.                                                                      |
+| Server function returns 500, logs show `process.env.X is undefined` | Env var missing in Vercel for the current environment.                                                                      |
+| Browser sees `permission denied for table ...`                      | Missing `GRANT` in migration. Add `GRANT ... TO authenticated`.                                                             |
+| Public page works locally, blank on Vercel SSR                      | A protected serverFn is being called from a public loader — move the call into a component with `useServerFn` + `useQuery`. |
+| Super admin bootstrap link 404s                                     | App not deployed yet, or route file `src/routes/superadmin/login.tsx` missing.                                              |
 
 ---
 

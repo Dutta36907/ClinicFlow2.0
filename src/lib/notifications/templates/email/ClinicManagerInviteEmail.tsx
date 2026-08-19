@@ -11,7 +11,17 @@ import {
   Text,
 } from "@react-email/components";
 import * as React from "react";
-import { button, card, colors, container, footer, heroTeal, main, rowLabel, rowValue } from "./shared";
+import {
+  button,
+  card,
+  colors,
+  container,
+  footer,
+  heroTeal,
+  main,
+  rowLabel,
+  rowValue,
+} from "./shared";
 
 export interface ClinicManagerInviteEmailProps {
   managerName: string;
@@ -32,8 +42,8 @@ export function ClinicManagerInviteEmail(p: ClinicManagerInviteEmailProps) {
             You're invited to manage {p.clinicName}
           </Heading>
           <Text style={{ fontSize: "15px", margin: "0 0 16px" }}>
-            Hi {p.managerName}, your ClinicFlow manager account is ready. Use the credentials
-            below to sign in and complete setup.
+            Hi {p.managerName}, your ClinicFlow manager account is ready. Use the credentials below
+            to sign in and complete setup.
           </Text>
           <Section style={card}>
             <Text style={rowLabel}>Sign-in URL</Text>

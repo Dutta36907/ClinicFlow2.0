@@ -35,10 +35,7 @@ export function useAuth() {
   }, []);
 
   async function loadRoles(uid: string) {
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role, clinic_id")
-      .eq("user_id", uid);
+    const { data } = await supabase.from("user_roles").select("role, clinic_id").eq("user_id", uid);
     setRoles((data ?? []) as UserRole[]);
   }
 

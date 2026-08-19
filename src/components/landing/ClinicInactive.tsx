@@ -62,9 +62,7 @@ export function ClinicInactive({
         </div>
 
         <div className="mt-5 text-center">
-          <h1 className="font-display text-2xl font-semibold tracking-tight">
-            {clinic.name}
-          </h1>
+          <h1 className="font-display text-2xl font-semibold tracking-tight">{clinic.name}</h1>
           <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
             <span className="relative flex size-2">
               <span className="relative inline-flex size-2 rounded-full bg-slate-400" />
@@ -94,9 +92,7 @@ export function ClinicInactive({
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Call admin
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-foreground">
-                {SUPPORT_PHONE}
-              </p>
+              <p className="mt-0.5 text-sm font-semibold text-foreground">{SUPPORT_PHONE}</p>
             </div>
           </a>
 
@@ -124,9 +120,7 @@ export function ClinicInactive({
         {slug && (
           <div className="mt-6 flex items-center justify-center gap-2 rounded-full border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground">
             <span>Your clinic ID:</span>
-            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">
-              {slug}
-            </code>
+            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground">{slug}</code>
             <Button
               type="button"
               variant="ghost"
@@ -135,7 +129,11 @@ export function ClinicInactive({
               onClick={copySlug}
               aria-label="Copy clinic ID"
             >
-              {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
+              {copied ? (
+                <Check className="size-3.5 text-emerald-500" />
+              ) : (
+                <Copy className="size-3.5" />
+              )}
             </Button>
           </div>
         )}

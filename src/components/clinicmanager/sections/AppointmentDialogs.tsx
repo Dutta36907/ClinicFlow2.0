@@ -77,11 +77,7 @@ import {
   validateAppointmentPatient,
 } from "@/lib/validation/clinic-forms";
 import { formatNice } from "../shared/tz-format";
-import {
-  APPT_STATUSES,
-  type AppointmentRow,
-  type DashboardDoctor,
-} from "../types";
+import { APPT_STATUSES, type AppointmentRow, type DashboardDoctor } from "../types";
 
 // ============================================================================
 // Slot validation: does the picked datetime fit the doctor's hours + time off?
@@ -149,13 +145,10 @@ export function validateAppointmentSlot(args: {
     const [hh, mm] = t.split(":").map(Number);
     return hh * 60 + mm;
   };
-  const range = (a: string, b: string) =>
-    formatRange12(a.slice(0, 5), b.slice(0, 5));
+  const range = (a: string, b: string) => formatRange12(a.slice(0, 5), b.slice(0, 5));
   const pickedTime = formatTime12(`${hs}:${mins}`);
 
-  const todays = args.overrides.filter(
-    (o) => o.date === dateKey && o.is_blocked,
-  );
+  const todays = args.overrides.filter((o) => o.date === dateKey && o.is_blocked);
 
   // 1) Full-day time off.
   if (todays.some((o) => !o.start_time && !o.end_time)) {
@@ -170,10 +163,7 @@ export function validateAppointmentSlot(args: {
   // 2) Partial time-off window.
   for (const o of todays) {
     if (!o.start_time || !o.end_time) continue;
-    if (
-      minOfDay >= toMin(o.start_time) &&
-      minOfDay < toMin(o.end_time)
-    ) {
+    if (minOfDay >= toMin(o.start_time) && minOfDay < toMin(o.end_time)) {
       return {
         ok: false,
         kind: "timeoff-partial",
@@ -185,16 +175,13 @@ export function validateAppointmentSlot(args: {
   }
 
   // 3) Weekday not worked at all.
-  const dayScheds = args.schedules.filter(
-    (s) => s.weekday === weekday && s.is_active,
-  );
+  const dayScheds = args.schedules.filter((s) => s.weekday === weekday && s.is_active);
   if (dayScheds.length === 0) {
     return {
       ok: false,
       kind: "weekday",
       title: `Doctor does not work on ${WEEKDAY_NAMES[weekday]}`,
-      detail:
-        "Pick a different day, or add this weekday in the doctor's Working hours.",
+      detail: "Pick a different day, or add this weekday in the doctor's Working hours.",
     };
   }
 
@@ -203,9 +190,7 @@ export function validateAppointmentSlot(args: {
     (s) => minOfDay >= toMin(s.start_time) && minOfDay < toMin(s.end_time),
   );
   if (!inside) {
-    const ranges = dayScheds
-      .map((s) => range(s.start_time, s.end_time))
-      .join(", ");
+    const ranges = dayScheds.map((s) => range(s.start_time, s.end_time)).join(", ");
     return {
       ok: false,
       kind: "hours",
@@ -220,10 +205,7 @@ export function validateAppointmentSlot(args: {
 
 export function SlotValidationAlert({ v }: { v: SlotValidation }) {
   if (v.ok) return null;
-  const labelByKind: Record<
-    Exclude<SlotValidation, { ok: true }>["kind"],
-    string
-  > = {
+  const labelByKind: Record<Exclude<SlotValidation, { ok: true }>["kind"], string> = {
     invalid: "Invalid input",
     weekday: "Weekday off",
     hours: "Working hours",
@@ -281,30 +263,23 @@ export function AppointmentDetailSheet({
   onEdit: () => void;
 }) {
   const statusColors: Record<string, string> = {
-    pending:
-      "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400",
-    confirmed:
-      "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+    pending: "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400",
+    confirmed: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
     completed: "border-primary/30 bg-primary/10 text-primary",
-    cancelled:
-      "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400",
-    rescheduled:
-      "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400",
+    cancelled: "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400",
+    rescheduled: "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400",
   };
 
-  const initials = appointment.patient_name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase())
-    .join("") || "?";
+  const initials =
+    appointment.patient_name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase())
+      .join("") || "?";
 
   // Tiny inline helper to render labelled info rows.
-  const infoRow = (
-    icon: React.ReactNode,
-    label: string,
-    value: string | null | undefined,
-  ) => (
+  const infoRow = (icon: React.ReactNode, label: string, value: string | null | undefined) => (
     <div className="flex items-start gap-3 rounded-lg border border-transparent px-2 py-2 transition-colors hover:border-border/60 hover:bg-muted/30">
       <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-md bg-gradient-to-br from-muted to-muted/40 text-muted-foreground ring-1 ring-border/60">
         {icon}
@@ -323,9 +298,7 @@ export function AppointmentDetailSheet({
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
           <SheetTitle>Patient details</SheetTitle>
-          <SheetDescription>
-            Appointment information at a glance.
-          </SheetDescription>
+          <SheetDescription>Appointment information at a glance.</SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
@@ -334,9 +307,7 @@ export function AppointmentDetailSheet({
               {initials}
             </span>
             <div>
-              <p className="font-display text-lg font-semibold">
-                {appointment.patient_name}
-              </p>
+              <p className="font-display text-lg font-semibold">{appointment.patient_name}</p>
               <span
                 className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${
                   statusColors[appointment.status] ?? "border-border bg-muted"
@@ -372,9 +343,7 @@ export function AppointmentDetailSheet({
                 {appointment.notes}
               </p>
             ) : (
-              <p className="text-sm italic text-muted-foreground">
-                No notes added.
-              </p>
+              <p className="text-sm italic text-muted-foreground">No notes added.</p>
             )}
           </div>
         </div>
@@ -510,16 +479,13 @@ export function AppointmentEditDialog({
     return opts;
   }, [daySlots, pickedTime]);
 
-  const offGrid =
-    !!daySlots && !daySlots.startOptions.includes(pickedTime);
+  const offGrid = !!daySlots && !daySlots.startOptions.includes(pickedTime);
 
   // --- Cache invalidation: shared (stats) + paginated (table) ------------
   function invalidate() {
     qc.invalidateQueries({ queryKey: ["mgr-appts", clinicId] });
     qc.invalidateQueries({ queryKey: ["mgr-appts-page", clinicId] });
   }
-
-
 
   // --- Save (create or update) -------------------------------------------
   async function onSave() {
@@ -552,9 +518,7 @@ export function AppointmentEditDialog({
         doctor_id: form.doctor_id,
         scheduled_at: (() => {
           // Convert clinic-local wall time → UTC ISO for storage.
-          const m = form.scheduled_at.match(
-            /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/,
-          );
+          const m = form.scheduled_at.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
           if (!m) return new Date(form.scheduled_at).toISOString();
           return zonedWallTimeToUtc(m[1], m[2], tz).toISOString();
         })(),
@@ -591,10 +555,7 @@ export function AppointmentEditDialog({
     if (!appointment) return;
     setDeleting(true);
     try {
-      const { error } = await supabase
-        .from("appointments")
-        .delete()
-        .eq("id", appointment.id);
+      const { error } = await supabase.from("appointments").delete().eq("id", appointment.id);
       if (error) throw error;
       toast.success("Appointment deleted");
       invalidate();
@@ -611,9 +572,7 @@ export function AppointmentEditDialog({
     <Dialog open onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>
-            {isCreate ? "New appointment" : "Edit appointment"}
-          </DialogTitle>
+          <DialogTitle>{isCreate ? "New appointment" : "Edit appointment"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <Grid>
@@ -645,15 +604,12 @@ export function AppointmentEditDialog({
             error={errors.patient_email}
           />
 
-
           <div>
             <Label>Doctor</Label>
             <select
               className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={form.doctor_id}
-              onChange={(e) =>
-                setForm({ ...form, doctor_id: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, doctor_id: e.target.value })}
             >
               {doctors.map((d) => (
                 <option key={d.id} value={d.id}>
@@ -705,9 +661,7 @@ export function AppointmentEditDialog({
                 )}
               </select>
               {availLoading && (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Checking availability…
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">Checking availability…</p>
               )}
               {!availLoading && daySlots && daySlots.dayOff && (
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -715,22 +669,16 @@ export function AppointmentEditDialog({
                   {DOCTOR_WEEKDAY_LABELS[daySlots.weekday]}s.
                 </p>
               )}
-              {!availLoading &&
-                daySlots &&
-                !daySlots.dayOff &&
-                daySlots.fullyBlocked && (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    On time off all day.
-                  </p>
-                )}
+              {!availLoading && daySlots && !daySlots.dayOff && daySlots.fullyBlocked && (
+                <p className="mt-1 text-xs text-muted-foreground">On time off all day.</p>
+              )}
               {!availLoading &&
                 daySlots &&
                 !daySlots.dayOff &&
                 !daySlots.fullyBlocked &&
                 daySlots.startOptions.length === 0 && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    No slots available — every working hour is blocked by time
-                    off.
+                    No slots available — every working hour is blocked by time off.
                   </p>
                 )}
             </div>
@@ -777,12 +725,9 @@ export function AppointmentEditDialog({
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Delete this appointment?
-                  </AlertDialogTitle>
+                  <AlertDialogTitle>Delete this appointment?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This permanently removes the booking. The patient will not
-                    be notified.
+                    This permanently removes the booking. The patient will not be notified.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -803,10 +748,7 @@ export function AppointmentEditDialog({
             <Button variant="ghost" onClick={onClose} disabled={saving}>
               Cancel
             </Button>
-            <Button
-              onClick={onSave}
-              disabled={saving || availLoading || !validation.ok}
-            >
+            <Button onClick={onSave} disabled={saving || availLoading || !validation.ok}>
               {saving ? "Saving…" : isCreate ? "Create" : "Save"}
             </Button>
           </div>

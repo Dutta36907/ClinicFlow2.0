@@ -88,9 +88,7 @@ export function WorkingHoursSection({ clinic }: { clinic: DashboardClinic }) {
               <div className="flex items-center gap-3">
                 <Switch
                   checked={open}
-                  onCheckedChange={(c) =>
-                    setDay(d.key, c ? ["09:00", "17:00"] : null)
-                  }
+                  onCheckedChange={(c) => setDay(d.key, c ? ["09:00", "17:00"] : null)}
                   aria-label={`Toggle ${d.label}`}
                 />
                 <div
@@ -111,9 +109,7 @@ export function WorkingHoursSection({ clinic }: { clinic: DashboardClinic }) {
                     type="time"
                     value={v![0]}
                     className="w-32 tabular-nums"
-                    onChange={(e) =>
-                      setDay(d.key, [e.target.value, v![1]])
-                    }
+                    onChange={(e) => setDay(d.key, [e.target.value, v![1]])}
                     aria-label={`${d.label} opens at`}
                   />
                   <span className="text-muted-foreground">to</span>
@@ -121,9 +117,7 @@ export function WorkingHoursSection({ clinic }: { clinic: DashboardClinic }) {
                     type="time"
                     value={v![1]}
                     className="w-32 tabular-nums"
-                    onChange={(e) =>
-                      setDay(d.key, [v![0], e.target.value])
-                    }
+                    onChange={(e) => setDay(d.key, [v![0], e.target.value])}
                     aria-label={`${d.label} closes at`}
                   />
                 </div>

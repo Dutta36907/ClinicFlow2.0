@@ -4,4 +4,4 @@ Disallow: /clinicmanager
 Disallow: /superadmin
 Disallow: /api/
 
-Sitemap: https://book-my-clinic-98.lovable.app/sitemap.xml
+Sitemap: https://your-domain.example/sitemap.xml

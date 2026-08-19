@@ -6,9 +6,8 @@
 // maskPhone() so the rendered WhatsApp message shows XXXXX{last5} only.
 // Currently no template here includes a patient phone (audited).
 // The import is retained so future templates inherit the rule by default.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { maskPhone } from "../../mask";
 
+import { maskPhone } from "../../mask";
 
 export const WHATSAPP_TEMPLATES = {
   appointment_booked: {
@@ -40,14 +39,7 @@ export const WHATSAPP_TEMPLATES = {
       doctorName: string;
       clinicName: string;
       clinicPhone: string;
-    }) => [
-      p.patientName,
-      p.newDate,
-      p.newTime,
-      p.doctorName,
-      p.clinicName,
-      p.clinicPhone,
-    ],
+    }) => [p.patientName, p.newDate, p.newTime, p.doctorName, p.clinicName, p.clinicPhone],
   },
   subscription_expiry: {
     templateName: "clinicflow_subscription_expiry",
@@ -57,12 +49,6 @@ export const WHATSAPP_TEMPLATES = {
       expiryDate: string;
       daysRemaining: number | string;
       supportPhone: string;
-    }) => [
-      p.managerName,
-      p.clinicName,
-      p.expiryDate,
-      String(p.daysRemaining),
-      p.supportPhone,
-    ],
+    }) => [p.managerName, p.clinicName, p.expiryDate, String(p.daysRemaining), p.supportPhone],
   },
 } as const;

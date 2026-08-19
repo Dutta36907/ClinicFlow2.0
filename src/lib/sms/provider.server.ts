@@ -67,7 +67,11 @@ export async function sendOtpSms(phone: string, code: string): Promise<SmsResult
         // requestOnScreenOtp — sendOtpSms should never be invoked for it. If
         // it is (e.g. sendTestSms with on_screen selected), return a clear
         // no-op result so the operator sees what happened.
-        return { ok: false, provider: "on_screen", error: "On-screen codes are displayed in-browser; no SMS is dispatched." };
+        return {
+          ok: false,
+          provider: "on_screen",
+          error: "On-screen codes are displayed in-browser; no SMS is dispatched.",
+        };
       default:
         // Loud failure: an unknown provider id (typo in platform_settings.sms)
         // must never silently fall back to the dev adapter, or OTPs are

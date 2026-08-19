@@ -16,11 +16,7 @@ import { Lock, Trash2, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { updateClinicProfile } from "@/lib/clinicmanager.functions";
-import {
-  LIMITS,
-  formatServerError,
-  validateClinicProfile,
-} from "@/lib/validation/clinic-forms";
+import { LIMITS, formatServerError, validateClinicProfile } from "@/lib/validation/clinic-forms";
 
 import { Card, SectionShell } from "../shared/SectionShell";
 import { Field, Grid, Sub, TextAreaField } from "../shared/FormPrimitives";
@@ -141,9 +137,7 @@ export function ProfileSection({ clinic }: { clinic: DashboardClinic }) {
               <p className="text-xs text-muted-foreground">
                 Recommended size: 512 × 512 px (square, PNG or WebP).
               </p>
-              {errors.logo_url && (
-                <p className="text-xs text-destructive">{errors.logo_url}</p>
-              )}
+              {errors.logo_url && <p className="text-xs text-destructive">{errors.logo_url}</p>}
             </div>
           </div>
         </div>
@@ -247,9 +241,7 @@ export function ProfileSection({ clinic }: { clinic: DashboardClinic }) {
               </strong>
               ) and expiry (
               <strong>
-                {clinic.expires_at
-                  ? format(new Date(clinic.expires_at), "PPP")
-                  : "Never"}
+                {clinic.expires_at ? format(new Date(clinic.expires_at), "PPP") : "Never"}
               </strong>
               ) can only be changed by a super admin.
             </p>

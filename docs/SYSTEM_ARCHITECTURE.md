@@ -20,11 +20,11 @@ clinic on the platform.
 
 ### Primary actors
 
-| Actor | Auth state | Entry point | Capabilities |
-|---|---|---|---|
-| Patient (guest) | Unauthenticated | `/<slug>` | Browse doctors, view slots, book / reschedule / cancel appointments via on-screen OTP |
-| Clinic Manager | Supabase user with `clinic_members` row | `/<slug>/clinicmanager` | Manage doctors, schedules, overrides, appointments, page content, media, enquiries |
-| Super Admin | Supabase user with `user_roles.role = 'super_admin'` and `super_admin_permissions.is_disabled = false` | `/superadmin` | Manage clinics, plans, platform settings, email config, security scans |
+| Actor           | Auth state                                                                                             | Entry point             | Capabilities                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------- |
+| Patient (guest) | Unauthenticated                                                                                        | `/<slug>`               | Browse doctors, view slots, book / reschedule / cancel appointments via on-screen OTP |
+| Clinic Manager  | Supabase user with `clinic_members` row                                                                | `/<slug>/clinicmanager` | Manage doctors, schedules, overrides, appointments, page content, media, enquiries    |
+| Super Admin     | Supabase user with `user_roles.role = 'super_admin'` and `super_admin_permissions.is_disabled = false` | `/superadmin`           | Manage clinics, plans, platform settings, email config, security scans                |
 
 ### Core domains
 
@@ -79,22 +79,22 @@ and any future third-party-callable endpoints live under `/api/public/*`.
 
 Each row lists the **role** so a swap-out target is obvious.
 
-| Role | Current choice | Notes |
-|---|---|---|
-| SSR framework | TanStack Start v1 (React 19) | Replaceable with Next.js App Router — see §15 |
-| Build tool | Vite 7 | Replaced together with the framework |
-| Runtime | Cloudflare Workers (`nodejs_compat`) | Edge runtime; not full Node — see §9 caveats |
-| UI | React 19 + Tailwind v4 + shadcn/ui | Tailwind tokens defined in `src/styles.css` |
-| Forms / validation | react-hook-form + Zod | Zod schemas shared between client and server functions |
-| Data fetching | TanStack Query (in router context) | Loader hydrates → `useSuspenseQuery` reads |
-| Database | Postgres (Supabase) | RLS enabled on every public table |
-| Auth | Supabase Auth | Email/password + Google OAuth |
-| Storage | Supabase Storage | One bucket per clinic-owned asset class |
-| Scheduling | `pg_cron` extension | Daily reminder sweep |
-| Email | Resend | API key stored as platform setting (encrypted) |
-| SMS / OTP | On-screen code (default), Twilio/MSG91/Gupshup pluggable | Provider is a `platform_settings` value |
-| Hosting (frontend) | Vercel | See `docs/deployment.md` |
-| Hosting (backend) | Supabase (Lovable Cloud) | Managed |
+| Role               | Current choice                                           | Notes                                                  |
+| ------------------ | -------------------------------------------------------- | ------------------------------------------------------ |
+| SSR framework      | TanStack Start v1 (React 19)                             | Replaceable with Next.js App Router — see §15          |
+| Build tool         | Vite 7                                                   | Replaced together with the framework                   |
+| Runtime            | Cloudflare Workers (`nodejs_compat`)                     | Edge runtime; not full Node — see §9 caveats           |
+| UI                 | React 19 + Tailwind v4 + shadcn/ui                       | Tailwind tokens defined in `src/styles.css`            |
+| Forms / validation | react-hook-form + Zod                                    | Zod schemas shared between client and server functions |
+| Data fetching      | TanStack Query (in router context)                       | Loader hydrates → `useSuspenseQuery` reads             |
+| Database           | Postgres (Supabase)                                      | RLS enabled on every public table                      |
+| Auth               | Supabase Auth                                            | Email/password + Google OAuth                          |
+| Storage            | Supabase Storage                                         | One bucket per clinic-owned asset class                |
+| Scheduling         | `pg_cron` extension                                      | Daily reminder sweep                                   |
+| Email              | Resend                                                   | API key stored as platform setting (encrypted)         |
+| SMS / OTP          | On-screen code (default), Twilio/MSG91/Gupshup pluggable | Provider is a `platform_settings` value                |
+| Hosting (frontend) | Vercel                                                   | See `docs/deployment.md`                               |
+| Hosting (backend)  | Supabase                                                 | Managed                                                |
 
 ---
 
@@ -130,35 +130,35 @@ continues to work unchanged.
 
 ### Public (no auth)
 
-| Path | Purpose |
-|---|---|
-| `/` | Marketing landing |
-| `/login` | Patient/manager sign-in |
-| `/$slug` | Clinic public landing page (SSR, indexed) |
-| `/$slug/doctors/$doctorId` | Doctor detail + booking entry |
-| `/privacy`, `/terms` | Legal pages |
-| `/sitemap.xml` | Generated from active clinics |
+| Path                       | Purpose                                   |
+| -------------------------- | ----------------------------------------- |
+| `/`                        | Marketing landing                         |
+| `/login`                   | Patient/manager sign-in                   |
+| `/$slug`                   | Clinic public landing page (SSR, indexed) |
+| `/$slug/doctors/$doctorId` | Doctor detail + booking entry             |
+| `/privacy`, `/terms`       | Legal pages                               |
+| `/sitemap.xml`             | Generated from active clinics             |
 
 ### Clinic Manager (authenticated, scoped to one clinic)
 
-| Path | Purpose |
-|---|---|
-| `/$slug/clinicmanager` | Dashboard shell |
-| `/$slug/clinicmanager/doctors/$doctorId` | Doctor editor |
-| `/_authenticated/...` | Layout-gated subtree (prerender-safe) |
+| Path                                     | Purpose                               |
+| ---------------------------------------- | ------------------------------------- |
+| `/$slug/clinicmanager`                   | Dashboard shell                       |
+| `/$slug/clinicmanager/doctors/$doctorId` | Doctor editor                         |
+| `/_authenticated/...`                    | Layout-gated subtree (prerender-safe) |
 
 ### Super Admin
 
-| Path | Purpose |
-|---|---|
-| `/superadmin/login` | Bootstrap-aware sign-in |
-| `/superadmin` | Clinics, plans, settings, security, email config |
-| `/superadmin/logout` | Sign-out |
+| Path                 | Purpose                                          |
+| -------------------- | ------------------------------------------------ |
+| `/superadmin/login`  | Bootstrap-aware sign-in                          |
+| `/superadmin`        | Clinics, plans, settings, security, email config |
+| `/superadmin/logout` | Sign-out                                         |
 
 ### API (public HTTP)
 
-| Path | Purpose |
-|---|---|
+| Path            | Purpose                                                                                       |
+| --------------- | --------------------------------------------------------------------------------------------- |
 | `/api/public/*` | Webhooks, cron callbacks. Must verify caller (signature or shared secret) inside the handler. |
 
 ---
@@ -168,21 +168,21 @@ continues to work unchanged.
 All under `src/lib/`. `*.functions.ts` files are client-importable server
 RPC; `*.server.ts` files never reach the browser bundle.
 
-| Module | Responsibility |
-|---|---|
-| `public.functions.ts` | Guest booking flow: list active clinics/doctors, slot availability, OTP issue/verify, create / reschedule / cancel appointment. Reads via `supabaseAdmin` with safe column projection. |
-| `clinicmanager.functions.ts` | Manager CRUD: doctors, weekly hours, overrides, appointments, enquiries. Gated by `is_clinic_member`. |
-| `superadmin.functions.ts` | Clinic lifecycle, plan changes, suspensions, role grants. Gated by `has_role('super_admin')` + not-disabled. |
-| `dashboard.functions.ts` | Aggregated metrics for both manager and super-admin dashboards. |
-| `media.functions.ts` | Upload / list / delete clinic media (logo, cover, gallery). |
-| `pagecontent.functions.ts` | Clinic landing-page content (about, services, gallery layout). |
-| `email-settings.functions.ts` | Read/write Resend key, master switch, per-event toggles. |
-| `notifications/email-dispatcher.server.ts` | Central email send with idempotency-key dedupe via `email_send_log`. |
-| `notifications/templates/*` | React Email templates. |
-| `sms/*` | Pluggable OTP providers (`dev`/on-screen is default). |
-| `security-scan.{functions,server}.ts` | In-app security scan surface. |
-| `enquiries.functions.ts` | Patient enquiry inbox per clinic. |
-| `validation/*` | Shared Zod schemas. |
+| Module                                     | Responsibility                                                                                                                                                                         |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `public.functions.ts`                      | Guest booking flow: list active clinics/doctors, slot availability, OTP issue/verify, create / reschedule / cancel appointment. Reads via `supabaseAdmin` with safe column projection. |
+| `clinicmanager.functions.ts`               | Manager CRUD: doctors, weekly hours, overrides, appointments, enquiries. Gated by `is_clinic_member`.                                                                                  |
+| `superadmin.functions.ts`                  | Clinic lifecycle, plan changes, suspensions, role grants. Gated by `has_role('super_admin')` + not-disabled.                                                                           |
+| `dashboard.functions.ts`                   | Aggregated metrics for both manager and super-admin dashboards.                                                                                                                        |
+| `media.functions.ts`                       | Upload / list / delete clinic media (logo, cover, gallery).                                                                                                                            |
+| `pagecontent.functions.ts`                 | Clinic landing-page content (about, services, gallery layout).                                                                                                                         |
+| `email-settings.functions.ts`              | Read/write Resend key, master switch, per-event toggles.                                                                                                                               |
+| `notifications/email-dispatcher.server.ts` | Central email send with idempotency-key dedupe via `email_send_log`.                                                                                                                   |
+| `notifications/templates/*`                | React Email templates.                                                                                                                                                                 |
+| `sms/*`                                    | Pluggable OTP providers (`dev`/on-screen is default).                                                                                                                                  |
+| `security-scan.{functions,server}.ts`      | In-app security scan surface.                                                                                                                                                          |
+| `enquiries.functions.ts`                   | Patient enquiry inbox per clinic.                                                                                                                                                      |
+| `validation/*`                             | Shared Zod schemas.                                                                                                                                                                    |
 
 ---
 
@@ -190,20 +190,20 @@ RPC; `*.server.ts` files never reach the browser bundle.
 
 Core public-schema tables (every one has RLS enabled and explicit `GRANT`s).
 
-| Table | Purpose | Read access |
-|---|---|---|
-| `clinics` | Tenant root. Slug, plan, status, contact, working hours. | Server-only via `supabaseAdmin` (safe columns) |
-| `doctors` | Clinic-scoped doctors, specialty, weekly availability JSON. | Server-only via `supabaseAdmin` (safe columns) |
-| `doctor_slot_overrides` | Date-specific closures / extra hours. `reason` column is staff-only. | Server-only, `reason` never exposed publicly |
-| `appointments` | Bookings: patient name/phone, doctor, slot, status. | Manager (own clinic), patient (via signed access not stored), super admin |
-| `user_roles` | `(user_id, role)` — separate from profile table to prevent privilege escalation. | `authenticated` SELECT for `has_role` |
-| `super_admin_permissions` | `is_disabled` toggle per super-admin user. | `has_role` / `is_clinic_member` consult it |
-| `clinic_members` | `(user_id, clinic_id)` membership for clinic managers. | Member + super admin |
-| `email_send_log` | Idempotency-key store; dedupes notification sends. | Service role only |
-| `email_settings` (in `platform_settings`) | Resend key, master switch, per-event toggles. | Super admin via server fn |
-| `platform_settings` | Key-value config: OTP provider, SMS keys, email config. | Super admin |
-| `enquiries` | Patient enquiries from public clinic page. | Manager + super admin |
-| `clinic_page_content` | Landing page content per clinic. | Public read of safe columns via server fn |
+| Table                                     | Purpose                                                                          | Read access                                                               |
+| ----------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `clinics`                                 | Tenant root. Slug, plan, status, contact, working hours.                         | Server-only via `supabaseAdmin` (safe columns)                            |
+| `doctors`                                 | Clinic-scoped doctors, specialty, weekly availability JSON.                      | Server-only via `supabaseAdmin` (safe columns)                            |
+| `doctor_slot_overrides`                   | Date-specific closures / extra hours. `reason` column is staff-only.             | Server-only, `reason` never exposed publicly                              |
+| `appointments`                            | Bookings: patient name/phone, doctor, slot, status.                              | Manager (own clinic), patient (via signed access not stored), super admin |
+| `user_roles`                              | `(user_id, role)` — separate from profile table to prevent privilege escalation. | `authenticated` SELECT for `has_role`                                     |
+| `super_admin_permissions`                 | `is_disabled` toggle per super-admin user.                                       | `has_role` / `is_clinic_member` consult it                                |
+| `clinic_members`                          | `(user_id, clinic_id)` membership for clinic managers.                           | Member + super admin                                                      |
+| `email_send_log`                          | Idempotency-key store; dedupes notification sends.                               | Service role only                                                         |
+| `email_settings` (in `platform_settings`) | Resend key, master switch, per-event toggles.                                    | Super admin via server fn                                                 |
+| `platform_settings`                       | Key-value config: OTP provider, SMS keys, email config.                          | Super admin                                                               |
+| `enquiries`                               | Patient enquiries from public clinic page.                                       | Manager + super admin                                                     |
+| `clinic_page_content`                     | Landing page content per clinic.                                                 | Public read of safe columns via server fn                                 |
 
 ### Patterns enforced everywhere
 
@@ -219,11 +219,11 @@ Core public-schema tables (every one has RLS enabled and explicit `GRANT`s).
 
 ### Three Supabase clients (do not mix)
 
-| Client | Where | Auth context | Use for |
-|---|---|---|---|
-| Browser publishable | `src/integrations/supabase/client.ts` | Logged-in user (persisted) | UI auth flows, realtime, session listeners |
-| Server publishable | Constructed in server fn handler | Anon (no session) | Future public reads that go through narrow `TO anon` policies |
-| Server admin | `src/integrations/supabase/client.server.ts` (`supabaseAdmin`) | Service role, BYPASSES RLS | Trusted server logic, projecting safe columns for public reads, admin operations |
+| Client              | Where                                                          | Auth context               | Use for                                                                          |
+| ------------------- | -------------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------------------- |
+| Browser publishable | `src/integrations/supabase/client.ts`                          | Logged-in user (persisted) | UI auth flows, realtime, session listeners                                       |
+| Server publishable  | Constructed in server fn handler                               | Anon (no session)          | Future public reads that go through narrow `TO anon` policies                    |
+| Server admin        | `src/integrations/supabase/client.server.ts` (`supabaseAdmin`) | Service role, BYPASSES RLS | Trusted server logic, projecting safe columns for public reads, admin operations |
 
 The `supabaseAdmin` import is filename-gated (`.server.ts`) from client bundles
 and must be loaded inside handler bodies in `*.functions.ts` files.
@@ -277,7 +277,13 @@ export const doThing = createServerFn({ method: "POST" })
 ```ts
 // src/routes/api/public/<name>.ts
 export const Route = createFileRoute("/api/public/<name>")({
-  server: { handlers: { POST: async ({ request }) => { /* verify, then act */ } } },
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        /* verify, then act */
+      },
+    },
+  },
 });
 ```
 
@@ -341,12 +347,12 @@ call — no spend, no log row.
 
 ## 12. Storage
 
-| Asset | Bucket | Dimensions (recommended) | Max upload |
-|---|---|---|---|
-| Clinic logo | `clinic-logos` | 512×512 px (square) | 20 MB (optimised client-side) |
-| Clinic cover | `clinic-covers` | 1920×480 px (wide banner) | 20 MB |
-| Clinic gallery | `clinic-gallery` | 1600×1200 px (4:3 typical) | 20 MB, multi-select |
-| Doctor photo | `doctor-photos` | 512×512 px | 20 MB |
+| Asset          | Bucket           | Dimensions (recommended)   | Max upload                    |
+| -------------- | ---------------- | -------------------------- | ----------------------------- |
+| Clinic logo    | `clinic-logos`   | 512×512 px (square)        | 20 MB (optimised client-side) |
+| Clinic cover   | `clinic-covers`  | 1920×480 px (wide banner)  | 20 MB                         |
+| Clinic gallery | `clinic-gallery` | 1600×1200 px (4:3 typical) | 20 MB, multi-select           |
+| Doctor photo   | `doctor-photos`  | 512×512 px                 | 20 MB                         |
 
 The unified upload dialog (`MediaLibraryDialog`) handles browsing existing
 assets and uploading new ones. Images are downscaled / re-encoded in the
@@ -379,23 +385,23 @@ Always read `mem://security/security-memory` before changing access policies.
 
 ## 14. Environments & deployment
 
-| Layer | Host | Config source |
-|---|---|---|
-| Frontend | Vercel | Project env vars (Vercel dashboard) |
-| Backend (DB, Auth, Storage) | Supabase (Lovable Cloud) | Managed; secrets via platform settings |
-| Cron | `pg_cron` in Postgres | Migration-managed |
+| Layer                       | Host                  | Config source                          |
+| --------------------------- | --------------------- | -------------------------------------- |
+| Frontend                    | Vercel                | Project env vars (Vercel dashboard)    |
+| Backend (DB, Auth, Storage) | Supabase              | Managed; secrets via platform settings |
+| Cron                        | `pg_cron` in Postgres | Migration-managed                      |
 
 Env vars are split by exposure:
 
-| Variable | Where | Why |
-|---|---|---|
-| `VITE_SUPABASE_URL` | Client + server | Public; baked into bundle |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Client + server | Public; RLS still applies |
-| `SUPABASE_URL` | Server only | Same value, server context |
-| `SUPABASE_PUBLISHABLE_KEY` | Server only | For anon-context server reads |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server only — **never** shipped | Bypasses RLS |
-| `RESEND_API_KEY` | Optional (DB-stored by default) | Used if env wins over `platform_settings` |
-| `WEBHOOK_SECRET` | Server only | Verifies `/api/public/*` callers |
+| Variable                        | Where                           | Why                                       |
+| ------------------------------- | ------------------------------- | ----------------------------------------- |
+| `VITE_SUPABASE_URL`             | Client + server                 | Public; baked into bundle                 |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Client + server                 | Public; RLS still applies                 |
+| `SUPABASE_URL`                  | Server only                     | Same value, server context                |
+| `SUPABASE_PUBLISHABLE_KEY`      | Server only                     | For anon-context server reads             |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Server only — **never** shipped | Bypasses RLS                              |
+| `RESEND_API_KEY`                | Optional (DB-stored by default) | Used if env wins over `platform_settings` |
+| `WEBHOOK_SECRET`                | Server only                     | Verifies `/api/public/*` callers          |
 
 See `docs/deployment.md` and `.env.example` for the full list.
 
@@ -408,20 +414,20 @@ schema, RLS, helpers, Resend, cron) does not change.
 
 ### Direct mappings
 
-| TanStack Start | Next.js App Router |
-|---|---|
-| `src/routes/__root.tsx` (`shellComponent`) | `app/layout.tsx` |
-| `src/routes/index.tsx` | `app/page.tsx` |
-| `src/routes/$slug.tsx` | `app/[slug]/page.tsx` |
-| `src/routes/$slug.doctors.$doctorId.tsx` | `app/[slug]/doctors/[doctorId]/page.tsx` |
-| `src/routes/_authenticated.tsx` (layout gate) | `app/(authenticated)/layout.tsx` + `middleware.ts` |
-| `src/routes/api/public/*.ts` | `app/api/public/*/route.ts` (keep URL identical) |
-| Loader + `useSuspenseQuery` | RSC `await` in the page component, or `generateMetadata` for head data |
-| `createServerFn` (RPC) | Server Action (`"use server"`) or Route Handler |
-| `requireSupabaseAuth` middleware | Server-side helper that reads the Supabase session from cookies |
-| `attachSupabaseAuth` client middleware | Not needed — Server Actions read cookies directly |
-| `head()` per route | `export const metadata` or `generateMetadata` |
-| `Link` / `useNavigate` from `@tanstack/react-router` | `Link` from `next/link`, `useRouter` from `next/navigation` |
+| TanStack Start                                       | Next.js App Router                                                     |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| `src/routes/__root.tsx` (`shellComponent`)           | `app/layout.tsx`                                                       |
+| `src/routes/index.tsx`                               | `app/page.tsx`                                                         |
+| `src/routes/$slug.tsx`                               | `app/[slug]/page.tsx`                                                  |
+| `src/routes/$slug.doctors.$doctorId.tsx`             | `app/[slug]/doctors/[doctorId]/page.tsx`                               |
+| `src/routes/_authenticated.tsx` (layout gate)        | `app/(authenticated)/layout.tsx` + `middleware.ts`                     |
+| `src/routes/api/public/*.ts`                         | `app/api/public/*/route.ts` (keep URL identical)                       |
+| Loader + `useSuspenseQuery`                          | RSC `await` in the page component, or `generateMetadata` for head data |
+| `createServerFn` (RPC)                               | Server Action (`"use server"`) or Route Handler                        |
+| `requireSupabaseAuth` middleware                     | Server-side helper that reads the Supabase session from cookies        |
+| `attachSupabaseAuth` client middleware               | Not needed — Server Actions read cookies directly                      |
+| `head()` per route                                   | `export const metadata` or `generateMetadata`                          |
+| `Link` / `useNavigate` from `@tanstack/react-router` | `Link` from `next/link`, `useRouter` from `next/navigation`            |
 
 ### What stays identical
 
@@ -460,20 +466,20 @@ Then the Next.js port only needs new wrappers — the logic ports as-is.
 
 ## 16. Glossary
 
-| Term | Meaning |
-|---|---|
-| RLS | Row-Level Security. Postgres policies that decide which rows a role can read/write. |
+| Term             | Meaning                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| RLS              | Row-Level Security. Postgres policies that decide which rows a role can read/write.              |
 | Security definer | A function that runs with its owner's privileges, used to bypass RLS recursion in helper checks. |
-| Idempotency key | A unique string per logical action; used here to dedupe email sends across retries. |
-| SSR | Server-Side Rendering — HTML produced on the server, required for SEO on public pages. |
-| Edge runtime | Cloudflare Workers (V8 isolate). Lighter than Node, with some APIs stubbed or missing. |
-| Service role | Supabase API key that bypasses RLS. Server-only, never shipped to the browser. |
-| Publishable key | Public Supabase key. Safe in the browser; RLS still enforces access. |
-| Server function | `createServerFn` — typed RPC from client to server with input validation and middleware. |
-| Bootstrap | One-time setup path for the first super admin, sealed after success. |
-| Tenant | A single clinic. Tenant isolation is enforced by `clinic_id` + RLS. |
-| OTP | One-Time Passcode used to verify the patient phone number before booking. |
-| pg_cron | Postgres extension that runs scheduled SQL or HTTP calls inside the database. |
+| Idempotency key  | A unique string per logical action; used here to dedupe email sends across retries.              |
+| SSR              | Server-Side Rendering — HTML produced on the server, required for SEO on public pages.           |
+| Edge runtime     | Cloudflare Workers (V8 isolate). Lighter than Node, with some APIs stubbed or missing.           |
+| Service role     | Supabase API key that bypasses RLS. Server-only, never shipped to the browser.                   |
+| Publishable key  | Public Supabase key. Safe in the browser; RLS still enforces access.                             |
+| Server function  | `createServerFn` — typed RPC from client to server with input validation and middleware.         |
+| Bootstrap        | One-time setup path for the first super admin, sealed after success.                             |
+| Tenant           | A single clinic. Tenant isolation is enforced by `clinic_id` + RLS.                              |
+| OTP              | One-Time Passcode used to verify the patient phone number before booking.                        |
+| pg_cron          | Postgres extension that runs scheduled SQL or HTTP calls inside the database.                    |
 
 ---
 

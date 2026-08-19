@@ -120,10 +120,14 @@ different branch as its Production Branch, and each gets its own env vars.
    values from Part 2, scoped to **Production** (this project's only
    "production" is your preproduction environment):
    - `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`
-   - `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (mark **Sensitive**)
+   - `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
    - `APP_URL` = this project's `https://clinicflow-preprod.vercel.app` (or your custom preprod domain)
    - `NODE_ENV` = `production`
-   - `BOOTSTRAP_SUPER_ADMIN_EMAIL` = your email
+   - `BOOTSTRAP_SETUP_TOKEN` = a random secret (`openssl rand -hex 32`) — required
+     once, to claim the first super admin at `/superadmin/login`
+   - Leave every variable's type as the default (**do not** mark them
+     "Sensitive" — that type can't be decrypted by `vercel pull`/`vercel build`,
+     which the deploy workflow relies on, and silently breaks the build)
 7. Redeploy (Deployments tab → ⋯ → Redeploy) so the new env vars take effect.
 
 ### Project B — `clinicflow-prod`
@@ -238,9 +242,9 @@ git push -u origin feature/whatever
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---|---|
-| `Deploy Preproduction` never fires after merge | Check the `CI` workflow actually ran on that branch and succeeded — `workflow_run` only fires on completion, not on push directly. |
-| Vercel build succeeds locally, fails in Actions | Missing/mismatched env vars in that Vercel project's **Production** environment — re-check Part 3 step 6. |
-| `supabase db push` fails in Actions | `SUPABASE_DB_URL` env secret wrong/missing for that GitHub Environment, or the migration has already been applied manually and is out of sync — run `supabase db push --dry-run` locally against that DB to check. |
-| Preprod and prod showing the same data | You wired the same Supabase project into both Vercel projects — go back to Part 3 step 6 and fix the env vars for one of them. |
+| Symptom                                         | Fix                                                                                                                                                                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Deploy Preproduction` never fires after merge  | Check the `CI` workflow actually ran on that branch and succeeded — `workflow_run` only fires on completion, not on push directly.                                                                                 |
+| Vercel build succeeds locally, fails in Actions | Missing/mismatched env vars in that Vercel project's **Production** environment — re-check Part 3 step 6.                                                                                                          |
+| `supabase db push` fails in Actions             | `SUPABASE_DB_URL` env secret wrong/missing for that GitHub Environment, or the migration has already been applied manually and is out of sync — run `supabase db push --dry-run` locally against that DB to check. |
+| Preprod and prod showing the same data          | You wired the same Supabase project into both Vercel projects — go back to Part 3 step 6 and fix the env vars for one of them.                                                                                     |

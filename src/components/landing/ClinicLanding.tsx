@@ -100,16 +100,13 @@ function SectionHeader({
       <span className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
         {eyebrow}
       </span>
-      <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-        {title}
-      </h2>
+      <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h2>
       {subtitle && (
         <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">{subtitle}</p>
       )}
     </div>
   );
 }
-
 
 export function ClinicLanding({
   slug,
@@ -175,13 +172,14 @@ export function ClinicLanding({
   // Tolerate either ["09:00","17:00"] tuples or {open,close} objects so a
   // legacy/malformed row can't crash the public landing page.
   const todayWindow: [string, string] | null = Array.isArray(rawWindow)
-    ? (typeof rawWindow[0] === "string" && typeof rawWindow[1] === "string"
-        ? [rawWindow[0], rawWindow[1]]
-        : null)
-    : rawWindow && typeof rawWindow === "object" &&
-      typeof (rawWindow as any).open === "string" &&
-      typeof (rawWindow as any).close === "string"
-      ? [(rawWindow as any).open, (rawWindow as any).close]
+    ? typeof rawWindow[0] === "string" && typeof rawWindow[1] === "string"
+      ? [rawWindow[0], rawWindow[1]]
+      : null
+    : rawWindow &&
+        typeof rawWindow === "object" &&
+        typeof (rawWindow as Record<string, unknown>).open === "string" &&
+        typeof (rawWindow as Record<string, unknown>).close === "string"
+      ? [(rawWindow as Record<string, string>).open, (rawWindow as Record<string, string>).close]
       : null;
   const toMin = (t: string) => {
     const [h, m] = (t ?? "").split(":").map(Number);
@@ -191,9 +189,7 @@ export function ClinicLanding({
     !!todayWindow &&
     nowParts.minOfDay >= toMin(todayWindow[0]) &&
     nowParts.minOfDay < toMin(todayWindow[1]);
-  const todayLabel = todayWindow
-    ? `Today ${todayWindow[0]}–${todayWindow[1]}`
-    : "Closed today";
+  const todayLabel = todayWindow ? `Today ${todayWindow[0]}–${todayWindow[1]}` : "Closed today";
 
   return (
     <div className="min-h-screen bg-background">
@@ -208,9 +204,7 @@ export function ClinicLanding({
                 <Stethoscope className="size-5" />
               </span>
             )}
-            <span className="font-display text-lg font-semibold tracking-tight">
-              {clinic.name}
-            </span>
+            <span className="font-display text-lg font-semibold tracking-tight">{clinic.name}</span>
           </div>
           <div className="flex items-center gap-2">
             <Button size="sm" onClick={() => openBooking()}>
@@ -334,7 +328,11 @@ export function ClinicLanding({
       <main className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:space-y-20 sm:px-6 sm:py-16">
         {/* Overview */}
         <section id="overview" className="scroll-mt-32">
-          <SectionHeader eyebrow="About" title="Overview" subtitle="A snapshot of the clinic, facilities and how to reach us." />
+          <SectionHeader
+            eyebrow="About"
+            title="Overview"
+            subtitle="A snapshot of the clinic, facilities and how to reach us."
+          />
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm lg:col-span-2">
               <p className="text-sm leading-relaxed text-foreground/90 sm:text-base">
@@ -347,13 +345,22 @@ export function ClinicLanding({
                   { icon: Clock, label: "24/7 Emergency", tone: "text-rose-500 bg-rose-500/10" },
                   { icon: Award, label: "NABH Accredited", tone: "text-amber-500 bg-amber-500/10" },
                   { icon: HeartPulse, label: "Advanced ICU", tone: "text-sky-500 bg-sky-500/10" },
-                  { icon: ShieldCheck, label: "Insurance Support", tone: "text-emerald-500 bg-emerald-500/10" },
+                  {
+                    icon: ShieldCheck,
+                    label: "Insurance Support",
+                    tone: "text-emerald-500 bg-emerald-500/10",
+                  },
                 ].map((f) => (
                   <div
                     key={f.label}
                     className="flex flex-col items-center gap-2 rounded-xl border border-border bg-background p-4 text-center"
                   >
-                    <span className={cn("flex size-10 items-center justify-center rounded-full", f.tone)}>
+                    <span
+                      className={cn(
+                        "flex size-10 items-center justify-center rounded-full",
+                        f.tone,
+                      )}
+                    >
                       <f.icon className="size-5" />
                     </span>
                     <span className="text-xs font-medium">{f.label}</span>
@@ -367,10 +374,20 @@ export function ClinicLanding({
                 className="mt-6 grid gap-3 rounded-xl border border-border bg-muted/30 p-4 text-sm sm:grid-cols-2"
               >
                 {clinic.phone && (
-                  <ContactItem icon={Phone} label="Phone" value={clinic.phone} href={`tel:${clinic.phone}`} />
+                  <ContactItem
+                    icon={Phone}
+                    label="Phone"
+                    value={clinic.phone}
+                    href={`tel:${clinic.phone}`}
+                  />
                 )}
                 {clinic.email && (
-                  <ContactItem icon={Mail} label="Email" value={clinic.email} href={`mailto:${clinic.email}`} />
+                  <ContactItem
+                    icon={Mail}
+                    label="Email"
+                    value={clinic.email}
+                    href={`mailto:${clinic.email}`}
+                  />
                 )}
                 {clinic.whatsapp && (
                   <ContactItem
@@ -413,7 +430,9 @@ export function ClinicLanding({
                         </div>
                         <Icon className="size-5 text-primary-foreground/70" />
                       </div>
-                      {i < arr.length - 1 && <div className="mt-5 h-px w-full bg-primary-foreground/15" />}
+                      {i < arr.length - 1 && (
+                        <div className="mt-5 h-px w-full bg-primary-foreground/15" />
+                      )}
                     </div>
                   );
                 })}
@@ -431,9 +450,17 @@ export function ClinicLanding({
 
         {/* Doctors */}
         <section id="doctors" className="scroll-mt-32">
-          <SectionHeader eyebrow="Care team" title="Our Doctors" subtitle="Experienced specialists ready to see you." />
+          <SectionHeader
+            eyebrow="Care team"
+            title="Our Doctors"
+            subtitle="Experienced specialists ready to see you."
+          />
           {doctors.length === 0 ? (
-            <EmptyTab icon={Stethoscope} title="No doctors yet" text="This clinic hasn't added any doctors." />
+            <EmptyTab
+              icon={Stethoscope}
+              title="No doctors yet"
+              text="This clinic hasn't added any doctors."
+            />
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {doctors.map((d) => (
@@ -464,7 +491,9 @@ export function ClinicLanding({
                       </span>
                     </div>
                     <div className="min-w-0">
-                      <h3 className="truncate font-display font-semibold leading-tight">{d.name}</h3>
+                      <h3 className="truncate font-display font-semibold leading-tight">
+                        {d.name}
+                      </h3>
                       <p className="truncate text-xs text-muted-foreground">
                         {d.specialization}
                         {d.degree && ` · ${d.degree}`}
@@ -472,7 +501,9 @@ export function ClinicLanding({
                     </div>
                   </div>
                   {d.description && (
-                    <p className="relative mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{d.description}</p>
+                    <p className="relative mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                      {d.description}
+                    </p>
                   )}
                   {d.years_experience != null && (
                     <div className="relative mt-3 flex items-center gap-2">
@@ -483,15 +514,8 @@ export function ClinicLanding({
                     </div>
                   )}
                   <div className="relative mt-4 flex gap-2">
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="flex-1 gap-2"
-                    >
-                      <Link
-                        to="/$slug/doctors/$doctorId"
-                        params={{ slug, doctorId: d.id }}
-                      >
+                    <Button asChild variant="outline" className="flex-1 gap-2">
+                      <Link to="/$slug/doctors/$doctorId" params={{ slug, doctorId: d.id }}>
                         View profile
                       </Link>
                     </Button>
@@ -511,9 +535,17 @@ export function ClinicLanding({
 
         {/* Treatments */}
         <section id="treatments" className="scroll-mt-32">
-          <SectionHeader eyebrow="Services" title="Treatments" subtitle="Conditions and procedures offered at the clinic." />
+          <SectionHeader
+            eyebrow="Services"
+            title="Treatments"
+            subtitle="Conditions and procedures offered at the clinic."
+          />
           {content.treatments.length === 0 ? (
-            <EmptyTab icon={Pill} title="Treatments coming soon" text="The clinic will list specialized treatments here." />
+            <EmptyTab
+              icon={Pill}
+              title="Treatments coming soon"
+              text="The clinic will list specialized treatments here."
+            />
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {content.treatments.map((t) => (
@@ -531,7 +563,9 @@ export function ClinicLanding({
                   <div className="relative min-w-0">
                     <h3 className="font-display font-semibold leading-tight">{t.title}</h3>
                     {t.description && (
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t.description}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        {t.description}
+                      </p>
                     )}
                   </div>
                 </article>
@@ -542,9 +576,17 @@ export function ClinicLanding({
 
         {/* Reviews */}
         <section id="reviews" className="scroll-mt-32">
-          <SectionHeader eyebrow="Testimonials" title="Patient Reviews" subtitle="What patients are saying about their visits." />
+          <SectionHeader
+            eyebrow="Testimonials"
+            title="Patient Reviews"
+            subtitle="What patients are saying about their visits."
+          />
           {content.testimonials.length === 0 ? (
-            <EmptyTab icon={MessageSquareQuote} title="Reviews coming soon" text="Patient reviews will appear here." />
+            <EmptyTab
+              icon={MessageSquareQuote}
+              title="Reviews coming soon"
+              text="Patient reviews will appear here."
+            />
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {content.testimonials.map((r) => (
@@ -563,21 +605,33 @@ export function ClinicLanding({
                           key={i}
                           className={cn(
                             "size-4",
-                            i < r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/25",
+                            i < r.rating
+                              ? "fill-amber-400 text-amber-400"
+                              : "text-muted-foreground/25",
                           )}
                         />
                       ))}
                     </div>
-                    <span className="text-[11px] font-medium text-muted-foreground">{r.rating}.0</span>
+                    <span className="text-[11px] font-medium text-muted-foreground">
+                      {r.rating}.0
+                    </span>
                   </div>
                   <p className="relative text-sm leading-relaxed text-foreground/90">
-                    <span className="font-display text-2xl leading-none text-primary/40">&ldquo;</span>
+                    <span className="font-display text-2xl leading-none text-primary/40">
+                      &ldquo;
+                    </span>
                     {r.quote}
-                    <span className="font-display text-2xl leading-none text-primary/40">&rdquo;</span>
+                    <span className="font-display text-2xl leading-none text-primary/40">
+                      &rdquo;
+                    </span>
                   </p>
                   <div className="relative mt-auto flex items-center gap-3 border-t border-border/60 pt-3">
                     {r.photo_url ? (
-                      <img src={r.photo_url} alt={r.patient_name} className="size-10 rounded-full object-cover ring-2 ring-background" />
+                      <img
+                        src={r.photo_url}
+                        alt={r.patient_name}
+                        className="size-10 rounded-full object-cover ring-2 ring-background"
+                      />
                     ) : (
                       <div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 text-sm font-semibold text-primary ring-2 ring-background">
                         {r.patient_name.slice(0, 1).toUpperCase()}
@@ -586,11 +640,17 @@ export function ClinicLanding({
                     <div className="min-w-0">
                       <div className="flex items-center gap-1 truncate text-sm font-medium">
                         {r.patient_name}
-                        <BadgeCheck className="size-3.5 text-primary" aria-label="Verified patient" />
+                        <BadgeCheck
+                          className="size-3.5 text-primary"
+                          aria-label="Verified patient"
+                        />
                       </div>
                       {r.review_date && (
                         <div className="text-xs text-muted-foreground">
-                          {new Date(r.review_date).toLocaleDateString(undefined, { month: "short", year: "numeric" })}
+                          {new Date(r.review_date).toLocaleDateString(undefined, {
+                            month: "short",
+                            year: "numeric",
+                          })}
                         </div>
                       )}
                     </div>
@@ -603,9 +663,17 @@ export function ClinicLanding({
 
         {/* Gallery */}
         <section id="gallery" className="scroll-mt-32">
-          <SectionHeader eyebrow="Inside the clinic" title="Gallery" subtitle="A look at the space, team and facilities." />
+          <SectionHeader
+            eyebrow="Inside the clinic"
+            title="Gallery"
+            subtitle="A look at the space, team and facilities."
+          />
           {content.gallery.length === 0 ? (
-            <EmptyTab icon={ImageIcon} title="Gallery coming soon" text="Clinic photos will appear here." />
+            <EmptyTab
+              icon={ImageIcon}
+              title="Gallery coming soon"
+              text="Clinic photos will appear here."
+            />
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {content.gallery.map((g) => (
@@ -646,9 +714,15 @@ export function ClinicLanding({
 
       <footer className="mt-8 border-t border-border bg-card/50 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-2 px-4 text-xs text-muted-foreground sm:flex-row sm:gap-6 sm:px-6">
-          <p>© {new Date().getFullYear()} {clinic.name}</p>
-          <a href="/privacy" className="hover:text-foreground">Privacy</a>
-          <a href="/terms" className="hover:text-foreground">Terms</a>
+          <p>
+            © {new Date().getFullYear()} {clinic.name}
+          </p>
+          <a href="/privacy" className="hover:text-foreground">
+            Privacy
+          </a>
+          <a href="/terms" className="hover:text-foreground">
+            Terms
+          </a>
         </div>
       </footer>
 

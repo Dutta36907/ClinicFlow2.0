@@ -1,27 +1,54 @@
 name: Deploy Preproduction
 
-# Fires only after the CI workflow *completes successfully* on the
-# preproduction branch — this is the actual gate (not just branch
-# protection), so even a direct push can't deploy broken code.
+# Triggered directly on push (not via workflow_run on the CI workflow):
+# workflow_run always resolves its YAML from the default branch (main),
+# so a workflow_run trigger here would silently ignore changes made on
+# preproduction. `checks` is the gate instead — `deploy` only runs if it
+# passes, so a direct push still can't deploy broken code.
 #
 # Required repo secrets:  VERCEL_TOKEN, VERCEL_ORG_ID
 # Required "preproduction" environment secrets: VERCEL_PROJECT_ID, SUPABASE_DB_URL
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
+  push:
     branches: [preproduction]
 
+concurrency: deploy-preproduction
+
 jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typecheck
+        # Advisory only for now, see docs/CI_CD_SETUP.md.
+        continue-on-error: true
+        run: bun run typecheck
+
+      - name: Build
+        run: bun run build
+
   deploy:
-    if: github.event.workflow_run.conclusion == 'success'
+    needs: checks
     runs-on: ubuntu-latest
     environment: preproduction
-    concurrency: deploy-preproduction
     steps:
       - uses: actions/checkout@v4
         with:
           ref: preproduction
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Push database migrations
         uses: supabase/setup-cli@v1

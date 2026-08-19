@@ -48,10 +48,7 @@ export const getRouter = () => {
             >
               Try again
             </button>
-            <Link
-              to="/"
-              className="px-4 py-2 rounded-md border text-sm"
-            >
+            <Link to="/" className="px-4 py-2 rounded-md border text-sm">
               Go home
             </Link>
           </div>
@@ -65,7 +62,10 @@ export const getRouter = () => {
           <p className="text-sm text-muted-foreground">
             The page you're looking for doesn't exist.
           </p>
-          <Link to="/" className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm">
+          <Link
+            to="/"
+            className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm"
+          >
             Go home
           </Link>
         </div>

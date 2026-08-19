@@ -12,13 +12,27 @@ export function LandingFooter() {
           ClinicFlow Suite
         </Link>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-          <a href="#features" className="hover:text-foreground">Features</a>
-          <a href="#how" className="hover:text-foreground">How it works</a>
-          <a href="#faq" className="hover:text-foreground">FAQ</a>
-          <Link to="/login" className="hover:text-foreground">Clinic sign in</Link>
-          <Link to="/superadmin/login" className="hover:text-foreground">Platform admin</Link>
-          <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-          <Link to="/terms" className="hover:text-foreground">Terms</Link>
+          <a href="#features" className="hover:text-foreground">
+            Features
+          </a>
+          <a href="#how" className="hover:text-foreground">
+            How it works
+          </a>
+          <a href="#faq" className="hover:text-foreground">
+            FAQ
+          </a>
+          <Link to="/login" className="hover:text-foreground">
+            Clinic sign in
+          </Link>
+          <Link to="/superadmin/login" className="hover:text-foreground">
+            Platform admin
+          </Link>
+          <Link to="/privacy" className="hover:text-foreground">
+            Privacy
+          </Link>
+          <Link to="/terms" className="hover:text-foreground">
+            Terms
+          </Link>
         </div>
         <span className="text-xs text-muted-foreground">
           © {new Date().getFullYear()} ClinicFlow Suite

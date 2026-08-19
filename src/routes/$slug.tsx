@@ -17,8 +17,7 @@ import { ClinicInactive } from "@/components/landing/ClinicInactive";
 import { ClinicExpired } from "@/components/landing/ClinicExpired";
 import { ClinicLandingSkeleton } from "@/components/landing/ClinicLandingSkeleton";
 import type { Doctor } from "@/components/booking/types";
-
-const SITE_URL = "https://book-my-clinic-98.lovable.app";
+import { SITE_URL } from "@/lib/site-url";
 
 function truncate(text: string | null | undefined, max: number) {
   if (!text) return "";
@@ -31,8 +30,7 @@ export const Route = createFileRoute("/$slug")({
     const url = `${SITE_URL}/${params.slug}`;
     const clinic = (loaderData as { clinic?: LandingClinic | null } | undefined)?.clinic;
     const name = clinic?.name ?? params.slug;
-    const tagline =
-      (clinic as { tagline?: string | null } | undefined)?.tagline?.trim() || "";
+    const tagline = (clinic as { tagline?: string | null } | undefined)?.tagline?.trim() || "";
     const description =
       truncate(tagline, 160) ||
       truncate(clinic?.description ?? "", 160) ||
@@ -122,12 +120,10 @@ function BookingError({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center">
       <div className="max-w-md">
-        <h1 className="font-display text-3xl font-semibold">
-          We couldn't load this clinic
-        </h1>
+        <h1 className="font-display text-3xl font-semibold">We couldn't load this clinic</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Something went wrong on our end while loading the booking page. Your
-          connection may have hiccuped — please try again in a moment.
+          Something went wrong on our end while loading the booking page. Your connection may have
+          hiccuped — please try again in a moment.
         </p>
         <div className="mt-6 flex justify-center gap-2">
           <Button

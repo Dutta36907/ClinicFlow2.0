@@ -31,12 +31,16 @@ function AuthLayout() {
           <nav className="flex items-center gap-2 text-sm">
             {isSuperAdmin && (
               <Link to="/superadmin">
-                <Button variant="ghost" size="sm">Super Admin</Button>
+                <Button variant="ghost" size="sm">
+                  Super Admin
+                </Button>
               </Link>
             )}
             {managedClinics.length + userClinics.length > 0 && (
               <Link to="/app">
-                <Button variant="ghost" size="sm">My clinics</Button>
+                <Button variant="ghost" size="sm">
+                  My clinics
+                </Button>
               </Link>
             )}
             <span className="hidden text-muted-foreground sm:inline">{user.email}</span>

@@ -37,10 +37,7 @@ export function PermissionGrid({
   onChange: (v: Perms) => void;
   disabled?: boolean;
 }) {
-  const selectedCount = PERMISSION_LABELS.reduce(
-    (n, p) => n + (value[p.key] ? 1 : 0),
-    0,
-  );
+  const selectedCount = PERMISSION_LABELS.reduce((n, p) => n + (value[p.key] ? 1 : 0), 0);
   const total = PERMISSION_LABELS.length;
   return (
     <div className="space-y-3">

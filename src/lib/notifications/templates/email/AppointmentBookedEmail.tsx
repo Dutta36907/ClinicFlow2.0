@@ -30,7 +30,9 @@ export function AppointmentBookedEmail(p: AppointmentBookedEmailProps) {
       <Body style={main}>
         <Container style={container}>
           <Text style={{ color: "#64748B", fontSize: "13px", margin: 0 }}>{p.clinicName}</Text>
-          <Heading as="h1" style={heroTeal}>Your appointment is confirmed ✓</Heading>
+          <Heading as="h1" style={heroTeal}>
+            Your appointment is confirmed ✓
+          </Heading>
           <Text style={{ fontSize: "15px", margin: "0 0 16px" }}>
             Hi {p.patientName}, we look forward to seeing you.
           </Text>

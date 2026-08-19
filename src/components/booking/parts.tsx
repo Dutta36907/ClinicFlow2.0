@@ -50,20 +50,13 @@ export function DialogStepper({ step }: { step: Step }) {
               <span
                 className={cn(
                   "flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold transition-all duration-300",
-                  isComplete &&
-                    "border-primary bg-primary text-primary-foreground",
+                  isComplete && "border-primary bg-primary text-primary-foreground",
                   isActive &&
                     "border-primary bg-primary text-primary-foreground ring-4 ring-primary/15 scale-105",
-                  !isActive &&
-                    !isComplete &&
-                    "border-border bg-card text-muted-foreground",
+                  !isActive && !isComplete && "border-border bg-card text-muted-foreground",
                 )}
               >
-                {isComplete ? (
-                  <Check className="size-3.5" strokeWidth={3} />
-                ) : (
-                  i + 1
-                )}
+                {isComplete ? <Check className="size-3.5" strokeWidth={3} /> : i + 1}
               </span>
               <span
                 className={cn(

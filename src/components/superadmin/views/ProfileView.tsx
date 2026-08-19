@@ -80,9 +80,7 @@ export function ProfileView() {
         >
           <div>
             <h2 className="text-base font-semibold">Account</h2>
-            <p className="text-xs text-muted-foreground">
-              Update your name and phone number.
-            </p>
+            <p className="text-xs text-muted-foreground">Update your name and phone number.</p>
           </div>
           <div className="space-y-2">
             <Label>Email</Label>

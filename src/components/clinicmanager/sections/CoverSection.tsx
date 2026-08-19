@@ -13,7 +13,11 @@ import { MediaLibraryDialog } from "../shared/MediaLibraryDialog";
 import { updateClinicCover } from "@/lib/pagecontent.functions";
 import type { DashboardClinic } from "../types";
 
-export function CoverSection({ clinic }: { clinic: DashboardClinic & { cover_image_url?: string | null } }) {
+export function CoverSection({
+  clinic,
+}: {
+  clinic: DashboardClinic & { cover_image_url?: string | null };
+}) {
   const qc = useQueryClient();
   const update = useServerFn(updateClinicCover);
   const [currentUrl, setCurrentUrl] = useState<string | null>(clinic.cover_image_url ?? null);

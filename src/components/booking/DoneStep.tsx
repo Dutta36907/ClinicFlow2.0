@@ -27,11 +27,14 @@ function buildIcs({
   // 30-minute default duration
   const end = new Date(start.getTime() + 30 * 60 * 1000);
   const fmt = (d: Date) =>
-    d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    d
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}/, "");
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Lovable//Appointment//EN",
+    "PRODID:-//ClinicFlow//Appointment//EN",
     "BEGIN:VEVENT",
     `UID:${uid}`,
     `DTSTAMP:${fmt(new Date())}`,
@@ -87,16 +90,17 @@ export function DoneStep({
     <div className="space-y-5 py-2 text-center">
       {/* Success badge with ring pulse */}
       <div className="relative mx-auto flex size-16 items-center justify-center">
-        <span className="absolute inset-0 animate-ping rounded-full bg-primary/20" aria-hidden="true" />
+        <span
+          className="absolute inset-0 animate-ping rounded-full bg-primary/20"
+          aria-hidden="true"
+        />
         <span className="relative flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/25">
           <Check className="size-8" strokeWidth={3} />
         </span>
       </div>
 
       <div className="space-y-1">
-        <h2 className="font-display text-2xl font-semibold tracking-tight">
-          You're booked!
-        </h2>
+        <h2 className="font-display text-2xl font-semibold tracking-tight">You're booked!</h2>
         <p className="text-sm text-muted-foreground">
           A confirmation has been sent. We look forward to seeing you.
         </p>
@@ -114,9 +118,7 @@ export function DoneStep({
             </p>
             <p className="truncate font-medium text-foreground">{doctor.name}</p>
             {doctor.specialization ? (
-              <p className="truncate text-xs text-muted-foreground">
-                {doctor.specialization}
-              </p>
+              <p className="truncate text-xs text-muted-foreground">{doctor.specialization}</p>
             ) : null}
           </div>
         </div>
@@ -133,9 +135,7 @@ export function DoneStep({
               {format(localDate, "EEEE, MMM d")} · {timeLabel}
             </p>
             {clinicTimezone && clinicTimezone !== "UTC" ? (
-              <p className="text-xs text-muted-foreground">
-                Clinic time · {clinicTimezone}
-              </p>
+              <p className="text-xs text-muted-foreground">Clinic time · {clinicTimezone}</p>
             ) : null}
           </div>
         </div>

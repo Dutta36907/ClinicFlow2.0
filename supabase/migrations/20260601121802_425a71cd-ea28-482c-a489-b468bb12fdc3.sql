@@ -31,9 +31,10 @@ CREATE POLICY "rate_limit_buckets no client access"
 --    Topic convention: 'clinic:<clinic_uuid>'. Only clinic members may
 --    subscribe / receive broadcasts. realtime.messages RLS is the authoritative
 --    check for live channel access; without it any signed-in user could
---    subscribe to any topic and receive patient PHI.
-ALTER TABLE realtime.messages ENABLE ROW LEVEL SECURITY;
-
+--    subscribe to any topic and receive patient PHI. RLS is already enabled
+--    on realtime.messages by default on this platform (owned by
+--    supabase_realtime_admin) — the postgres role can't ALTER TABLE it, but
+--    CREATE/DROP POLICY on it works without ownership.
 DROP POLICY IF EXISTS "clinic members can read realtime" ON realtime.messages;
 CREATE POLICY "clinic members can read realtime"
   ON realtime.messages FOR SELECT TO authenticated

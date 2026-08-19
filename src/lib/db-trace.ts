@@ -73,7 +73,7 @@ export function installFetchPatch(): void {
   ): Promise<Response> {
     const store = storage.getStore();
     const host = getSupabaseHost();
-    if (!store || !host) return orig(input as any, init);
+    if (!store || !host) return orig(input, init);
 
     const urlStr =
       typeof input === "string"
@@ -86,17 +86,16 @@ export function installFetchPatch(): void {
     try {
       targetHost = new URL(urlStr).host;
     } catch {
-      return orig(input as any, init);
+      return orig(input, init);
     }
-    if (targetHost !== host) return orig(input as any, init);
+    if (targetHost !== host) return orig(input, init);
 
     const method = (
-      init?.method ??
-      (input instanceof Request ? input.method : "GET")
+      init?.method ?? (input instanceof Request ? input.method : "GET")
     ).toUpperCase();
     const startedAt = Date.now();
     try {
-      const res = await orig(input as any, init);
+      const res = await orig(input, init);
       store.calls.push({
         method,
         pathKey: pathKeyFor(method, urlStr),
@@ -150,10 +149,7 @@ function emit(store: TraceStore): void {
   );
 }
 
-export async function runWithTrace<T>(
-  label: string,
-  fn: () => Promise<T>,
-): Promise<T> {
+export async function runWithTrace<T>(label: string, fn: () => Promise<T>): Promise<T> {
   if (isDisabled()) return fn();
   installFetchPatch();
   const store: TraceStore = { calls: [], startedAt: Date.now(), label };

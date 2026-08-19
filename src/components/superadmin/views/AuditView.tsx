@@ -27,7 +27,10 @@ export function AuditView() {
   const total = q.data?.total ?? 0;
 
   return (
-    <SuperAdminLayout title="Audit log" subtitle={`${total} platform event${total === 1 ? "" : "s"}`}>
+    <SuperAdminLayout
+      title="Audit log"
+      subtitle={`${total} platform event${total === 1 ? "" : "s"}`}
+    >
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-sm">

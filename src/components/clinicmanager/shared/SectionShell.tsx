@@ -30,9 +30,7 @@ export function SectionShell({
           <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
             {title}
           </h1>
-          {description && (
-            <p className="mt-1.5 text-sm text-muted-foreground">{description}</p>
-          )}
+          {description && <p className="mt-1.5 text-sm text-muted-foreground">{description}</p>}
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </header>
@@ -42,13 +40,7 @@ export function SectionShell({
 }
 
 /** Rounded panel used inside sections. Accepts extra className for layout tweaks. */
-export function Card({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div
       className={

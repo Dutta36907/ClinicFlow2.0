@@ -59,11 +59,7 @@ export function AppointmentsView() {
   const clinicsQ = useQuery({
     queryKey: ["sa-clinics-lookup"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("clinics")
-        .select("id, name")
-        .order("name")
-        .limit(200);
+      const { data } = await supabase.from("clinics").select("id, name").order("name").limit(200);
       return (data ?? []) as Clinic[];
     },
   });
@@ -71,10 +67,7 @@ export function AppointmentsView() {
   const doctorsQ = useQuery({
     queryKey: ["sa-doctors-lookup"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("doctors")
-        .select("id, name")
-        .limit(500);
+      const { data } = await supabase.from("doctors").select("id, name").limit(500);
       return (data ?? []) as Doctor[];
     },
   });
@@ -84,10 +77,9 @@ export function AppointmentsView() {
     queryFn: async () => {
       let q = supabase
         .from("appointments")
-        .select(
-          "id, patient_name, patient_phone, status, scheduled_at, clinic_id, doctor_id",
-          { count: "exact" },
-        )
+        .select("id, patient_name, patient_phone, status, scheduled_at, clinic_id, doctor_id", {
+          count: "exact",
+        })
         .order("scheduled_at", { ascending: false });
       if (clinicFilter !== "all") q = q.eq("clinic_id", clinicFilter);
       if (statusFilter !== "all")
@@ -119,7 +111,6 @@ export function AppointmentsView() {
     return m;
   }, [doctorsQ.data]);
 
-
   return (
     <SuperAdminLayout
       title="Appointments"
@@ -136,7 +127,9 @@ export function AppointmentsView() {
         />
 
         <div className="flex w-full items-center gap-2 sm:w-auto">
-          <span className="shrink-0 text-xs uppercase tracking-wide text-muted-foreground">Status</span>
+          <span className="shrink-0 text-xs uppercase tracking-wide text-muted-foreground">
+            Status
+          </span>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="h-9 w-full sm:w-[160px]">
               <SelectValue />
@@ -153,7 +146,9 @@ export function AppointmentsView() {
         </div>
 
         <div className="flex w-full items-center gap-2 sm:w-auto">
-          <span className="shrink-0 text-xs uppercase tracking-wide text-muted-foreground">Range</span>
+          <span className="shrink-0 text-xs uppercase tracking-wide text-muted-foreground">
+            Range
+          </span>
           <Select value={range} onValueChange={(v) => setRange(v as DateRange)}>
             <SelectTrigger className="h-9 w-full sm:w-[140px]">
               <SelectValue />
@@ -205,11 +200,20 @@ export function AppointmentsView() {
               </thead>
               <tbody>
                 {rows.map((a) => (
-                  <tr key={a.id} className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
+                  <tr
+                    key={a.id}
+                    className="border-b border-border last:border-0 transition-colors hover:bg-muted/40"
+                  >
                     <td className="px-4 py-3 font-medium">{a.patient_name}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{a.patient_phone}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{clinicMap.get(a.clinic_id) ?? "—"}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{doctorMap.get(a.doctor_id) ?? "—"}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                      {a.patient_phone}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {clinicMap.get(a.clinic_id) ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {doctorMap.get(a.doctor_id) ?? "—"}
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground tabular-nums">
                       {new Date(a.scheduled_at).toLocaleString(undefined, {
                         month: "short",
@@ -220,7 +224,9 @@ export function AppointmentsView() {
                       })}
                     </td>
                     <td className="px-4 py-3">
-                      <StatusBadge status={a.status as Parameters<typeof StatusBadge>[0]["status"]} />
+                      <StatusBadge
+                        status={a.status as Parameters<typeof StatusBadge>[0]["status"]}
+                      />
                     </td>
                   </tr>
                 ))}

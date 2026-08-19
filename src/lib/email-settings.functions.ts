@@ -151,9 +151,7 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
 
 export const sendTestEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
-    z.object({ to: z.string().trim().email().max(255) }).parse(d),
-  )
+  .inputValidator((d: unknown) => z.object({ to: z.string().trim().email().max(255) }).parse(d))
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await getAdmin();
     await assertSuperAdmin(context.userId);

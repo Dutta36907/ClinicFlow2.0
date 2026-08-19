@@ -40,9 +40,7 @@ async function assertClinicAccess(userId: string, clinicId: string) {
     if (perm?.is_disabled) throw new Error("Your account is disabled");
     return;
   }
-  const ok = roles.some(
-    (r) => r.role === "clinic_manager" && r.clinic_id === clinicId,
-  );
+  const ok = roles.some((r) => r.role === "clinic_manager" && r.clinic_id === clinicId);
   if (!ok) throw new Error("Not authorized");
 }
 
@@ -100,7 +98,6 @@ export const listClinicMedia = createServerFn({ method: "POST" })
     return { rows, total };
   });
 
-
 export const deleteClinicMedia = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
@@ -118,9 +115,7 @@ export const deleteClinicMedia = createServerFn({ method: "POST" })
     if (!data.path.startsWith(`${data.clinic_id}/`)) {
       throw new Error("Invalid path");
     }
-    const { error } = await supabaseAdmin.storage
-      .from(data.bucket)
-      .remove([data.path]);
+    const { error } = await supabaseAdmin.storage.from(data.bucket).remove([data.path]);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -178,16 +173,13 @@ export const uploadClinicMedia = createServerFn({ method: "POST" })
     const path = `${data.clinic_id}/${Date.now()}-${rand}.${ext}`;
 
     const bytes = new Uint8Array(await data.file.arrayBuffer());
-    const { error } = await supabaseAdmin.storage
-      .from(data.bucket)
-      .upload(path, bytes, {
-        cacheControl: "31536000",
-        upsert: false,
-        contentType: data.file.type,
-      });
+    const { error } = await supabaseAdmin.storage.from(data.bucket).upload(path, bytes, {
+      cacheControl: "31536000",
+      upsert: false,
+      contentType: data.file.type,
+    });
     if (error) throw new Error(error.message);
 
     const { data: pub } = supabaseAdmin.storage.from(data.bucket).getPublicUrl(path);
     return { url: pub.publicUrl, path };
   });
-
