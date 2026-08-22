@@ -72,7 +72,7 @@ function LoginPage() {
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-2">
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/80 p-12 text-primary-foreground lg:flex lg:flex-col lg:items-center lg:justify-between">
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/80 p-12 text-primary-foreground lg:flex lg:flex-col lg:items-center">
         <div
           aria-hidden
           className="pointer-events-none absolute -top-32 -right-32 size-96 rounded-full bg-white/10 blur-3xl"
@@ -89,8 +89,10 @@ function LoginPage() {
             </span>
             <span className="text-xl font-semibold tracking-tight">ClinicFlow</span>
           </Link>
+        </div>
 
-          <h1 className="mt-16 text-4xl font-semibold leading-tight tracking-tight xl:text-5xl">
+        <div className="relative flex w-full max-w-md flex-1 flex-col justify-center">
+          <h1 className="text-4xl font-semibold leading-tight tracking-tight xl:text-5xl">
             Run your clinic, calmly.
           </h1>
           <p className="mt-4 text-base text-primary-foreground/85">
@@ -114,7 +116,7 @@ function LoginPage() {
           </ul>
         </div>
 
-        <div className="relative grid w-full max-w-md grid-cols-2 gap-3 rounded-2xl bg-white/10 p-5 ring-1 ring-white/15 backdrop-blur-sm">
+        <div className="relative grid w-full max-w-md grid-cols-4 gap-2 rounded-2xl bg-white/10 p-4 ring-1 ring-white/15 backdrop-blur-sm">
           {[
             { v: "15+", l: "Years" },
             { v: "10k+", l: "Patients" },
@@ -122,8 +124,8 @@ function LoginPage() {
             { v: "50+", l: "Clinics" },
           ].map((s) => (
             <div key={s.l}>
-              <div className="text-2xl font-semibold tracking-tight">{s.v}</div>
-              <div className="text-xs text-primary-foreground/75">{s.l}</div>
+              <div className="text-lg font-semibold tracking-tight">{s.v}</div>
+              <div className="text-[11px] leading-tight text-primary-foreground/75">{s.l}</div>
             </div>
           ))}
         </div>
