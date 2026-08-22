@@ -72,7 +72,7 @@ function LoginPage() {
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-2">
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/80 p-12 text-primary-foreground lg:flex lg:flex-col lg:justify-between">
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/80 p-12 text-primary-foreground lg:flex lg:flex-col lg:items-center lg:justify-between">
         <div
           aria-hidden
           className="pointer-events-none absolute -top-32 -right-32 size-96 rounded-full bg-white/10 blur-3xl"
@@ -82,7 +82,7 @@ function LoginPage() {
           className="pointer-events-none absolute -bottom-40 -left-20 size-[28rem] rounded-full bg-white/10 blur-3xl"
         />
 
-        <div className="relative">
+        <div className="relative w-full max-w-md">
           <Link to="/" className="inline-flex items-center gap-2.5">
             <span className="flex size-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm ring-1 ring-white/25">
               <Stethoscope className="size-5" />
@@ -90,10 +90,10 @@ function LoginPage() {
             <span className="text-xl font-semibold tracking-tight">ClinicFlow</span>
           </Link>
 
-          <h1 className="mt-16 max-w-md text-4xl font-semibold leading-tight tracking-tight xl:text-5xl">
+          <h1 className="mt-16 text-4xl font-semibold leading-tight tracking-tight xl:text-5xl">
             Run your clinic, calmly.
           </h1>
-          <p className="mt-4 max-w-md text-base text-primary-foreground/85">
+          <p className="mt-4 text-base text-primary-foreground/85">
             The manager workspace for your day — doctors, schedules, and every patient booking in
             one place.
           </p>
@@ -114,11 +114,12 @@ function LoginPage() {
           </ul>
         </div>
 
-        <div className="relative grid grid-cols-3 gap-3 rounded-2xl bg-white/10 p-5 ring-1 ring-white/15 backdrop-blur-sm">
+        <div className="relative grid w-full max-w-md grid-cols-2 gap-3 rounded-2xl bg-white/10 p-5 ring-1 ring-white/15 backdrop-blur-sm">
           {[
             { v: "15+", l: "Years" },
             { v: "10k+", l: "Patients" },
             { v: "98%", l: "Success" },
+            { v: "50+", l: "Clinics" },
           ].map((s) => (
             <div key={s.l}>
               <div className="text-2xl font-semibold tracking-tight">{s.v}</div>
