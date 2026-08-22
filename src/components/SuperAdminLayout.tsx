@@ -315,7 +315,7 @@ export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
       "Couldn't verify your super admin access",
       error.message ?? "Please retry in a moment.",
     );
-    return;
+    redirectToLoginOnce();
   }
 
   if (!roles || roles.length === 0) {
