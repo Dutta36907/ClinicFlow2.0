@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type * as React from "react";
 import { ensureSuperAdmin } from "@/components/SuperAdminLayout";
+import { SuperAdminLoader } from "@/components/superadmin/SuperAdminLoader";
 import { useSuperAdminView, type SuperAdminView } from "@/stores/superadminViewStore";
 import { useSuperAdminPermissions, canViewSection } from "@/hooks/useSuperAdminPermissions";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/superadmin/")({
   },
   beforeLoad: ensureSuperAdmin,
   head: () => ({ meta: [{ title: "Super Admin" }] }),
+  pendingComponent: SuperAdminLoader,
   component: SuperAdminShell,
 });
 
