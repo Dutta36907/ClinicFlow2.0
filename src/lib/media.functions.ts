@@ -7,6 +7,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   ALLOWED_IMAGE_MIME,
+  AVATAR_MAX_BYTES,
   BUCKET_LABEL,
   CLINIC_BUCKETS,
   MAX_BYTES_BY_BUCKET,
@@ -181,5 +182,76 @@ export const uploadClinicMedia = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     const { data: pub } = supabaseAdmin.storage.from(data.bucket).getPublicUrl(path);
+    return { url: pub.publicUrl, path };
+  });
+
+// ----------------------------------------------------------------------------
+// Avatars — same shape as clinic media, but owned by the user's own id
+// folder instead of a clinic id.
+// ----------------------------------------------------------------------------
+
+export type AvatarItem = { path: string; url: string; size: number; updated_at: string | null };
+
+export const listMyAvatars = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ rows: AvatarItem[] }> => {
+    const supabaseAdmin = await getAdmin();
+    const { data: rows, error } = await supabaseAdmin.storage
+      .from("avatars")
+      .list(context.userId, { limit: 100, sortBy: { column: "updated_at", order: "desc" } });
+    if (error) throw new Error(error.message);
+    const items: AvatarItem[] = [];
+    for (const r of rows ?? []) {
+      if (!r.name || r.name.startsWith(".")) continue;
+      const path = `${context.userId}/${r.name}`;
+      const { data: pub } = supabaseAdmin.storage.from("avatars").getPublicUrl(path);
+      items.push({
+        path,
+        url: pub.publicUrl,
+        size: (r.metadata as { size?: number } | null)?.size ?? 0,
+        updated_at: r.updated_at ?? r.created_at ?? null,
+      });
+    }
+    return { rows: items };
+  });
+
+export const uploadMyAvatar = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => {
+    if (!(d instanceof FormData)) throw new Error("Expected multipart form data");
+    const file = d.get("file");
+    if (!(file instanceof File)) throw new Error("Missing file");
+    return { file };
+  })
+  .handler(async ({ data, context }): Promise<{ url: string; path: string }> => {
+    const supabaseAdmin = await getAdmin();
+
+    if (!ALLOWED_IMAGE_MIME.has(data.file.type)) {
+      throw new Error("Only JPEG, PNG, or WebP images are allowed");
+    }
+    if (data.file.size > AVATAR_MAX_BYTES) {
+      throw new Error(
+        `Avatar is too large: ${formatBytes(data.file.size)} (max ${formatBytes(AVATAR_MAX_BYTES)})`,
+      );
+    }
+
+    const extByMime: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+    };
+    const ext = extByMime[data.file.type] ?? "jpg";
+    const rand = Math.random().toString(36).slice(2, 8);
+    const path = `${context.userId}/${Date.now()}-${rand}.${ext}`;
+
+    const bytes = new Uint8Array(await data.file.arrayBuffer());
+    const { error } = await supabaseAdmin.storage.from("avatars").upload(path, bytes, {
+      cacheControl: "31536000",
+      upsert: false,
+      contentType: data.file.type,
+    });
+    if (error) throw new Error(error.message);
+
+    const { data: pub } = supabaseAdmin.storage.from("avatars").getPublicUrl(path);
     return { url: pub.publicUrl, path };
   });

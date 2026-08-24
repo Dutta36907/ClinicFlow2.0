@@ -1183,18 +1183,22 @@ export const updateMyProfile = createServerFn({ method: "POST" })
       .object({
         full_name: z.string().trim().min(2).max(120),
         phone: z.string().trim().max(40).optional().or(z.literal("")),
+        avatar_url: z.string().trim().url().max(2000).optional().or(z.literal("")),
       })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await getAdmin();
     const uid = context.userId;
-    const { error } = await supabaseAdmin
-      .from("profiles")
-      .upsert(
-        { id: uid, full_name: data.full_name, phone: data.phone || null },
-        { onConflict: "id" },
-      );
+    const { error } = await supabaseAdmin.from("profiles").upsert(
+      {
+        id: uid,
+        full_name: data.full_name,
+        phone: data.phone || null,
+        avatar_url: data.avatar_url || null,
+      },
+      { onConflict: "id" },
+    );
     if (error) throw new Error(error.message);
 
     await supabaseAdmin.auth.admin.updateUserById(uid, {
@@ -1210,12 +1214,17 @@ export const getMyProfile = createServerFn({ method: "GET" })
     const supabaseAdmin = await getAdmin();
     const uid = context.userId;
     const [{ data: profile }, { data: u }] = await Promise.all([
-      supabaseAdmin.from("profiles").select("full_name, phone").eq("id", uid).maybeSingle(),
+      supabaseAdmin
+        .from("profiles")
+        .select("full_name, phone, avatar_url")
+        .eq("id", uid)
+        .maybeSingle(),
       supabaseAdmin.auth.admin.getUserById(uid),
     ]);
     return {
       full_name: profile?.full_name ?? null,
       phone: profile?.phone ?? null,
+      avatar_url: profile?.avatar_url ?? null,
       email: u?.user?.email ?? null,
     };
   });
