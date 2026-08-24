@@ -304,11 +304,10 @@ export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
   const uid = session.user.id;
   if (superAdminCache.get(uid)) return;
 
-  const { data: roles, error } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", uid)
-    .eq("role", "super_admin");
+  // Single RPC round-trip for role + disabled-flag, replacing what used to
+  // be two sequential queries. Same function already used server-side in
+  // superadmin.functions.ts / dashboard.functions.ts / media.functions.ts.
+  const { data, error } = await supabase.rpc("get_user_auth_context", { _uid: uid });
 
   if (error) {
     notifyRoleIssue(
@@ -318,7 +317,9 @@ export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
     redirectToLoginOnce();
   }
 
-  if (!roles || roles.length === 0) {
+  const row = data?.[0];
+
+  if (!row?.is_super) {
     notifyRoleIssue(
       "You don't have super admin access",
       "Ask a platform owner to grant your account the super_admin role.",
@@ -326,13 +327,7 @@ export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
     return;
   }
 
-  // Block disabled accounts
-  const { data: perm } = await supabase
-    .from("super_admin_permissions")
-    .select("is_disabled")
-    .eq("user_id", uid)
-    .maybeSingle();
-  if (perm && (perm as { is_disabled?: boolean }).is_disabled) {
+  if (row.is_disabled) {
     notifyRoleIssue(
       "Your account is disabled",
       "Another super admin has disabled your access. Contact them to re-enable.",
