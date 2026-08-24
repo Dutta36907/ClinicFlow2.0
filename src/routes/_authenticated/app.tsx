@@ -1,19 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, useAuthContext } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Stethoscope, ArrowRight, Shield } from "lucide-react";
-import { AppLoadingSplash } from "@/components/common/AppLoadingSplash";
 
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppHome,
 });
 
 function AppHome() {
-  const auth = useAuth();
-  if (auth.loading) {
-    return <AppLoadingSplash message="Loading your clinics…" delayMs={0} />;
-  }
+  // Reads the auth data _authenticated.tsx already fetched (via context)
+  // instead of re-mounting another onAuthStateChange subscription and
+  // re-firing the user_roles query. The parent layout only renders this
+  // route once loading is done and a user exists, so no local loading
+  // check is needed here.
+  const auth = useAuthContext();
   return <AppHomeInner auth={auth} />;
 }
 

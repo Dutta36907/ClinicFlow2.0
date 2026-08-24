@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -49,4 +49,29 @@ export function useAuth() {
 export async function signOut() {
   await supabase.auth.signOut();
   window.location.href = "/login";
+}
+
+/**
+ * Shares one useAuth() subscription/fetch across a route subtree instead of
+ * each route re-mounting its own onAuthStateChange listener and re-firing
+ * the user_roles query. _authenticated.tsx provides the value it already
+ * computed; child routes read it via useAuthContext() instead of calling
+ * useAuth() again.
+ */
+const AuthContext = createContext<ReturnType<typeof useAuth> | null>(null);
+
+export function AuthContextProvider({
+  value,
+  children,
+}: {
+  value: ReturnType<typeof useAuth>;
+  children: ReactNode;
+}) {
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuthContext() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuthContext must be used within an AuthContextProvider");
+  return ctx;
 }
