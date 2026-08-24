@@ -5,9 +5,9 @@
  * upload, so storage stays small and the public page loads fast.
  */
 
-import type { ClinicBucket } from "./image-limits";
+import type { AvatarBucket, ClinicBucket } from "./image-limits";
 
-export type OptimizeBucket = ClinicBucket;
+export type OptimizeBucket = ClinicBucket | AvatarBucket;
 
 // Re-export shared limits/labels so existing imports from this module keep working.
 export { MAX_BYTES_BY_BUCKET, BUCKET_LABEL, ALLOWED_IMAGE_MIME, formatBytes } from "./image-limits";
@@ -27,6 +27,7 @@ const TARGETS: Record<OptimizeBucket, Target> = {
   "clinic-logos": { w: 512, h: 512, cover: true },
   "clinic-covers": { w: 1920, h: 480, cover: true },
   "clinic-gallery": { maxEdge: 1920 },
+  avatars: { w: 512, h: 512, cover: true },
 };
 
 const SMALL_BYTES = 200 * 1024;

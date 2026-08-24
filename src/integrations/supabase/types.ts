@@ -676,18 +676,21 @@ export type Database = {
       };
       profiles: {
         Row: {
+          avatar_url: string | null;
           created_at: string;
           full_name: string | null;
           id: string;
           phone: string | null;
         };
         Insert: {
+          avatar_url?: string | null;
           created_at?: string;
           full_name?: string | null;
           id: string;
           phone?: string | null;
         };
         Update: {
+          avatar_url?: string | null;
           created_at?: string;
           full_name?: string | null;
           id?: string;

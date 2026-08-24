@@ -30,6 +30,10 @@ export const BUCKET_LABEL: Record<ClinicBucket, string> = {
 
 export const ALLOWED_IMAGE_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+/** User avatar bucket — not clinic-scoped, so kept separate from ClinicBucket. */
+export type AvatarBucket = "avatars";
+export const AVATAR_MAX_BYTES = 512 * 1024;
+
 /** Human-friendly size formatter: "512 KB", "1 MB", "1.4 MB". */
 export function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
