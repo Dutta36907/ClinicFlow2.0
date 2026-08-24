@@ -100,7 +100,7 @@ export type SuperAdminDashboardDTO = {
   renewals: {
     dueWithinDays: number;
     count: number;
-    nextClinic: { id: string; name: string; expiresAt: string; daysAway: number } | null;
+    expiringSoon: { id: string; name: string; slug: string; expiresAt: string; daysAway: number }[];
   };
   topBookingClinics: { id: string; name: string; slug: string; bookings: number }[];
   systemHealth: {
@@ -164,7 +164,7 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
         apptsPending,
         enqUnassignedStale,
         renewalsCount,
-        renewalsNext,
+        renewalsList,
         topBookingsRaw,
         alertsUnresolved,
         lastAlert,
@@ -240,12 +240,11 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
           .gte("expires_at", new Date().toISOString()),
         supabaseAdmin
           .from("clinics")
-          .select("id, name, expires_at")
+          .select("id, name, slug, expires_at")
           .not("expires_at", "is", null)
           .gte("expires_at", new Date().toISOString())
           .order("expires_at", { ascending: true })
-          .limit(1)
-          .maybeSingle(),
+          .limit(6),
         supabaseAdmin
           .from("appointments")
           .select("clinic_id")
@@ -344,21 +343,20 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
       const enqLast7 = enqLast7d.count ?? 0;
       const enqPrev7 = enqPrev7d.count ?? 0;
 
-      let nextClinic: SuperAdminDashboardDTO["renewals"]["nextClinic"] = null;
-      if (renewalsNext.data?.expires_at) {
-        const daysAway = Math.max(
-          0,
-          Math.round(
-            (+new Date(renewalsNext.data.expires_at) - Date.now()) / (24 * 60 * 60 * 1000),
+      const expiringSoon: SuperAdminDashboardDTO["renewals"]["expiringSoon"] = (
+        renewalsList.data ?? []
+      )
+        .filter((c): c is typeof c & { expires_at: string } => c.expires_at != null)
+        .map((c) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          expiresAt: c.expires_at,
+          daysAway: Math.max(
+            0,
+            Math.round((+new Date(c.expires_at) - Date.now()) / (24 * 60 * 60 * 1000)),
           ),
-        );
-        nextClinic = {
-          id: renewalsNext.data.id,
-          name: renewalsNext.data.name,
-          expiresAt: renewalsNext.data.expires_at,
-          daysAway,
-        };
-      }
+        }));
 
       return {
         clinics: {
@@ -395,7 +393,7 @@ export const getSuperAdminDashboard = createServerFn({ method: "GET" })
         renewals: {
           dueWithinDays: RENEWAL_WINDOW_DAYS,
           count: renewalsCount.count ?? 0,
-          nextClinic,
+          expiringSoon,
         },
         topBookingClinics,
         systemHealth: {
