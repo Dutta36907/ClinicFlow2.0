@@ -67,7 +67,7 @@ export function DashboardView() {
 
   const renewalsCount = d?.renewals.count ?? 0;
   const renewalsWindow = d?.renewals.dueWithinDays ?? 14;
-  const nextRenewal = d?.renewals.nextClinic ?? null;
+  const expiringSoon = d?.renewals.expiringSoon ?? [];
   const unassignedEnquiries = d?.pendingActions.unassignedEnquiriesOver48h ?? 0;
   const unresolvedAlerts = d?.systemHealth.unresolvedAlerts ?? 0;
 
@@ -329,21 +329,41 @@ export function DashboardView() {
                 ) : (
                   <>
                     {renewalsCount > 0 && (
-                      <div className="flex items-start gap-3 rounded-lg p-3">
-                        <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-destructive/10 text-destructive">
-                          <CalendarClock className="size-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-lg font-semibold tabular-nums">{renewalsCount}</p>
-                          <p className="text-xs font-medium">
-                            Renewals due in {renewalsWindow} days
-                          </p>
-                          {nextRenewal && (
-                            <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
-                              Next: {nextRenewal.name} · {nextRenewal.daysAway}d
+                      <div className="rounded-lg p-3">
+                        <div className="flex items-start gap-3">
+                          <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-destructive/10 text-destructive">
+                            <CalendarClock className="size-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-lg font-semibold tabular-nums">{renewalsCount}</p>
+                            <p className="text-xs font-medium">
+                              Renewals due in {renewalsWindow} days
                             </p>
-                          )}
+                          </div>
                         </div>
+                        <ul className="mt-2 divide-y divide-border/70 border-t border-border/70">
+                          {expiringSoon.map((c) => (
+                            <li
+                              key={c.id}
+                              className="flex items-center justify-between gap-2 py-1.5 pl-11"
+                            >
+                              <span className="min-w-0 truncate text-xs text-foreground">
+                                {c.name}
+                              </span>
+                              <span
+                                className={`shrink-0 text-[11px] font-medium tabular-nums ${
+                                  c.daysAway <= 3
+                                    ? "text-destructive"
+                                    : c.daysAway <= 7
+                                      ? "text-[color:var(--chart-3)]"
+                                      : "text-muted-foreground"
+                                }`}
+                              >
+                                {c.daysAway}d
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                     {unassignedEnquiries > 0 && (
