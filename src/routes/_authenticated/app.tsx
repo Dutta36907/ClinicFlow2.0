@@ -14,11 +14,11 @@ function AppHome() {
   if (auth.loading) {
     return <AppLoadingSplash message="Loading your clinics…" delayMs={0} />;
   }
-  return <AppHomeInner />;
+  return <AppHomeInner auth={auth} />;
 }
 
-function AppHomeInner() {
-  const { user, isSuperAdmin, managedClinics, userClinics, loading } = useAuth();
+function AppHomeInner({ auth }: { auth: ReturnType<typeof useAuth> }) {
+  const { user, isSuperAdmin, managedClinics, userClinics, loading } = auth;
   const clinicIds = Array.from(new Set([...managedClinics, ...userClinics]));
 
   const clinicsQ = useQuery({
