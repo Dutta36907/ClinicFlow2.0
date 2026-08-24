@@ -13,18 +13,22 @@ export const assertLoginRateLimit = createServerFn({ method: "POST" })
   .inputValidator((d: { email: string }) => ({ email: emailSchema.parse(d.email) }))
   .handler(async ({ data }) => {
     const clientIp = getClientIp();
-    // Per-email: stops credential stuffing against one account.
-    await assertRateLimit(`login:email:${data.email}`, {
-      capacity: 5,
-      refillSeconds: 600,
-      label: "sign-in",
-    });
-    // Per-IP: stops scripted guessing spread across many accounts from one source.
-    await assertRateLimit(`login:ip:${clientIp}`, {
-      capacity: 20,
-      refillSeconds: 600,
-      label: "sign-in",
-    });
+    // Per-email and per-IP checks are independent buckets — run them
+    // concurrently instead of paying two round trips in series on every login.
+    await Promise.all([
+      // Per-email: stops credential stuffing against one account.
+      assertRateLimit(`login:email:${data.email}`, {
+        capacity: 5,
+        refillSeconds: 600,
+        label: "sign-in",
+      }),
+      // Per-IP: stops scripted guessing spread across many accounts from one source.
+      assertRateLimit(`login:ip:${clientIp}`, {
+        capacity: 20,
+        refillSeconds: 600,
+        label: "sign-in",
+      }),
+    ]);
   });
 
 export const assertSignupRateLimit = createServerFn({ method: "POST" }).handler(async () => {
