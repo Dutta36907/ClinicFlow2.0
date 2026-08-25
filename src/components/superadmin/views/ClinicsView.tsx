@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import { useServerFn } from "@tanstack/react-start";
 import {
   deleteClinic,
+  listClinicPlans,
   listClinicsForSuperAdmin,
   setClinicActive,
 } from "@/lib/superadmin.functions";
@@ -45,6 +46,7 @@ import {
   Pencil,
   Search,
   Trash2,
+  Users,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -52,13 +54,20 @@ import { AddClinicWizard } from "@/components/superadmin/AddClinicWizard";
 import { EditClinicDialog, type EditableClinic } from "@/components/superadmin/EditClinicDialog";
 
 type StatusFilter = "all" | "active" | "inactive" | "expired";
+type BillingFilter = "all" | "trial" | "paid";
+type ExpiringWithin = 7 | 15 | 20 | 30 | undefined;
 type SortKey = "name" | "expires_at" | "created_at";
 type SortDir = "asc" | "desc";
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const;
+const EXPIRING_OPTIONS = [7, 15, 20, 30] as const;
 
 type ClinicRow = EditableClinic & {
   phone?: string | null;
   email?: string | null;
+  plan: string | null;
+  trial_ends_at: string | null;
+  created_at: string;
+  user_count: number;
 };
 
 function deriveStatus(c: { is_active: boolean; expires_at: string | null }) {
@@ -83,6 +92,9 @@ export function ClinicsView() {
   const [confirmSlug, setConfirmSlug] = useState("");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
+  const [billing, setBilling] = useState<BillingFilter>("all");
+  const [plan, setPlan] = useState<string>("");
+  const [expiringWithinDays, setExpiringWithinDays] = useState<ExpiringWithin>(undefined);
   const [sortKey, setSortKey] = useState<SortKey>("created_at");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(1);
@@ -91,7 +103,7 @@ export function ClinicsView() {
   const debouncedSearch = useDebouncedValue(search.trim(), 300);
 
   // Reset to page 1 when filters/sort/page size change.
-  const filterSig = `${debouncedSearch}|${status}|${sortKey}|${sortDir}|${pageSize}`;
+  const filterSig = `${debouncedSearch}|${status}|${billing}|${plan}|${expiringWithinDays}|${sortKey}|${sortDir}|${pageSize}`;
   const [lastSig, setLastSig] = useState(filterSig);
   if (lastSig !== filterSig) {
     setLastSig(filterSig);
@@ -102,7 +114,17 @@ export function ClinicsView() {
   const clinicsQ = useQuery({
     queryKey: [
       "all-clinics",
-      { page, pageSize, search: debouncedSearch, status, sortKey, sortDir },
+      {
+        page,
+        pageSize,
+        search: debouncedSearch,
+        status,
+        billing,
+        plan,
+        expiringWithinDays,
+        sortKey,
+        sortDir,
+      },
     ],
     queryFn: () =>
       listFn({
@@ -111,6 +133,9 @@ export function ClinicsView() {
           pageSize,
           search: debouncedSearch,
           status,
+          billing,
+          plan,
+          expiringWithinDays,
           sortKey,
           sortDir,
         },
@@ -118,6 +143,16 @@ export function ClinicsView() {
     placeholderData: keepPreviousData,
     staleTime: 5_000,
   });
+
+  const plansFn = useServerFn(listClinicPlans);
+  const plansQ = useQuery({
+    queryKey: ["all-clinics-plans"],
+    queryFn: () => plansFn(),
+    staleTime: 60_000,
+  });
+
+  const hasActiveFilters =
+    !!debouncedSearch || status !== "all" || billing !== "all" || !!plan || !!expiringWithinDays;
 
   const rows = clinicsQ.data?.rows ?? [];
   const total = clinicsQ.data?.total ?? 0;
@@ -207,7 +242,7 @@ export function ClinicsView() {
               </span>
             }
           >
-            <div className="relative w-full sm:w-[320px]">
+            <div className="relative w-full sm:max-w-[260px] sm:flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={search}
@@ -216,28 +251,78 @@ export function ClinicsView() {
                 className="pl-9"
               />
             </div>
-            <Select value={status} onValueChange={(v) => setStatus(v as StatusFilter)}>
-              <SelectTrigger className="w-full sm:w-[160px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="expired">Expired</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
+
+            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-muted/60 p-1.5">
+              <Select value={status} onValueChange={(v) => setStatus(v as StatusFilter)}>
+                <SelectTrigger className="h-8 w-full bg-card sm:w-[140px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="expired">Expired</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={plan || "all"} onValueChange={(v) => setPlan(v === "all" ? "" : v)}>
+                <SelectTrigger className="h-8 w-full bg-card sm:w-[130px]">
+                  <SelectValue placeholder="Plan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All plans</SelectItem>
+                  {(plansQ.data?.plans ?? []).map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={billing} onValueChange={(v) => setBilling(v as BillingFilter)}>
+                <SelectTrigger className="h-8 w-full bg-card sm:w-[130px]">
+                  <SelectValue placeholder="Billing" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All billing</SelectItem>
+                  <SelectItem value="trial">In trial</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={expiringWithinDays ? String(expiringWithinDays) : "off"}
+                onValueChange={(v) =>
+                  setExpiringWithinDays(v === "off" ? undefined : (Number(v) as ExpiringWithin))
+                }
+              >
+                <SelectTrigger className="h-8 w-full bg-card sm:w-[170px]">
+                  <SelectValue placeholder="Expiring" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="off">Expiring: off</SelectItem>
+                  {EXPIRING_OPTIONS.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      Expiring in {d} days
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </FilterBar>
         </div>
 
         <div className="rounded-2xl border border-border bg-card shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[920px] text-sm">
+            <table className="w-full min-w-[1120px] text-sm">
               <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
                 <tr>
                   <SortableTh sortBy="name">Name</SortableTh>
                   <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Plan</th>
                   <SortableTh sortBy="expires_at">Activate till</SortableTh>
+                  <SortableTh sortBy="created_at">Created</SortableTh>
+                  <th className="px-4 py-3">Users</th>
                   <th className="px-4 py-3 text-center">Booking URL</th>
                   <th className="px-4 py-3 text-center">Clinic Manager</th>
                   <th className="px-4 py-3 text-right">Edit</th>
@@ -294,12 +379,34 @@ export function ClinicsView() {
                           </TooltipContent>
                         </Tooltip>
                       </td>
+                      <td className="px-4 py-3">
+                        {c.plan ? (
+                          <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground">
+                            {c.plan}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </td>
                       <td
                         className={`px-4 py-3 text-sm ${
                           s === "expired" ? "text-destructive" : "text-muted-foreground"
                         }`}
                       >
                         {c.expires_at ? format(new Date(c.expires_at), "MMM d, yyyy") : "Never"}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
+                        {format(new Date(c.created_at), "MMM d, yyyy")}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center gap-1.5 text-sm font-medium ${
+                            c.user_count === 0 ? "text-destructive" : ""
+                          }`}
+                        >
+                          <Users className="size-3.5 text-muted-foreground" />
+                          {c.user_count}
+                        </span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex justify-center">
@@ -407,7 +514,16 @@ export function ClinicsView() {
                         <Skeleton className="h-5 w-20 rounded-full" />
                       </td>
                       <td className="px-4 py-3">
+                        <Skeleton className="h-5 w-14 rounded-md" />
+                      </td>
+                      <td className="px-4 py-3">
                         <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-4 w-10" />
                       </td>
                       <td className="px-4 py-3">
                         <div className="mx-auto size-8">
@@ -429,15 +545,13 @@ export function ClinicsView() {
                   ))}
                 {!clinicsQ.isLoading && total === 0 && (
                   <tr>
-                    <td colSpan={7} className="p-0">
+                    <td colSpan={10} className="p-0">
                       <EmptyState
                         icon={Building2}
-                        title={
-                          debouncedSearch || status !== "all" ? "No matches" : "No clinics yet"
-                        }
+                        title={hasActiveFilters ? "No matches" : "No clinics yet"}
                         description={
-                          debouncedSearch || status !== "all"
-                            ? "Try a different search term or status filter."
+                          hasActiveFilters
+                            ? "Try different search or filter values."
                             : "Onboard your first tenant to get started."
                         }
                       />
