@@ -745,6 +745,13 @@ const listClinicsSchema = z.object({
   pageSize: z.number().int().min(1).max(100).default(25),
   search: z.string().trim().max(200).default(""),
   status: z.enum(["all", "active", "inactive", "expired"]).default("all"),
+  // trial: trial_ends_at is set (still using the trial clock). paid: it isn't.
+  billing: z.enum(["all", "trial", "paid"]).default("all"),
+  plan: z.string().trim().max(100).default(""),
+  // Same window used by the Dashboard's "Renewals due" panel.
+  expiringWithinDays: z
+    .union([z.literal(7), z.literal(15), z.literal(20), z.literal(30)])
+    .optional(),
   sortKey: z.enum(["name", "expires_at", "created_at"]).default("created_at"),
   sortDir: z.enum(["asc", "desc"]).default("desc"),
 });
@@ -760,7 +767,7 @@ export const listClinicsForSuperAdmin = createServerFn({ method: "POST" })
     let q = supabaseAdmin
       .from("clinics")
       .select(
-        "id, name, slug, email, phone, whatsapp, website, address, google_map_url, description, is_active, expires_at, created_at",
+        "id, name, slug, email, phone, whatsapp, website, address, google_map_url, description, is_active, plan, expires_at, trial_ends_at, created_at",
         { count: "exact" },
       );
 
@@ -771,6 +778,26 @@ export const listClinicsForSuperAdmin = createServerFn({ method: "POST" })
       q = q.eq("is_active", false);
     } else if (data.status === "expired") {
       q = q.not("expires_at", "is", null).lte("expires_at", nowIso);
+    }
+
+    // Billing filter
+    if (data.billing === "trial") {
+      q = q.not("trial_ends_at", "is", null);
+    } else if (data.billing === "paid") {
+      q = q.is("trial_ends_at", null);
+    }
+
+    // Plan filter
+    if (data.plan) {
+      q = q.eq("plan", data.plan);
+    }
+
+    // Expiring-within-N-days filter
+    if (data.expiringWithinDays) {
+      const cutoffIso = new Date(
+        Date.now() + data.expiringWithinDays * 24 * 60 * 60 * 1000,
+      ).toISOString();
+      q = q.not("expires_at", "is", null).gte("expires_at", nowIso).lte("expires_at", cutoffIso);
     }
 
     // Search across name / phone / email — escape commas which split .or().
@@ -794,12 +821,40 @@ export const listClinicsForSuperAdmin = createServerFn({ method: "POST" })
     const { data: rows, count, error } = await q;
     if (error) throw new Error(error.message);
 
+    // Per-clinic user count (managers + clinic users), for the current page only.
+    const ids = (rows ?? []).map((r) => r.id);
+    const userCounts = new Map<string, number>();
+    if (ids.length > 0) {
+      const { data: roleRows } = await supabaseAdmin
+        .from("user_roles")
+        .select("clinic_id")
+        .in("clinic_id", ids);
+      for (const r of roleRows ?? []) {
+        if (!r.clinic_id) continue;
+        userCounts.set(r.clinic_id, (userCounts.get(r.clinic_id) ?? 0) + 1);
+      }
+    }
+
     return {
-      rows: rows ?? [],
+      rows: (rows ?? []).map((r) => ({ ...r, user_count: userCounts.get(r.id) ?? 0 })),
       total: count ?? 0,
       page: data.page,
       pageSize: data.pageSize,
     };
+  });
+
+export const listClinicPlans = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ plans: string[] }> => {
+    const supabaseAdmin = await getAdmin();
+    await assertSuperAdmin(context.userId);
+    const { data, error } = await supabaseAdmin
+      .from("clinics")
+      .select("plan")
+      .not("plan", "is", null);
+    if (error) throw new Error(error.message);
+    const plans = Array.from(new Set((data ?? []).map((r) => r.plan as string))).sort();
+    return { plans };
   });
 
 // ---- System users (super admins with menu-wise RBAC) ----
