@@ -5,6 +5,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertClinicAccess } from "@/lib/server/auth-context";
 import {
   ALLOWED_IMAGE_MIME,
   AVATAR_MAX_BYTES,
@@ -22,28 +23,6 @@ async function getAdmin() {
 
 const BUCKETS = CLINIC_BUCKETS;
 type Bucket = ClinicBucket;
-
-async function assertClinicAccess(userId: string, clinicId: string) {
-  const supabaseAdmin = await getAdmin();
-  const { data, error } = await supabaseAdmin
-    .from("user_roles")
-    .select("role, clinic_id")
-    .eq("user_id", userId);
-  if (error) throw new Error(error.message);
-  const roles = data ?? [];
-  const isSuper = roles.some((r) => r.role === "super_admin");
-  if (isSuper) {
-    const { data: perm } = await supabaseAdmin
-      .from("super_admin_permissions")
-      .select("is_disabled")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (perm?.is_disabled) throw new Error("Your account is disabled");
-    return;
-  }
-  const ok = roles.some((r) => r.role === "clinic_manager" && r.clinic_id === clinicId);
-  if (!ok) throw new Error("Not authorized");
-}
 
 export type MediaItem = {
   bucket: Bucket;
