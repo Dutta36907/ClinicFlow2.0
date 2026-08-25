@@ -55,8 +55,8 @@ export function useSuperAdminPermissions() {
   return useQuery({
     queryKey: ["sa-permissions"],
     queryFn: async (): Promise<Permissions> => {
-      const { data: auth } = await supabase.auth.getUser();
-      const uid = auth.user?.id;
+      const { data: auth } = await supabase.auth.getSession();
+      const uid = auth.session?.user.id;
       if (!uid) return ALL_TRUE;
       const { data } = await supabase
         .from("super_admin_permissions")

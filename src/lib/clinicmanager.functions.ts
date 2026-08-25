@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { getAuthContext, assertClinicAccess } from "@/lib/server/auth-context";
 
 async function getAdmin() {
   const m = await import("@/integrations/supabase/client.server");
@@ -8,21 +9,6 @@ async function getAdmin() {
 }
 
 // --- Access helpers -------------------------------------------------------
-
-async function assertClinicAccess(userId: string, clinicId: string) {
-  const supabaseAdmin = await getAdmin();
-  // Single RPC round-trip — returns is_super, is_disabled, and clinic_ids.
-  const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
-  if (error) throw new Error(error.message);
-  const row = Array.isArray(data)
-    ? data[0]
-    : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
-  if (row?.is_super) {
-    if (row.is_disabled) throw new Error("Your account is disabled");
-    return;
-  }
-  if (!(row?.clinic_ids ?? []).includes(clinicId)) throw new Error("Not authorized");
-}
 
 async function resolveClinicBySlug(slug: string) {
   const supabaseAdmin = await getAdmin();
@@ -53,14 +39,9 @@ export const getManagerDashboard = createServerFn({ method: "GET" })
     const clinic = await resolveClinicBySlug(data.slug);
     if (!clinic) return null;
 
-    const { data: roles } = await supabaseAdmin
-      .from("user_roles")
-      .select("role, clinic_id")
-      .eq("user_id", context.userId);
-    const isSuper = (roles ?? []).some((r) => r.role === "super_admin");
-    const isManager = (roles ?? []).some(
-      (r) => r.role === "clinic_manager" && r.clinic_id === clinic.id,
-    );
+    const ctx = await getAuthContext(context.userId);
+    const isSuper = ctx.isSuper && !ctx.isDisabled;
+    const isManager = ctx.managedClinicIds.includes(clinic.id);
     if (!isSuper && !isManager) return { unauthorized: true as const };
 
     // Bounded fetch: dashboard exposes the full doctor list to other

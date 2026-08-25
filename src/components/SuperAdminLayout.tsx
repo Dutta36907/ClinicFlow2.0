@@ -34,6 +34,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { signOutSuperAdmin } from "@/lib/superadminAuth";
+import { getAuthContext, clearAuthContextCache } from "@/lib/auth-context";
 import { markInactivityLogout } from "@/lib/logout-reason";
 import { useInactivityLogout, SUPER_ADMIN_IDLE_MS } from "@/hooks/useInactivityLogout";
 import { InactivityWarningDialog } from "@/components/InactivityWarningDialog";
@@ -180,17 +181,11 @@ function AppSidebar() {
   );
 }
 
-export function SuperAdminLayout({
-  title,
-  subtitle,
-  actions,
-  children,
-}: {
-  title: string;
-  subtitle?: string;
-  actions?: ReactNode;
-  children: ReactNode;
-}) {
+// Owns the sidebar/provider/inactivity-timer for the whole super-admin
+// section. Mounted once by the route shell (SuperAdminShell) so switching
+// between views doesn't tear down and rebuild the sidebar's collapsed state
+// and the inactivity timer/listeners on every nav click.
+export function SuperAdminShellChrome({ children }: { children: ReactNode }) {
   const { warningOpen, secondsLeft, stayActive } = useInactivityLogout({
     enabled: true,
     idleMs: SUPER_ADMIN_IDLE_MS,
@@ -204,22 +199,7 @@ export function SuperAdminLayout({
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/75 px-4 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 sm:px-6">
-            <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-            <div className="h-6 w-px bg-border/60" aria-hidden />
-            <div className="min-w-0 flex-1">
-              <h1 className="truncate text-base font-semibold tracking-tight sm:text-lg">
-                {title}
-              </h1>
-              {subtitle && (
-                <p className="hidden truncate text-xs text-muted-foreground sm:block">{subtitle}</p>
-              )}
-            </div>
-            {actions}
-          </header>
-          <main className="flex-1 px-4 py-6 sm:px-6 sm:py-8">{children}</main>
-        </div>
+        <div className="flex min-w-0 flex-1 flex-col">{children}</div>
       </div>
       <InactivityWarningDialog
         open={warningOpen}
@@ -230,13 +210,46 @@ export function SuperAdminLayout({
   );
 }
 
+// Per-view header + content. Rendered inside SuperAdminShellChrome, so it
+// re-mounts on every view switch while the sidebar/timer above it don't.
+export function SuperAdminLayout({
+  title,
+  subtitle,
+  actions,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <>
+      <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/75 px-4 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 sm:px-6">
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+        <div className="h-6 w-px bg-border/60" aria-hidden />
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-base font-semibold tracking-tight sm:text-lg">{title}</h1>
+          {subtitle && (
+            <p className="hidden truncate text-xs text-muted-foreground sm:block">{subtitle}</p>
+          )}
+        </div>
+        {actions}
+      </header>
+      <main className="flex-1 px-4 py-6 sm:px-6 sm:py-8">{children}</main>
+    </>
+  );
+}
+
 // Cache super-admin verification per user-id for the lifetime of the tab so
 // sidebar navigation never re-hits the DB and never flickers back to /login
-// during transient auth reads.
-const superAdminCache = new Map<string, boolean>();
+// during transient auth reads. Backed by the same shared, memoized
+// auth-context cache useAuth() uses, so the two never fetch independently.
+const verifiedSuperAdmins = new Set<string>();
 
 export function clearSuperAdminCache() {
-  superAdminCache.clear();
+  verifiedSuperAdmins.clear();
+  clearAuthContextCache();
 }
 
 // One-shot promise that resolves once Supabase has emitted its first
@@ -255,7 +268,7 @@ supabase.auth.onAuthStateChange((event) => {
   authReadyResolve?.();
   authReadyResolve = null;
   if (event === "SIGNED_OUT" || event === "USER_UPDATED") {
-    superAdminCache.clear();
+    clearSuperAdminCache();
   }
 });
 
@@ -302,24 +315,19 @@ export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
   if (!session?.user) redirectToLoginOnce();
 
   const uid = session.user.id;
-  if (superAdminCache.get(uid)) return;
+  if (verifiedSuperAdmins.has(uid)) return;
 
-  // Single RPC round-trip for role + disabled-flag, replacing what used to
-  // be two sequential queries. Same function already used server-side in
-  // superadmin.functions.ts / dashboard.functions.ts / media.functions.ts.
-  const { data, error } = await supabase.rpc("get_user_auth_context", { _uid: uid });
-
-  if (error) {
+  // Shared memoized fetch — same cache useAuth() uses, so navigating between
+  // /app and /superadmin in one tab never re-fetches this twice.
+  const ctx = await getAuthContext(uid).catch((error) => {
     notifyRoleIssue(
       "Couldn't verify your super admin access",
-      error.message ?? "Please retry in a moment.",
+      error instanceof Error ? error.message : "Please retry in a moment.",
     );
     redirectToLoginOnce();
-  }
+  });
 
-  const row = data?.[0];
-
-  if (!row?.is_super) {
+  if (!ctx.isSuper) {
     notifyRoleIssue(
       "You don't have super admin access",
       "Ask a platform owner to grant your account the super_admin role.",
@@ -327,7 +335,7 @@ export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
     return;
   }
 
-  if (row.is_disabled) {
+  if (ctx.isDisabled) {
     notifyRoleIssue(
       "Your account is disabled",
       "Another super admin has disabled your access. Contact them to re-enable.",
@@ -336,5 +344,5 @@ export async function ensureSuperAdmin({ cause }: { cause?: string } = {}) {
     redirectToLoginOnce();
   }
 
-  superAdminCache.set(uid, true);
+  verifiedSuperAdmins.add(uid);
 }

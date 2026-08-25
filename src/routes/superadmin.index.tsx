@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type * as React from "react";
-import { ensureSuperAdmin } from "@/components/SuperAdminLayout";
+import { ensureSuperAdmin, SuperAdminShellChrome } from "@/components/SuperAdminLayout";
 import { SuperAdminLoader } from "@/components/superadmin/SuperAdminLoader";
 import { useSuperAdminView, type SuperAdminView } from "@/stores/superadminViewStore";
 import { useSuperAdminPermissions, canViewSection } from "@/hooks/useSuperAdminPermissions";
@@ -84,5 +84,5 @@ function SuperAdminShell() {
     monitoring: <MonitoringView />,
     settings: <SettingsView />,
   };
-  return views[view];
+  return <SuperAdminShellChrome>{views[view]}</SuperAdminShellChrome>;
 }

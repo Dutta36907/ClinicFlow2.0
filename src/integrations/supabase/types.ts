@@ -1001,6 +1001,7 @@ export type Database = {
         Args: { _uid: string };
         Returns: {
           clinic_ids: string[];
+          clinic_user_ids: string[];
           is_disabled: boolean;
           is_super: boolean;
         }[];

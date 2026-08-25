@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertSuperAdmin } from "@/lib/server/auth-context";
 
 async function getAdmin() {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -119,18 +120,6 @@ export const bootstrapFirstSuperAdmin = createServerFn({ method: "POST" })
 
     return { bootstrapped: true };
   });
-
-async function assertSuperAdmin(userId: string) {
-  const supabaseAdmin = await getAdmin();
-  // Single RPC round-trip replaces two serial queries (user_roles + super_admin_permissions).
-  const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
-  if (error) throw new Error(error.message);
-  const row = Array.isArray(data)
-    ? data[0]
-    : (data as { is_super?: boolean; is_disabled?: boolean } | null);
-  if (!row?.is_super) throw new Error("Not authorized");
-  if (row.is_disabled) throw new Error("Your account is disabled");
-}
 
 const slugRe = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

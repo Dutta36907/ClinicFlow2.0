@@ -17,41 +17,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { summarize, withSample } from "@/lib/server/metrics.server";
+import { assertSuperAdmin, assertClinicAccess } from "@/lib/server/auth-context";
 
 async function getAdmin() {
   const m = await import("@/integrations/supabase/client.server");
   return m.supabaseAdmin;
-}
-
-// ----------------------------------------------------------------------------
-// Auth helpers (local copies of the existing patterns — see superadmin.functions.ts
-// and clinicmanager.functions.ts for the originals).
-// ----------------------------------------------------------------------------
-
-async function assertSuperAdmin(userId: string) {
-  const supabaseAdmin = await getAdmin();
-  // Single RPC round-trip — returns is_super, is_disabled, and clinic_ids.
-  const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
-  if (error) throw new Error(error.message);
-  const row = Array.isArray(data)
-    ? data[0]
-    : (data as { is_super?: boolean; is_disabled?: boolean } | null);
-  if (!row?.is_super) throw new Error("Not authorized");
-  if (row.is_disabled) throw new Error("Your account is disabled");
-}
-
-async function assertClinicAccess(userId: string, clinicId: string) {
-  const supabaseAdmin = await getAdmin();
-  const { data, error } = await supabaseAdmin.rpc("get_user_auth_context", { _uid: userId });
-  if (error) throw new Error(error.message);
-  const row = Array.isArray(data)
-    ? data[0]
-    : (data as { is_super?: boolean; is_disabled?: boolean; clinic_ids?: string[] } | null);
-  if (row?.is_super) {
-    if (row.is_disabled) throw new Error("Your account is disabled");
-    return;
-  }
-  if (!(row?.clinic_ids ?? []).includes(clinicId)) throw new Error("Not authorized");
 }
 
 // ----------------------------------------------------------------------------
